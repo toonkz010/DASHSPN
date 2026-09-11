@@ -16,7 +16,7 @@
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen p-3 md:p-6 text-sm">
 
-  <!-- ระบบ Admin Modal -->
+  <!-- Admin Modal -->
   <div id="adminModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
     <div class="bg-slate-900 border border-slate-700 p-6 rounded-xl w-full max-w-sm shadow-2xl">
       <div id="pinSection">
@@ -44,13 +44,9 @@
   <!-- Header -->
   <header class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-slate-800 pb-4">
     <div class="flex items-center gap-4">
-      <!-- 5) โลโก้ (ใช้ลิงก์กลางที่แสดงผลได้แน่นอน) -->
-      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Royal_Thai_Police_Emblem.png" alt="โลโก้ ภ.3" class="w-12 h-14 object-contain">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Royal_Thai_Police_Emblem.png" alt="โลโก้" class="w-12 h-14 object-contain">
       <div>
-        <!-- 6) เปลี่ยนหัวข้อตามที่กำหนด -->
-        <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 via-indigo-300 to-white bg-clip-text text-transparent">
-          ผลการจับกุมหนี้นอกระบบ ของ ศูนย์ปราบปรามหนี้นอกระบบตำรวจภูธรภาค 3
-        </h1>
+        <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 via-indigo-300 to-white bg-clip-text text-transparent">ผลการจับกุมหนี้นอกระบบ ของ ศูนย์ปราบปรามหนี้นอกระบบตำรวจภูธรภาค 3</h1>
         <p class="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
           <span id="statusDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
           <span id="syncStatus">รอเชื่อมต่อ...</span> | <span id="lastUpdated" class="font-mono">-</span>
@@ -83,14 +79,11 @@
   </header>
 
   <main class="max-w-7xl mx-auto space-y-5">
-    <!-- KPI Cards -->
     <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden backdrop-blur">
         <p class="text-xs font-semibold text-slate-400">รวมผลการจับกุม (ราย)</p>
         <h3 id="totalCases" class="text-3xl font-extrabold text-white mt-1 font-mono">0</h3>
       </div>
-      
-      <!-- 3) ช่องเบาะแสหนี้นอกระบบ (รายวัน) -->
       <div class="bg-slate-900/60 border border-amber-900/30 rounded-2xl p-4 relative overflow-hidden backdrop-blur">
         <div class="flex justify-between items-center mb-1">
           <p class="text-xs font-semibold text-slate-400">เบาะแสหนี้นอกระบบประจำวัน</p>
@@ -101,7 +94,6 @@
           <span class="text-xs text-slate-500 font-mono">ราย</span>
         </div>
       </div>
-
       <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden backdrop-blur">
         <p class="text-xs font-semibold text-slate-400">ความสำเร็จ (ร้อยละ)</p>
         <div class="flex items-baseline gap-2 mt-1">
@@ -109,15 +101,12 @@
           <span class="text-xs text-slate-500 font-mono">เป้า: <span id="totalTarget">0</span></span>
         </div>
       </div>
-      
-      <!-- 2) เป้าหมายคงเหลือรวม -->
       <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden backdrop-blur">
         <p class="text-xs font-semibold text-slate-400">เป้าหมายคงเหลือภาพรวม (ราย)</p>
         <h3 id="remainingTarget" class="text-3xl font-extrabold mt-1 font-mono">0</h3>
       </div>
     </section>
 
-    <!-- แจ้งเตือนขาดเป้า -->
     <div id="missingAlert" class="hidden bg-red-950/30 border border-red-900/50 p-3.5 rounded-xl flex items-start gap-3">
       <i data-lucide="alert-triangle" class="w-5 h-5 text-red-500 shrink-0"></i>
       <div>
@@ -126,7 +115,6 @@
       </div>
     </div>
 
-    <!-- กราฟ -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
       <div class="lg:col-span-2 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5">
         <h2 class="text-sm font-semibold text-slate-200 mb-4 flex items-center gap-2"><i data-lucide="trending-up" class="w-4 h-4 text-blue-400"></i> แนวโน้มผลจับกุมรายวัน (ราย)</h2>
@@ -138,7 +126,6 @@
       </div>
     </section>
 
-    <!-- ตารางเป้าหมายและการจับกุม -->
     <section class="bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-800/80 flex justify-between items-center">
         <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2"><i data-lucide="target" class="w-4 h-4 text-emerald-400"></i> สรุปเป้าหมายและการจับกุม</h2>
@@ -160,7 +147,6 @@
       </div>
     </section>
 
-    <!-- 4) ตาราง Matrix (แถบซ่อนได้) -->
     <section class="bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden mt-6 mb-10 transition-all">
       <div class="px-5 py-4 border-b border-slate-800/80 flex justify-between items-center cursor-pointer hover:bg-slate-800/60 transition" onclick="toggleMatrix()">
         <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2">
@@ -178,6 +164,9 @@
   </main>
 
   <script>
+    // 🚨 🚨 เอา URL เว็บแอป จากขั้นตอนแรกมาวางตรงนี้ 🚨 🚨
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz41GG_9gW6eVt1bWW_mIWDwPnQR0njup8gGVqQ-XPjH-BPzNSRMUXUsB60H5dpgkKc/exec'; 
+
     let allRecords = []; 
     let validMonthsList = []; 
     let allTargetsData = {}; 
@@ -186,7 +175,6 @@
     const standardProvinces = ['ชัยภูมิ', 'นครราชสีมา', 'บุรีรัมย์', 'ยโสธร', 'ศรีสะเกษ', 'สุรินทร์', 'อำนาจเจริญ', 'อุบลราชธานี'];
     const thaiMonthNames = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
     const chartColors = ['#f43f5e', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef'];
-
     const defaultTgt = { 'ชัยภูมิ': 50, 'นครราชสีมา': 50, 'บุรีรัมย์': 50, 'ยโสธร': 50, 'ศรีสะเกษ': 50, 'สุรินทร์': 50, 'อำนาจเจริญ': 50, 'อุบลราชธานี': 50 };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -197,27 +185,19 @@
       document.getElementById('dailyDebtDate').addEventListener('change', updateDailyDebt);
       document.getElementById('adminPin').addEventListener('keypress', e => { if(e.key === 'Enter') verifyPin(); });
       
-      // ตั้งค่าเริ่มต้นวันที่ช่องเบาะแสหนี้เป็นวันนี้
       const today = new Date();
       document.getElementById('dailyDebtDate').value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
       
       fetchDataFromServer();
     });
 
-    // ================= แถบซ่อน Matrix =================
     function toggleMatrix() {
       const container = document.getElementById('matrixContainer');
       const icon = document.getElementById('matrixToggleIcon');
-      if (container.classList.contains('hidden')) {
-        container.classList.remove('hidden');
-        icon.classList.remove('rotate-180');
-      } else {
-        container.classList.add('hidden');
-        icon.classList.add('rotate-180');
-      }
+      container.classList.toggle('hidden');
+      icon.classList.toggle('rotate-180');
     }
 
-    // ================= อัปเดตหนี้นอกระบบรายวัน =================
     function updateDailyDebt() {
       let selectedDate = document.getElementById('dailyDebtDate').value;
       if (!selectedDate || allRecords.length === 0) return;
@@ -225,7 +205,6 @@
       document.getElementById('dailyDebtCases').textContent = count.toLocaleString();
     }
 
-    // ================= ระบบ Admin =================
     function openAdmin() { 
       document.getElementById('adminModal').classList.remove('hidden'); 
       document.getElementById('pinSection').classList.remove('hidden');
@@ -263,7 +242,8 @@
       });
     }
 
-    function saveAdminTargets() {
+    // 🚀 ยิงคำสั่ง Save กลับไปที่ API 
+    async function saveAdminTargets() {
       const btn = document.getElementById('btnSaveTarget');
       btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> กำลังบันทึก...';
       const selectedYM = document.getElementById('monthSelector').value;
@@ -274,21 +254,25 @@
         newTargets[p] = isNaN(val) ? 0 : val;
       });
 
-      google.script.run
-        .withSuccessHandler(res => {
-           allTargetsData = res; 
+      try {
+        const url = `${API_URL}?action=saveTargets&month=${selectedYM}&data=${encodeURIComponent(JSON.stringify(newTargets))}`;
+        const res = await fetch(url);
+        const json = await res.json();
+        
+        if(json.status === 'success') {
+           allTargetsData = json.allTargets; 
            closeAdmin();
            renderDashboard();
-           btn.innerHTML = 'บันทึกระบบ';
            alert('อัปเดตเป้าหมายเดือนนี้เรียบร้อยแล้ว!');
-        })
-        .withFailureHandler(err => {
-           alert("เกิดข้อผิดพลาด: " + err.message);
-           btn.innerHTML = 'บันทึกระบบ';
-        })
-        .saveAdminTargets(selectedYM, newTargets);
+        } else {
+           throw new Error(json.message);
+        }
+      } catch (err) {
+        alert("เกิดข้อผิดพลาด: " + err.message);
+      } finally {
+        btn.innerHTML = 'บันทึกระบบ';
+      }
     }
-    // ===============================================
 
     function initMonthSelector(validMonths) {
       const selector = document.getElementById('monthSelector');
@@ -302,16 +286,23 @@
       });
     }
 
-    function fetchDataFromServer() {
+    // 🚀 ดึงข้อมูลผ่านการ Fetch API 
+    async function fetchDataFromServer() {
       document.getElementById('refreshIcon').classList.add('animate-spin');
       document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
-      document.getElementById('syncStatus').textContent = "กำลังซิงค์...";
+      document.getElementById('syncStatus').textContent = "กำลังซิงค์ API...";
 
-      google.script.run
-        .withSuccessHandler(res => {
-            allRecords = res.records;
-            validMonthsList = res.validMonths;
-            allTargetsData = res.allTargets; 
+      try {
+        if(API_URL === 'ใส่_URL_เว็บแอป_ที่นี่') throw new Error("คุณยังไม่ได้ใส่ URL API ในโค้ด HTML");
+        
+        const res = await fetch(`${API_URL}?action=getData`);
+        const data = await res.json();
+
+        if (data.status === 'success') {
+            allRecords = data.records;
+            validMonthsList = data.validMonths;
+            allTargetsData = data.allTargets; 
+            
             if(document.getElementById('monthSelector').options.length === 0) initMonthSelector(validMonthsList);
             
             document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-emerald-500";
@@ -319,15 +310,18 @@
             document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString('th-TH');
             
             renderDashboard();
-            updateDailyDebt(); // อัปเดตหนี้รายวันตอนโหลด
-            document.getElementById('refreshIcon').classList.remove('animate-spin');
-        })
-        .withFailureHandler(err => {
-            document.getElementById('refreshIcon').classList.remove('animate-spin');
-            document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-red-500";
-            document.getElementById('syncStatus').textContent = "ผิดพลาด";
-        })
-        .getSheetData();
+            updateDailyDebt(); 
+        } else {
+            throw new Error(data.message);
+        }
+      } catch (err) {
+        document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-red-500";
+        document.getElementById('syncStatus').textContent = "ผิดพลาด";
+        console.error(err);
+        alert(err.message);
+      } finally {
+        document.getElementById('refreshIcon').classList.remove('animate-spin');
+      }
     }
 
     function renderDashboard() {
@@ -365,7 +359,6 @@
       let pct = sumTarget > 0 ? Math.round((totalActual / sumTarget) * 100) : 0;
       document.getElementById('targetPercent').textContent = `${pct}%`;
 
-      // เป้าหมายคงเหลือ (ถ้ายอดจับเกินให้โชว์ +)
       let diff = sumTarget - totalActual;
       let remEl = document.getElementById('remainingTarget');
       if(diff <= 0) {
@@ -397,7 +390,6 @@
         
         sumTgt += tgt; sumAct += act; sumMiss += miss;
         
-        // 1) ระบุชัดเจน ภ.จว. ขาด - ราย
         if (miss > 0) missingList.push(`<span class="text-white bg-red-900/80 px-2 py-0.5 rounded text-xs">ภ.จว.${p} ขาด ${miss} ราย</span>`);
 
         tbody.innerHTML += `
@@ -418,7 +410,6 @@
         `;
       });
       
-      // เพิ่มแถวสรุปผล "รวม ภ.3" ด้านล่างสุด 
       let sumPct = sumTgt > 0 ? Math.round((sumAct / sumTgt) * 100) : 0;
       tbody.innerHTML += `
           <tr class="bg-slate-800 border-t-2 border-slate-700 font-bold text-white">
@@ -445,7 +436,6 @@
         alertBox.classList.add('hidden'); 
       }
 
-      // กราฟ 
       const daysInMonth = new Date(selYear, selMonth, 0).getDate();
       const dailyTotals = Array(daysInMonth).fill(0);
       const matrix = {};
