@@ -2,491 +2,1568 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>ผลการจับกุมหนี้นอกระบบ</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    ระบบติดตามผลการปราบปรามหนี้นอกระบบ | ตำรวจภูธรภาค 3
+  </title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
-    body { font-family: 'Prompt', sans-serif; }
-    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Prompt", sans-serif;
+      background:
+        radial-gradient(
+          circle at 5% 0%,
+          rgba(37, 99, 235, 0.22),
+          transparent 29%
+        ),
+        radial-gradient(
+          circle at 95% 4%,
+          rgba(250, 204, 21, 0.10),
+          transparent 24%
+        ),
+        linear-gradient(
+          180deg,
+          #020617 0%,
+          #071226 50%,
+          #020617 100%
+        );
+      background-attachment: fixed;
+    }
+
+    .glass-panel {
+      background: linear-gradient(
+        145deg,
+        rgba(15, 23, 42, 0.90),
+        rgba(15, 23, 42, 0.62)
+      );
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(16px);
+    }
+
+    .header-panel {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 90% 0%,
+          rgba(250, 204, 21, 0.18),
+          transparent 30%
+        ),
+        linear-gradient(
+          135deg,
+          rgba(30, 58, 138, 0.96),
+          rgba(15, 23, 42, 0.97)
+        );
+      border: 1px solid rgba(250, 204, 21, 0.22);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
+    }
+
+    .header-panel::after {
+      content: "";
+      position: absolute;
+      right: -90px;
+      top: -155px;
+      width: 290px;
+      height: 290px;
+      border: 48px solid rgba(255, 255, 255, 0.035);
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .logo-frame {
+      width: 94px;
+      height: 105px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px;
+      border-radius: 20px;
+      background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.13),
+        rgba(255, 255, 255, 0.035)
+      );
+      border: 1px solid rgba(250, 204, 21, 0.34);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.30);
+    }
+
+    .logo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45));
+    }
+
+    .summary-card {
+      position: relative;
+      overflow: hidden;
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .summary-card::after {
+      content: "";
+      position: absolute;
+      right: -35px;
+      bottom: -65px;
+      width: 135px;
+      height: 135px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.06);
+      pointer-events: none;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(96, 165, 250, 0.34);
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.30);
+    }
+
+    input[type="date"] {
+      color-scheme: dark;
+    }
+
+    select,
+    input,
+    button {
+      font-family: "Prompt", sans-serif;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 999px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    .modal-backdrop {
+      backdrop-filter: blur(7px);
+    }
+
+    @media (max-width: 640px) {
+      .logo-frame {
+        width: 70px;
+        height: 79px;
+        padding: 5px;
+        border-radius: 15px;
+      }
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen p-3 md:p-6 text-sm">
 
-  <!-- Admin Modal -->
-  <div id="adminModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
-    <div class="bg-slate-900 border border-slate-700 p-6 rounded-xl w-full max-w-sm shadow-2xl">
-      <div id="pinSection">
-        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="lock" class="w-5 h-5 text-indigo-400"></i> เข้าสู่ระบบ Admin</h3>
-        <p class="text-xs text-slate-400 mb-4">รหัสผ่านเพื่อตั้งค่าเป้าหมาย (ค่าเริ่มต้น: 1234)</p>
-        <input type="password" id="adminPin" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-white outline-none focus:border-indigo-500 mb-4 tracking-widest text-center text-lg">
-        <div class="flex justify-end gap-2">
-          <button onclick="closeAdmin()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs transition">ยกเลิก</button>
-          <button onclick="verifyPin()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded text-xs font-bold text-white transition">ยืนยัน</button>
+<body class="min-h-screen p-3 text-sm text-slate-200 md:p-6">
+  <main class="mx-auto max-w-7xl">
+    <!-- Header -->
+    <header class="header-panel mb-6 rounded-3xl p-4 md:p-6">
+      <div
+        class="relative z-10 flex flex-col justify-between gap-5 xl:flex-row xl:items-center"
+      >
+        <div class="flex items-center gap-4 md:gap-5">
+          <div class="logo-frame">
+            <img
+              src="./logo-police-region-3.png"
+              alt="ตราสัญลักษณ์ตำรวจภูธรภาค 3"
+              onerror="
+                this.style.display='none';
+                document.getElementById('logoFallback')
+                  .classList.remove('hidden');
+              "
+            >
+            <i
+              id="logoFallback"
+              data-lucide="shield"
+              class="hidden h-12 w-12 text-yellow-300"
+            ></i>
+          </div>
+
+          <div>
+            <span
+              class="inline-flex rounded-full border border-yellow-400/25 bg-yellow-400/10 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-yellow-300 md:text-xs"
+            >
+              POLICE REGION 3
+            </span>
+
+            <h1
+              class="mt-2 text-xl font-bold leading-tight tracking-tight text-white md:text-3xl"
+            >
+              ระบบติดตามผลการปราบปรามหนี้นอกระบบ
+            </h1>
+
+            <p class="mt-1 text-xs text-blue-200/80 md:text-sm">
+              ศูนย์ปราบปรามหนี้นอกระบบ ตำรวจภูธรภาค 3
+            </p>
+
+            <div
+              class="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-300"
+            >
+              <span
+                id="statusDot"
+                class="h-2 w-2 rounded-full bg-slate-500"
+              ></span>
+              <span id="syncStatus">กำลังเตรียมข้อมูล</span>
+              <span class="text-slate-500">•</span>
+              <span>อัปเดตล่าสุด</span>
+              <span
+                id="lastUpdated"
+                class="font-mono text-yellow-300"
+              >
+                -
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex w-full flex-wrap items-center gap-2 xl:w-auto">
+          <label
+            class="flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2"
+          >
+            <i
+              data-lucide="calendar-days"
+              class="mr-2 h-4 w-4 text-yellow-300"
+            ></i>
+            <select
+              id="monthSelector"
+              class="cursor-pointer bg-transparent text-xs font-semibold text-white outline-none"
+            ></select>
+          </label>
+
+          <label
+            class="flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2"
+          >
+            <span class="mr-2 text-[11px] text-slate-400">
+              ตั้งแต่
+            </span>
+            <input
+              type="date"
+              id="startDate"
+              class="bg-transparent text-[11px] text-slate-200 outline-none"
+            >
+          </label>
+
+          <label
+            class="flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2"
+          >
+            <span class="mr-2 text-[11px] text-slate-400">
+              ถึง
+            </span>
+            <input
+              type="date"
+              id="endDate"
+              class="bg-transparent text-[11px] text-slate-200 outline-none"
+            >
+          </label>
+
+          <button
+            type="button"
+            onclick="openAdmin()"
+            class="flex items-center gap-2 rounded-xl border border-yellow-400/30 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200 transition hover:bg-yellow-400/20"
+          >
+            <i data-lucide="settings" class="h-4 w-4"></i>
+            จัดการเป้าหมาย
+          </button>
+
+          <button
+            type="button"
+            onclick="fetchDataFromServer()"
+            title="อัปเดตข้อมูล"
+            class="rounded-xl border border-blue-400/25 bg-blue-500/15 p-2.5 transition hover:bg-blue-500/25"
+          >
+            <i
+              id="refreshIcon"
+              data-lucide="refresh-cw"
+              class="h-4 w-4 text-blue-200"
+            ></i>
+          </button>
         </div>
       </div>
+    </header>
 
-      <div id="targetSection" class="hidden">
-        <h3 class="text-base font-bold text-white flex items-center gap-2"><i data-lucide="sliders" class="w-5 h-5 text-emerald-400"></i> ตั้งค่าเป้าหมายราย ภ.จว.</h3>
-        <p id="adminMonthLabel" class="text-xs text-blue-400 mb-4 mt-1 border-b border-slate-700 pb-2"></p>
-        <div id="targetInputs" class="space-y-2.5 mb-5 max-h-64 overflow-y-auto custom-scrollbar pr-2"></div>
-        <div class="flex justify-end gap-2">
-          <button onclick="closeAdmin()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs transition">ปิด</button>
-          <button onclick="saveAdminTargets()" id="btnSaveTarget" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded text-xs font-bold text-white transition">บันทึกระบบ</button>
+    <!-- Summary cards -->
+    <section
+      class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+    >
+      <article class="glass-panel summary-card rounded-2xl p-5">
+        <div class="relative z-10 flex justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-400">
+              ผลการปฏิบัติสะสม
+            </p>
+            <h2
+              id="totalCases"
+              class="mt-2 font-mono text-3xl font-extrabold text-white"
+            >
+              0
+            </h2>
+            <p class="mt-1 text-[11px] text-slate-500">
+              จำนวนผลการปฏิบัติในช่วงที่เลือก
+            </p>
+          </div>
+          <div class="h-fit rounded-xl bg-blue-500/10 p-2.5">
+            <i
+              data-lucide="shield-check"
+              class="h-5 w-5 text-blue-300"
+            ></i>
+          </div>
         </div>
+      </article>
+
+      <article class="glass-panel summary-card rounded-2xl p-5">
+        <div class="relative z-10 flex justify-between">
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-medium text-slate-400">
+              เบาะแสหนี้นอกระบบรายวัน
+            </p>
+            <div class="mt-2 flex items-baseline gap-2">
+              <h2
+                id="dailyDebtCases"
+                class="font-mono text-3xl font-extrabold text-amber-400"
+              >
+                0
+              </h2>
+              <span class="text-xs text-slate-500">ราย</span>
+            </div>
+            <input
+              type="date"
+              id="dailyDebtDate"
+              class="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950/50 px-2 py-1 text-[10px] text-slate-300 outline-none"
+            >
+          </div>
+          <div class="ml-3 h-fit rounded-xl bg-amber-500/10 p-2.5">
+            <i
+              data-lucide="message-square-warning"
+              class="h-5 w-5 text-amber-300"
+            ></i>
+          </div>
+        </div>
+      </article>
+
+      <article class="glass-panel summary-card rounded-2xl p-5">
+        <div class="relative z-10 flex justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-400">
+              ความก้าวหน้าตามเป้าหมาย
+            </p>
+            <h2
+              id="targetPercent"
+              class="mt-2 font-mono text-3xl font-extrabold text-emerald-400"
+            >
+              0%
+            </h2>
+            <p class="mt-1 text-[11px] text-slate-500">
+              เป้าหมายรวม
+              <span
+                id="totalTarget"
+                class="font-mono text-slate-300"
+              >
+                0
+              </span>
+              ราย
+            </p>
+          </div>
+          <div class="h-fit rounded-xl bg-emerald-500/10 p-2.5">
+            <i
+              data-lucide="gauge"
+              class="h-5 w-5 text-emerald-300"
+            ></i>
+          </div>
+        </div>
+      </article>
+
+      <article class="glass-panel summary-card rounded-2xl p-5">
+        <div class="relative z-10 flex justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-400">
+              จำนวนคงเหลือตามเป้าหมาย
+            </p>
+            <h2
+              id="remainingTarget"
+              class="mt-2 font-mono text-3xl font-extrabold text-rose-400"
+            >
+              0
+            </h2>
+            <p class="mt-1 text-[11px] text-slate-500">
+              คำนวณจากเป้าหมายภาพรวม
+            </p>
+          </div>
+          <div class="h-fit rounded-xl bg-rose-500/10 p-2.5">
+            <i
+              data-lucide="target"
+              class="h-5 w-5 text-rose-300"
+            ></i>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Alert -->
+    <section
+      id="missingAlert"
+      class="mt-4 hidden rounded-2xl border border-red-500/20 bg-red-950/30 p-4"
+    >
+      <div class="flex items-start gap-3">
+        <i
+          data-lucide="triangle-alert"
+          class="mt-0.5 h-5 w-5 flex-shrink-0 text-red-400"
+        ></i>
+        <div>
+          <p class="font-semibold text-red-200">
+            หน่วยงานที่ยังดำเนินการไม่ครบตามเป้าหมาย
+          </p>
+          <div
+            id="missingList"
+            class="mt-2 flex flex-wrap gap-2"
+          ></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <article class="glass-panel rounded-2xl p-4 md:p-5">
+        <div class="mb-4">
+          <h2 class="font-semibold text-white">
+            แนวโน้มผลการปฏิบัติรายวัน
+          </h2>
+          <p class="text-[11px] text-slate-500">
+            จำนวนผลการปฏิบัติในช่วงวันที่ที่เลือก
+          </p>
+        </div>
+        <div class="h-72">
+          <canvas id="dailyTrendChart"></canvas>
+        </div>
+      </article>
+
+      <article class="glass-panel rounded-2xl p-4 md:p-5">
+        <div class="mb-4">
+          <h2 class="font-semibold text-white">
+            ผลการปฏิบัติจำแนกตามหน่วยงาน
+          </h2>
+          <p class="text-[11px] text-slate-500">
+            เปรียบเทียบผลดำเนินการของแต่ละจังหวัด
+          </p>
+        </div>
+        <div class="h-72">
+          <canvas id="provinceChart"></canvas>
+        </div>
+      </article>
+    </section>
+
+    <!-- Summary table -->
+    <section class="glass-panel mt-4 overflow-hidden rounded-2xl">
+      <div class="border-b border-slate-800 p-4 md:px-5">
+        <h2 class="font-semibold text-white">
+          สรุปผลการดำเนินงานเทียบเป้าหมาย
+        </h2>
+        <p class="text-[11px] text-slate-500">
+          ผลการปฏิบัติ เป้าหมาย และความก้าวหน้ารายหน่วยงาน
+        </p>
+      </div>
+
+      <div class="custom-scrollbar overflow-x-auto">
+        <table class="w-full min-w-[760px] text-left">
+          <thead class="bg-slate-950/55 text-xs text-slate-400">
+            <tr>
+              <th class="p-3 pl-5">หน่วยงาน</th>
+              <th class="p-3 text-center">เป้าหมาย</th>
+              <th class="p-3 text-center">ผลดำเนินการ</th>
+              <th class="p-3 text-center">คงเหลือ</th>
+              <th class="p-3 text-center">ความก้าวหน้า</th>
+            </tr>
+          </thead>
+          <tbody
+            id="summaryBody"
+            class="divide-y divide-slate-800/70"
+          ></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Matrix table -->
+    <details class="glass-panel mt-4 overflow-hidden rounded-2xl" open>
+      <summary
+        class="flex cursor-pointer list-none items-center justify-between border-b border-slate-800 p-4 md:px-5"
+      >
+        <div>
+          <h2 class="font-semibold text-white">
+            รายละเอียดผลการปฏิบัติรายวัน
+          </h2>
+          <p class="text-[11px] text-slate-500">
+            จำแนกตามวันที่และหน่วยงาน
+          </p>
+        </div>
+        <i
+          data-lucide="table-properties"
+          class="h-5 w-5 text-blue-300"
+        ></i>
+      </summary>
+
+      <div class="custom-scrollbar overflow-x-auto">
+        <table class="w-full text-center text-xs">
+          <thead
+            id="matrixHeader"
+            class="bg-slate-950/55 text-slate-400"
+          ></thead>
+          <tbody
+            id="matrixBody"
+            class="divide-y divide-slate-800/70"
+          ></tbody>
+        </table>
+      </div>
+    </details>
+
+    <footer class="py-6 text-center text-[11px] text-slate-600">
+      ระบบติดตามผลการปราบปรามหนี้นอกระบบ ตำรวจภูธรภาค 3
+    </footer>
+  </main>
+
+  <!-- Admin modal -->
+  <div
+    id="adminModal"
+    class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 p-4"
+  >
+    <div
+      class="glass-panel max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl"
+    >
+      <div
+        class="flex items-center justify-between border-b border-slate-800 p-5"
+      >
+        <div>
+          <h2 class="text-lg font-semibold text-white">
+            จัดการเป้าหมายรายเดือน
+          </h2>
+          <p class="text-xs text-slate-500">
+            สำหรับเจ้าหน้าที่ผู้รับผิดชอบ
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onclick="closeAdmin()"
+          class="rounded-xl p-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"
+        >
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <div id="pinSection" class="p-5">
+        <label
+          for="adminPassword"
+          class="mb-2 block text-xs font-medium text-slate-300"
+        >
+          รหัสผู้ดูแล
+        </label>
+
+        <input
+          id="adminPassword"
+          type="password"
+          autocomplete="current-password"
+          placeholder="กรอกรหัสผู้ดูแล"
+          class="w-full rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-blue-500"
+        >
+
+        <p
+          id="pinError"
+          class="mt-2 hidden text-xs text-red-400"
+        ></p>
+
+        <button
+          id="verifyButton"
+          type="button"
+          onclick="verifyAdmin()"
+          class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <i data-lucide="log-in" class="h-4 w-4"></i>
+          ตรวจสอบสิทธิ์
+        </button>
+      </div>
+
+      <div id="targetSection" class="hidden p-5">
+        <div
+          class="mb-4 rounded-xl border border-blue-500/20 bg-blue-500/10 p-3"
+        >
+          <p class="text-xs text-blue-200">
+            กำหนดเป้าหมายประจำเดือน
+          </p>
+          <p
+            id="targetMonthLabel"
+            class="mt-1 font-semibold text-white"
+          ></p>
+        </div>
+
+        <div
+          id="targetInputs"
+          class="grid grid-cols-1 gap-3 sm:grid-cols-2"
+        ></div>
+
+        <button
+          id="saveTargetButton"
+          type="button"
+          onclick="saveAdminTargets()"
+          class="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <i data-lucide="save" class="h-4 w-4"></i>
+          บันทึกเป้าหมาย
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Header -->
-  <header class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-slate-800 pb-4">
-    <div class="flex items-center gap-4">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Royal_Thai_Police_Emblem.png" alt="โลโก้" class="w-12 h-14 object-contain">
-      <div>
-        <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 via-indigo-300 to-white bg-clip-text text-transparent">ผลการจับกุมหนี้นอกระบบ ของ ศูนย์ปราบปรามหนี้นอกระบบตำรวจภูธรภาค 3</h1>
-        <p class="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
-          <span id="statusDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
-          <span id="syncStatus">รอเชื่อมต่อ...</span> | <span id="lastUpdated" class="font-mono">-</span>
-        </p>
-      </div>
-    </div>
-
-    <div class="flex flex-wrap items-center gap-2">
-      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 shadow-inner">
-        <i data-lucide="calendar" class="w-4 h-4 text-slate-400 mr-2"></i>
-        <select id="monthSelector" class="bg-transparent text-xs font-bold text-blue-300 outline-none cursor-pointer"></select>
-      </div>
-      
-      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 shadow-inner gap-1">
-        <i data-lucide="filter" class="w-3 h-3 text-slate-400 mr-1"></i>
-        <span class="text-[11px] text-slate-400">จาก:</span>
-        <input type="date" id="startDate" class="bg-transparent text-[11px] text-slate-200 outline-none cursor-pointer">
-        <span class="text-[11px] text-slate-400 ml-1">ถึง:</span>
-        <input type="date" id="endDate" class="bg-transparent text-[11px] text-slate-200 outline-none cursor-pointer">
-      </div>
-
-      <button onclick="openAdmin()" class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-950 hover:bg-indigo-900 border border-indigo-800 text-indigo-300 rounded-lg text-xs transition">
-        <i data-lucide="shield" class="w-3.5 h-3.5"></i> ระบบแอดมิน
-      </button>
-
-      <button onclick="fetchDataFromServer()" class="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition">
-        <i data-lucide="refresh-cw" id="refreshIcon" class="w-4 h-4 text-slate-300"></i>
-      </button>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto space-y-5">
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden backdrop-blur">
-        <p class="text-xs font-semibold text-slate-400">รวมผลการจับกุม (ราย)</p>
-        <h3 id="totalCases" class="text-3xl font-extrabold text-white mt-1 font-mono">0</h3>
-      </div>
-      <div class="bg-slate-900/60 border border-amber-900/30 rounded-2xl p-4 relative overflow-hidden backdrop-blur">
-        <div class="flex justify-between items-center mb-1">
-          <p class="text-xs font-semibold text-slate-400">เบาะแสหนี้นอกระบบประจำวัน</p>
-          <input type="date" id="dailyDebtDate" class="bg-slate-800 border border-slate-700 text-[10px] text-slate-300 rounded px-1 py-0.5 outline-none cursor-pointer">
-        </div>
-        <div class="flex items-baseline gap-2">
-          <h3 id="dailyDebtCases" class="text-3xl font-extrabold text-amber-400 font-mono">0</h3>
-          <span class="text-xs text-slate-500 font-mono">ราย</span>
-        </div>
-      </div>
-      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden backdrop-blur">
-        <p class="text-xs font-semibold text-slate-400">ความสำเร็จ (ร้อยละ)</p>
-        <div class="flex items-baseline gap-2 mt-1">
-          <h3 id="targetPercent" class="text-3xl font-extrabold text-emerald-400 font-mono">0%</h3>
-          <span class="text-xs text-slate-500 font-mono">เป้า: <span id="totalTarget">0</span></span>
-        </div>
-      </div>
-      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden backdrop-blur">
-        <p class="text-xs font-semibold text-slate-400">เป้าหมายคงเหลือภาพรวม (ราย)</p>
-        <h3 id="remainingTarget" class="text-3xl font-extrabold mt-1 font-mono">0</h3>
-      </div>
-    </section>
-
-    <div id="missingAlert" class="hidden bg-red-950/30 border border-red-900/50 p-3.5 rounded-xl flex items-start gap-3">
-      <i data-lucide="alert-triangle" class="w-5 h-5 text-red-500 shrink-0"></i>
-      <div>
-        <p class="text-sm font-bold text-red-400 mb-1">ภ.จว. ที่ยังไม่ถึงเป้าหมาย:</p>
-        <p id="missingDetails" class="text-xs text-red-200/90 leading-relaxed flex flex-wrap gap-2"></p>
-      </div>
-    </div>
-
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-      <div class="lg:col-span-2 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5">
-        <h2 class="text-sm font-semibold text-slate-200 mb-4 flex items-center gap-2"><i data-lucide="trending-up" class="w-4 h-4 text-blue-400"></i> แนวโน้มผลจับกุมรายวัน (ราย)</h2>
-        <div class="h-64"><canvas id="dailyTrendChart"></canvas></div>
-      </div>
-      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5">
-        <h2 class="text-sm font-semibold text-slate-200 mb-4 flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-400"></i> ผลจับกุมสะสมแยก ภ.จว. (แยกสี)</h2>
-        <div class="h-64"><canvas id="provinceChart"></canvas></div>
-      </div>
-    </section>
-
-    <section class="bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-800/80 flex justify-between items-center">
-        <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2"><i data-lucide="target" class="w-4 h-4 text-emerald-400"></i> สรุปเป้าหมายและการจับกุม</h2>
-        <span id="tableDateLabel" class="text-xs text-blue-400 font-mono"></span>
-      </div>
-      <div class="overflow-x-auto custom-scrollbar">
-        <table class="w-full text-sm text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-800/40 text-slate-300 border-b border-slate-700/50">
-              <th class="p-3 font-semibold pl-5">ภ.จว.</th>
-              <th class="p-3 font-semibold text-center text-blue-300">เป้าหมาย (ราย)</th>
-              <th class="p-3 font-semibold text-center text-emerald-400">ผลการปฏิบัติ (ราย)</th>
-              <th class="p-3 font-semibold text-center text-red-400">ขาดอีก (ราย)</th>
-              <th class="p-3 font-semibold text-center pr-5">ร้อยละ</th>
-            </tr>
-          </thead>
-          <tbody id="summaryBody" class="divide-y divide-slate-800/50 text-slate-300"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden mt-6 mb-10 transition-all">
-      <div class="px-5 py-4 border-b border-slate-800/80 flex justify-between items-center cursor-pointer hover:bg-slate-800/60 transition" onclick="toggleMatrix()">
-        <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-          <i data-lucide="table" class="w-4 h-4 text-indigo-400"></i> ผลการจับกุมแยกรายวัน ว.ด.ป.
-        </h2>
-        <i data-lucide="chevron-up" id="matrixToggleIcon" class="w-5 h-5 text-slate-400 transition-transform"></i>
-      </div>
-      <div id="matrixContainer" class="overflow-x-auto custom-scrollbar transition-all">
-        <table class="w-full text-xs text-left border-collapse">
-          <thead><tr id="matrixHeader" class="bg-slate-800/40 text-slate-300 border-b border-slate-700/50"></tr></thead>
-          <tbody id="matrixBody" class="divide-y divide-slate-800/30 text-slate-300 font-mono"></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
+  <!-- Toast -->
+  <div
+    id="toast"
+    class="fixed bottom-4 right-4 z-[60] hidden max-w-sm rounded-xl border px-4 py-3 text-sm shadow-2xl"
+  ></div>
 
   <script>
-    // 🚨 🚨 เอา URL เว็บแอป จากขั้นตอนแรกมาวางตรงนี้ 🚨 🚨
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz41GG_9gW6eVt1bWW_mIWDwPnQR0njup8gGVqQ-XPjH-BPzNSRMUXUsB60H5dpgkKc/exec'; 
+    /*
+     * นำ URL จาก Deploy Google Apps Script มาวางตรงนี้
+     * URL ต้องลงท้ายด้วย /exec
+     */
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz41GG_9gW6eVt1bWW_mIWDwPnQR0njup8gGVqQ-XPjH-BPzNSRMUXUsB60H5dpgkKc/exec';
 
-    let allRecords = []; 
-    let validMonthsList = []; 
-    let allTargetsData = {}; 
-    let dailyChart = null; let provChart = null;
-    
-    const standardProvinces = ['ชัยภูมิ', 'นครราชสีมา', 'บุรีรัมย์', 'ยโสธร', 'ศรีสะเกษ', 'สุรินทร์', 'อำนาจเจริญ', 'อุบลราชธานี'];
-    const thaiMonthNames = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-    const chartColors = ['#f43f5e', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef'];
-    const defaultTgt = { 'ชัยภูมิ': 50, 'นครราชสีมา': 50, 'บุรีรัมย์': 50, 'ยโสธร': 50, 'ศรีสะเกษ': 50, 'สุรินทร์': 50, 'อำนาจเจริญ': 50, 'อุบลราชธานี': 50 };
+    const PROVINCES = [
+      'ชัยภูมิ',
+      'นครราชสีมา',
+      'บุรีรัมย์',
+      'ยโสธร',
+      'ศรีสะเกษ',
+      'สุรินทร์',
+      'อำนาจเจริญ',
+      'อุบลราชธานี'
+    ];
+
+    const CHART_COLORS = [
+      '#60a5fa',
+      '#facc15',
+      '#34d399',
+      '#fb7185',
+      '#a78bfa',
+      '#22d3ee',
+      '#fb923c',
+      '#f472b6'
+    ];
+
+    const state = {
+      records: [],
+      validMonths: [],
+      allTargets: {},
+      selectedMonth: '',
+      adminToken: '',
+      dailyChart: null,
+      provinceChart: null
+    };
+
+    const element = id => document.getElementById(id);
 
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      document.getElementById('monthSelector').addEventListener('change', renderDashboard);
-      document.getElementById('startDate').addEventListener('change', renderDashboard);
-      document.getElementById('endDate').addEventListener('change', renderDashboard);
-      document.getElementById('dailyDebtDate').addEventListener('change', updateDailyDebt);
-      document.getElementById('adminPin').addEventListener('keypress', e => { if(e.key === 'Enter') verifyPin(); });
-      
-      const today = new Date();
-      document.getElementById('dailyDebtDate').value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-      
+
+      element('monthSelector').addEventListener(
+        'change',
+        handleMonthChange
+      );
+
+      element('startDate').addEventListener(
+        'change',
+        renderDashboard
+      );
+
+      element('endDate').addEventListener(
+        'change',
+        renderDashboard
+      );
+
+      element('dailyDebtDate').addEventListener(
+        'change',
+        renderDailyDebt
+      );
+
+      element('adminPassword').addEventListener(
+        'keydown',
+        event => {
+          if (event.key === 'Enter') {
+            verifyAdmin();
+          }
+        }
+      );
+
       fetchDataFromServer();
     });
 
-    function toggleMatrix() {
-      const container = document.getElementById('matrixContainer');
-      const icon = document.getElementById('matrixToggleIcon');
-      container.classList.toggle('hidden');
-      icon.classList.toggle('rotate-180');
-    }
-
-    function updateDailyDebt() {
-      let selectedDate = document.getElementById('dailyDebtDate').value;
-      if (!selectedDate || allRecords.length === 0) return;
-      let count = allRecords.filter(r => r.dateStr === selectedDate && r.isDebt === 1).length;
-      document.getElementById('dailyDebtCases').textContent = count.toLocaleString();
-    }
-
-    function openAdmin() { 
-      document.getElementById('adminModal').classList.remove('hidden'); 
-      document.getElementById('pinSection').classList.remove('hidden');
-      document.getElementById('targetSection').classList.add('hidden');
-      document.getElementById('adminPin').value = '';
-      document.getElementById('adminPin').focus();
-    }
-    
-    function closeAdmin() { document.getElementById('adminModal').classList.add('hidden'); }
-    
-    function verifyPin() {
-      if (document.getElementById('adminPin').value === "1234") {
-        document.getElementById('pinSection').classList.add('hidden');
-        document.getElementById('targetSection').classList.remove('hidden');
-        buildTargetModal();
-      } else alert("รหัสผ่านไม่ถูกต้อง!");
-    }
-
-    function buildTargetModal() {
-      const selectedYM = document.getElementById('monthSelector').value;
-      const monthText = document.getElementById('monthSelector').options[document.getElementById('monthSelector').selectedIndex].text;
-      document.getElementById('adminMonthLabel').innerHTML = `กำหนดเป้าหมาย <span class="text-white font-bold">${monthText}</span>`;
-      
-      const container = document.getElementById('targetInputs');
-      container.innerHTML = '';
-      let curTgt = allTargetsData[selectedYM] || defaultTgt;
-      
-      standardProvinces.forEach(p => {
-        container.innerHTML += `
-          <div class="flex justify-between items-center bg-slate-800/80 p-2.5 rounded-lg border border-slate-700">
-            <span class="text-sm font-medium text-slate-200">ภ.จว.${p}</span>
-            <input type="number" id="tgt_${p}" value="${curTgt[p] || 0}" class="w-20 bg-slate-950 border border-slate-600 rounded px-2 py-1 text-sm text-center text-white font-mono outline-none focus:border-emerald-500">
-          </div>
-        `;
-      });
-    }
-
-    // 🚀 ยิงคำสั่ง Save กลับไปที่ API 
-    async function saveAdminTargets() {
-      const btn = document.getElementById('btnSaveTarget');
-      btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> กำลังบันทึก...';
-      const selectedYM = document.getElementById('monthSelector').value;
-      
-      let newTargets = {};
-      standardProvinces.forEach(p => {
-        let val = parseInt(document.getElementById(`tgt_${p}`).value);
-        newTargets[p] = isNaN(val) ? 0 : val;
-      });
-
-      try {
-        const url = `${API_URL}?action=saveTargets&month=${selectedYM}&data=${encodeURIComponent(JSON.stringify(newTargets))}`;
-        const res = await fetch(url);
-        const json = await res.json();
-        
-        if(json.status === 'success') {
-           allTargetsData = json.allTargets; 
-           closeAdmin();
-           renderDashboard();
-           alert('อัปเดตเป้าหมายเดือนนี้เรียบร้อยแล้ว!');
-        } else {
-           throw new Error(json.message);
-        }
-      } catch (err) {
-        alert("เกิดข้อผิดพลาด: " + err.message);
-      } finally {
-        btn.innerHTML = 'บันทึกระบบ';
-      }
-    }
-
-    function initMonthSelector(validMonths) {
-      const selector = document.getElementById('monthSelector');
-      selector.innerHTML = '';
-      validMonths.forEach((ym, idx) => {
-        const [year, month] = ym.split('-').map(Number);
-        const opt = document.createElement('option');
-        opt.value = ym; opt.textContent = `${thaiMonthNames[month - 1]} ${year + 543}`;
-        if (idx === 0) opt.selected = true;
-        selector.appendChild(opt);
-      });
-    }
-
-    // 🚀 ดึงข้อมูลผ่านการ Fetch API 
     async function fetchDataFromServer() {
-      document.getElementById('refreshIcon').classList.add('animate-spin');
-      document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
-      document.getElementById('syncStatus').textContent = "กำลังซิงค์ API...";
+      if (!API_URL.startsWith('https://script.google.com/')) {
+        setStatus('error', 'ยังไม่ได้ตั้งค่า API URL');
+        showToast(
+          'กรุณานำ Web App URL ไปใส่ในตัวแปร API_URL',
+          'error'
+        );
+        return;
+      }
+
+      setStatus('loading', 'กำลังอัปเดตข้อมูล');
+      element('refreshIcon').classList.add('animate-spin');
 
       try {
-        if(API_URL === 'ใส่_URL_เว็บแอป_ที่นี่') throw new Error("คุณยังไม่ได้ใส่ URL API ในโค้ด HTML");
-        
-        const res = await fetch(`${API_URL}?action=getData`);
-        const data = await res.json();
+        const response = await fetch(
+          `${API_URL}?action=getData&_=${Date.now()}`,
+          { cache: 'no-store' }
+        );
 
-        if (data.status === 'success') {
-            allRecords = data.records;
-            validMonthsList = data.validMonths;
-            allTargetsData = data.allTargets; 
-            
-            if(document.getElementById('monthSelector').options.length === 0) initMonthSelector(validMonthsList);
-            
-            document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-emerald-500";
-            document.getElementById('syncStatus').textContent = "ซิงค์สำเร็จ";
-            document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString('th-TH');
-            
-            renderDashboard();
-            updateDailyDebt(); 
-        } else {
-            throw new Error(data.message);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
         }
-      } catch (err) {
-        document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-red-500";
-        document.getElementById('syncStatus').textContent = "ผิดพลาด";
-        console.error(err);
-        alert(err.message);
+
+        const result = await response.json();
+
+        if (result.status !== 'success') {
+          throw new Error(result.message || 'ไม่สามารถอ่านข้อมูลได้');
+        }
+
+        state.records = Array.isArray(result.records)
+          ? result.records
+          : [];
+
+        state.validMonths = Array.isArray(result.validMonths)
+          ? result.validMonths
+          : [];
+
+        state.allTargets = result.allTargets || {};
+
+        buildMonthSelector();
+        renderDashboard();
+
+        setStatus('success', 'ข้อมูลเป็นปัจจุบัน');
+
+        element('lastUpdated').textContent =
+          new Intl.DateTimeFormat('th-TH', {
+            dateStyle: 'medium',
+            timeStyle: 'short'
+          }).format(new Date());
+      } catch (error) {
+        console.error(error);
+        setStatus('error', 'เชื่อมต่อข้อมูลไม่สำเร็จ');
+        showToast(error.message, 'error');
       } finally {
-        document.getElementById('refreshIcon').classList.remove('animate-spin');
+        element('refreshIcon').classList.remove('animate-spin');
       }
+    }
+
+    function buildMonthSelector() {
+      const selector = element('monthSelector');
+      const previousMonth =
+        state.selectedMonth || selector.value;
+
+      selector.innerHTML = '';
+
+      state.validMonths
+        .slice()
+        .sort()
+        .reverse()
+        .forEach(yearMonth => {
+          const option = document.createElement('option');
+          option.value = yearMonth;
+          option.textContent = formatMonth(yearMonth);
+          selector.appendChild(option);
+        });
+
+      if (
+        previousMonth &&
+        state.validMonths.includes(previousMonth)
+      ) {
+        selector.value = previousMonth;
+      }
+
+      state.selectedMonth =
+        selector.value || state.validMonths[0] || '';
+
+      applyMonthDateRange();
+    }
+
+    function handleMonthChange() {
+      state.selectedMonth = element('monthSelector').value;
+      applyMonthDateRange();
+      renderDashboard();
+    }
+
+    function applyMonthDateRange() {
+      if (!state.selectedMonth) {
+        return;
+      }
+
+      const [year, month] = state.selectedMonth
+        .split('-')
+        .map(Number);
+
+      const lastDay = new Date(year, month, 0).getDate();
+      const firstDate = `${state.selectedMonth}-01`;
+      const lastDate =
+        `${state.selectedMonth}-${String(lastDay).padStart(2, '0')}`;
+
+      element('startDate').min = firstDate;
+      element('startDate').max = lastDate;
+      element('endDate').min = firstDate;
+      element('endDate').max = lastDate;
+      element('dailyDebtDate').min = firstDate;
+      element('dailyDebtDate').max = lastDate;
+
+      element('startDate').value = firstDate;
+      element('endDate').value = lastDate;
+      element('dailyDebtDate').value = lastDate;
     }
 
     function renderDashboard() {
-      const selectedYM = document.getElementById('monthSelector').value; 
-      const startD = document.getElementById('startDate').value; 
-      const endD = document.getElementById('endDate').value; 
-      if (!selectedYM) return;
-
-      const [selYear, selMonth] = selectedYM.split('-').map(Number);
-      let curTargets = allTargetsData[selectedYM] || defaultTgt; 
-
-      let activeData = allRecords.filter(r => r.yearMonth === selectedYM);
-      let timeLabel = `(ภาพรวมเดือน ${thaiMonthNames[selMonth-1]} ${selYear+543})`;
-
-      if (startD || endD) {
-        activeData = activeData.filter(r => {
-           let pass = true;
-           if (startD) pass = pass && r.dateStr >= startD;
-           if (endD) pass = pass && r.dateStr <= endD;
-           return pass;
-        });
-        if(startD && endD) timeLabel = `(กรองข้อมูล: ${startD} ถึง ${endD})`;
-        else if(startD) timeLabel = `(กรองข้อมูลตั้งแต่: ${startD})`;
-        else timeLabel = `(กรองข้อมูลถึง: ${endD})`;
-      }
-      
-      document.getElementById('tableDateLabel').textContent = timeLabel;
-
-      let totalActual = activeData.length;
-      let sumTarget = standardProvinces.reduce((sum, p) => sum + curTargets[p], 0);
-
-      document.getElementById('totalCases').textContent = totalActual.toLocaleString();
-      document.getElementById('totalTarget').textContent = sumTarget.toLocaleString();
-      
-      let pct = sumTarget > 0 ? Math.round((totalActual / sumTarget) * 100) : 0;
-      document.getElementById('targetPercent').textContent = `${pct}%`;
-
-      let diff = sumTarget - totalActual;
-      let remEl = document.getElementById('remainingTarget');
-      if(diff <= 0) {
-        let over = Math.abs(diff);
-        remEl.textContent = over > 0 ? `+${over}` : '0';
-        remEl.className = "text-3xl font-extrabold mt-1 font-mono text-emerald-400";
-      } else {
-        remEl.textContent = diff;
-        remEl.className = "text-3xl font-extrabold mt-1 font-mono text-red-400";
+      if (!state.selectedMonth) {
+        return;
       }
 
-      let stats = {};
-      standardProvinces.forEach(p => stats[p] = { actual: 0 });
-      activeData.forEach(r => {
-        if(stats[r.province] !== undefined) stats[r.province].actual++;
+      const startDate =
+        element('startDate').value ||
+        `${state.selectedMonth}-01`;
+
+      const endDate =
+        element('endDate').value ||
+        getLastDateOfMonth(state.selectedMonth);
+
+      if (startDate > endDate) {
+        showToast(
+          'วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด',
+          'error'
+        );
+        return;
+      }
+
+      const filteredRecords = state.records.filter(record =>
+        record.yearMonth === state.selectedMonth &&
+        record.dateStr >= startDate &&
+        record.dateStr <= endDate
+      );
+
+      const targets = getCurrentTargets();
+      const provinceCounts = getProvinceCounts(filteredRecords);
+
+      const totalCases = filteredRecords.length;
+      const totalTarget = PROVINCES.reduce(
+        (sum, province) => sum + targets[province],
+        0
+      );
+
+      const remainingTarget = Math.max(
+        totalTarget - totalCases,
+        0
+      );
+
+      const targetPercent =
+        totalTarget > 0
+          ? (totalCases / totalTarget) * 100
+          : 0;
+
+      element('totalCases').textContent =
+        formatNumber(totalCases);
+
+      element('totalTarget').textContent =
+        formatNumber(totalTarget);
+
+      element('remainingTarget').textContent =
+        formatNumber(remainingTarget);
+
+      element('targetPercent').textContent =
+        `${targetPercent.toFixed(1)}%`;
+
+      renderDailyDebt();
+      renderMissingAlert(targets, provinceCounts);
+      renderSummaryTable(targets, provinceCounts);
+      renderCharts(
+        filteredRecords,
+        provinceCounts,
+        startDate,
+        endDate
+      );
+      renderMatrix(filteredRecords, startDate, endDate);
+    }
+
+    function renderDailyDebt() {
+      const selectedDate = element('dailyDebtDate').value;
+
+      const total = state.records.filter(record =>
+        record.dateStr === selectedDate &&
+        Number(record.isDebt) === 1
+      ).length;
+
+      element('dailyDebtCases').textContent =
+        formatNumber(total);
+    }
+
+    function getCurrentTargets() {
+      const saved = state.allTargets[state.selectedMonth] || {};
+      const targets = {};
+
+      PROVINCES.forEach(province => {
+        targets[province] = Math.max(
+          0,
+          Number(saved[province]) || 0
+        );
       });
 
-      const tbody = document.getElementById('summaryBody');
-      tbody.innerHTML = '';
-      
-      let missingList = [];
-      let sumTgt = 0, sumAct = 0, sumMiss = 0;
+      return targets;
+    }
 
-      standardProvinces.forEach(p => {
-        let tgt = curTargets[p];
-        let act = stats[p].actual;
-        let miss = tgt - act > 0 ? tgt - act : 0; 
-        let progress = tgt > 0 ? Math.round((act / tgt)*100) : 0;
-        
-        sumTgt += tgt; sumAct += act; sumMiss += miss;
-        
-        if (miss > 0) missingList.push(`<span class="text-white bg-red-900/80 px-2 py-0.5 rounded text-xs">ภ.จว.${p} ขาด ${miss} ราย</span>`);
+    function getProvinceCounts(records) {
+      const counts = Object.fromEntries(
+        PROVINCES.map(province => [province, 0])
+      );
 
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-800/60 transition">
-            <td class="p-3 pl-5 font-medium">${p}</td>
-            <td class="p-3 text-center text-blue-300/80 font-mono">${tgt}</td>
-            <td class="p-3 text-center text-emerald-400 font-bold bg-emerald-900/10 font-mono">${act}</td>
-            <td class="p-3 text-center font-mono ${miss > 0 ? 'text-red-400 font-bold' : 'text-slate-600'}">${miss > 0 ? miss : '✓'}</td>
-            <td class="p-3 pr-5">
-              <div class="flex items-center justify-end gap-3">
-                <span class="text-xs w-8 text-right font-mono">${progress}%</span>
-                <div class="w-20 h-2 bg-slate-700/50 rounded-full overflow-hidden border border-slate-700">
-                  <div class="h-full transition-all duration-1000 ${progress >= 100 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-blue-500'}" style="width: ${Math.min(100, progress)}%"></div>
-                </div>
-              </div>
-            </td>
-          </tr>
-        `;
-      });
-      
-      let sumPct = sumTgt > 0 ? Math.round((sumAct / sumTgt) * 100) : 0;
-      tbody.innerHTML += `
-          <tr class="bg-slate-800 border-t-2 border-slate-700 font-bold text-white">
-            <td class="p-3 pl-5 text-center">รวม ภ.3</td>
-            <td class="p-3 text-center text-blue-300 font-mono text-lg">${sumTgt}</td>
-            <td class="p-3 text-center text-emerald-400 font-mono text-lg">${sumAct}</td>
-            <td class="p-3 text-center text-red-400 font-mono text-lg">${sumMiss > 0 ? sumMiss : '✓'}</td>
-            <td class="p-3 pr-5">
-              <div class="flex items-center justify-end gap-3">
-                <span class="text-xs w-8 text-right font-mono text-emerald-400">${sumPct}%</span>
-                <div class="w-20 h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-600">
-                  <div class="h-full bg-emerald-500" style="width: ${Math.min(100, sumPct)}%"></div>
-                </div>
-              </div>
-            </td>
-          </tr>
-      `;
-
-      const alertBox = document.getElementById('missingAlert');
-      if (missingList.length > 0) {
-        alertBox.classList.remove('hidden');
-        document.getElementById('missingDetails').innerHTML = missingList.join('');
-      } else {
-        alertBox.classList.add('hidden'); 
-      }
-
-      const daysInMonth = new Date(selYear, selMonth, 0).getDate();
-      const dailyTotals = Array(daysInMonth).fill(0);
-      const matrix = {};
-      for (let d = 1; d <= daysInMonth; d++) {
-        matrix[d] = {}; standardProvinces.forEach(p => matrix[d][p] = 0);
-      }
-      
-      const fullMonthData = allRecords.filter(r => r.yearMonth === selectedYM);
-      fullMonthData.forEach(r => {
-        if (r.day >= 1 && r.day <= daysInMonth) {
-          dailyTotals[r.day - 1]++;
-          if (matrix[r.day][r.province] !== undefined) matrix[r.day][r.province]++;
+      records.forEach(record => {
+        if (record.province in counts) {
+          counts[record.province]++;
         }
       });
 
-      renderCharts(daysInMonth, dailyTotals, stats);
-      renderMatrixTable(daysInMonth, matrix, dailyTotals);
+      return counts;
     }
 
-    function renderCharts(daysInMonth, dailyTotals, statsMap) {
-      if (dailyChart) dailyChart.destroy();
-      dailyChart = new Chart(document.getElementById('dailyTrendChart'), {
-        type: 'line', data: { labels: Array.from({length: daysInMonth}, (_,i)=>`${i+1}`), datasets: [{ data: dailyTotals, borderColor: '#60a5fa', backgroundColor: 'rgba(96, 165, 250, 0.15)', fill: true, tension: 0.4, pointRadius: 2, pointHoverRadius: 5 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { stepSize: 1, color: '#64748b' } }, x: { grid: { display: false }, ticks: { color: '#64748b' } } } }
-      });
+    function renderMissingAlert(targets, counts) {
+      const alertBox = element('missingAlert');
+      const list = element('missingList');
 
-      if (provChart) provChart.destroy();
-      provChart = new Chart(document.getElementById('provinceChart'), {
-        type: 'bar', 
-        data: { 
-          labels: standardProvinces, 
-          datasets: [{ 
-            data: standardProvinces.map(p => statsMap[p].actual), 
-            backgroundColor: chartColors, 
-            borderRadius: 6 
-          }] 
-        },
-        options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { stepSize: 1, color: '#64748b' } }, y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: {family: 'Prompt'} } } } }
-      });
-    }
+      const totalTarget = PROVINCES.reduce(
+        (sum, province) => sum + targets[province],
+        0
+      );
 
-    function renderMatrixTable(daysInMonth, matrix, dailyTotals) {
-      document.getElementById('matrixHeader').innerHTML = `<th class="p-3 whitespace-nowrap pl-5">ว.ด.ป.</th>${standardProvinces.map(p=>`<th class="p-3 text-center min-w-[70px]">${p}</th>`).join('')}<th class="p-3 text-center text-blue-300 pr-5">รวมรายวัน</th>`;
-      const tbody = document.getElementById('matrixBody'); tbody.innerHTML = '';
-      for (let d = 1; d <= daysInMonth; d++) {
-        const total = dailyTotals[d-1];
-        let rowHtml = `<td class="p-3 pl-5 text-slate-400">วันที่ ${d}</td>` + standardProvinces.map(p => `<td class="p-3 text-center ${matrix[d][p] > 0 ? 'text-white font-bold bg-blue-500/10' : 'text-slate-600/50'}">${matrix[d][p] || '-'}</td>`).join('') + `<td class="p-3 pr-5 text-center font-bold ${total>0 ? 'text-blue-400 bg-blue-900/20' : 'text-slate-600/50'}">${total || '-'}</td>`;
-        const tr = document.createElement('tr'); 
-        tr.className = "hover:bg-slate-800/40 transition";
-        tr.innerHTML = rowHtml; tbody.appendChild(tr);
+      list.innerHTML = '';
+
+      if (totalTarget === 0) {
+        alertBox.classList.remove('hidden');
+
+        const message = document.createElement('span');
+        message.className =
+          'rounded-lg border border-yellow-600/30 ' +
+          'bg-yellow-950/50 px-2.5 py-1 text-xs text-yellow-200';
+
+        message.textContent =
+          'ยังไม่ได้กำหนดเป้าหมายประจำเดือนนี้';
+
+        list.appendChild(message);
+        return;
       }
+
+      const missing = PROVINCES
+        .map(province => ({
+          province,
+          remaining: Math.max(
+            targets[province] - counts[province],
+            0
+          )
+        }))
+        .filter(item => item.remaining > 0);
+
+      if (missing.length === 0) {
+        alertBox.classList.add('hidden');
+        return;
+      }
+
+      alertBox.classList.remove('hidden');
+
+      missing.forEach(item => {
+        const badge = document.createElement('span');
+
+        badge.className =
+          'rounded-lg border border-red-700/40 ' +
+          'bg-red-900/60 px-2.5 py-1 text-xs text-white';
+
+        badge.textContent =
+          `ภ.จว.${item.province} คงเหลือ ${item.remaining} ราย`;
+
+        list.appendChild(badge);
+      });
+    }
+
+    function renderSummaryTable(targets, counts) {
+      const tbody = element('summaryBody');
+      tbody.innerHTML = '';
+
+      let totalTarget = 0;
+      let totalResult = 0;
+
+      PROVINCES.forEach(province => {
+        const target = targets[province];
+        const result = counts[province];
+        const remaining = Math.max(target - result, 0);
+        const percent =
+          target > 0 ? (result / target) * 100 : 0;
+
+        totalTarget += target;
+        totalResult += result;
+
+        const row = document.createElement('tr');
+        row.className =
+          'transition hover:bg-slate-800/35';
+
+        row.innerHTML = `
+          <td class="p-3 pl-5 font-medium text-slate-200">
+            ภ.จว.${province}
+          </td>
+          <td class="p-3 text-center font-mono text-slate-300">
+            ${formatNumber(target)}
+          </td>
+          <td class="p-3 text-center font-mono font-semibold text-blue-300">
+            ${formatNumber(result)}
+          </td>
+          <td class="p-3 text-center font-mono ${
+            remaining > 0 ? 'text-red-400' : 'text-emerald-400'
+          }">
+            ${formatNumber(remaining)}
+          </td>
+          <td class="p-3">
+            <div class="flex items-center justify-center gap-2">
+              <div class="h-1.5 w-20 overflow-hidden rounded-full bg-slate-800">
+                <div
+                  class="h-full rounded-full bg-emerald-500"
+                  style="width:${Math.min(percent, 100)}%"
+                ></div>
+              </div>
+              <span class="w-14 text-right font-mono text-slate-300">
+                ${target > 0 ? percent.toFixed(1) + '%' : '-'}
+              </span>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+
+      const totalRemaining = Math.max(
+        totalTarget - totalResult,
+        0
+      );
+
+      const totalPercent =
+        totalTarget > 0
+          ? (totalResult / totalTarget) * 100
+          : 0;
+
+      const totalRow = document.createElement('tr');
+
+      totalRow.className =
+        'bg-blue-950/35 font-semibold text-white';
+
+      totalRow.innerHTML = `
+        <td class="p-3 pl-5">
+          รวมตำรวจภูธรภาค 3
+        </td>
+        <td class="p-3 text-center font-mono">
+          ${formatNumber(totalTarget)}
+        </td>
+        <td class="p-3 text-center font-mono text-blue-300">
+          ${formatNumber(totalResult)}
+        </td>
+        <td class="p-3 text-center font-mono text-rose-300">
+          ${formatNumber(totalRemaining)}
+        </td>
+        <td class="p-3 text-center font-mono text-emerald-300">
+          ${totalTarget > 0 ? totalPercent.toFixed(1) + '%' : '-'}
+        </td>
+      `;
+
+      tbody.appendChild(totalRow);
+    }
+
+    function renderCharts(
+      records,
+      provinceCounts,
+      startDate,
+      endDate
+    ) {
+      const dates = enumerateDates(startDate, endDate);
+
+      const dailyCounts = Object.fromEntries(
+        dates.map(date => [date, 0])
+      );
+
+      records.forEach(record => {
+        if (record.dateStr in dailyCounts) {
+          dailyCounts[record.dateStr]++;
+        }
+      });
+
+      if (state.dailyChart) {
+        state.dailyChart.destroy();
+      }
+
+      if (state.provinceChart) {
+        state.provinceChart.destroy();
+      }
+
+      state.dailyChart = new Chart(
+        element('dailyTrendChart'),
+        {
+          type: 'line',
+          data: {
+            labels: dates.map(formatShortDate),
+            datasets: [{
+              label: 'ผลการปฏิบัติ',
+              data: dates.map(date => dailyCounts[date]),
+              borderColor: '#60a5fa',
+              backgroundColor: 'rgba(96, 165, 250, 0.12)',
+              fill: true,
+              tension: 0.35,
+              pointRadius: 3,
+              pointHoverRadius: 5
+            }]
+          },
+          options: getChartOptions()
+        }
+      );
+
+      state.provinceChart = new Chart(
+        element('provinceChart'),
+        {
+          type: 'bar',
+          data: {
+            labels: PROVINCES,
+            datasets: [{
+              label: 'ผลดำเนินการ',
+              data: PROVINCES.map(
+                province => provinceCounts[province]
+              ),
+              backgroundColor: CHART_COLORS,
+              borderRadius: 7,
+              borderSkipped: false
+            }]
+          },
+          options: {
+            ...getChartOptions(),
+            indexAxis: 'y'
+          }
+        }
+      );
+    }
+
+    function getChartOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index'
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#cbd5e1',
+              font: {
+                family: 'Prompt'
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              color: '#94a3b8',
+              precision: 0
+            },
+            grid: {
+              color: 'rgba(148, 163, 184, 0.08)'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: '#94a3b8',
+              precision: 0
+            },
+            grid: {
+              color: 'rgba(148, 163, 184, 0.08)'
+            }
+          }
+        }
+      };
+    }
+
+    function renderMatrix(records, startDate, endDate) {
+      const dates = enumerateDates(startDate, endDate);
+      const matrix = {};
+
+      PROVINCES.forEach(province => {
+        matrix[province] = Object.fromEntries(
+          dates.map(date => [date, 0])
+        );
+      });
+
+      records.forEach(record => {
+        if (
+          matrix[record.province] &&
+          record.dateStr in matrix[record.province]
+        ) {
+          matrix[record.province][record.dateStr]++;
+        }
+      });
+
+      element('matrixHeader').innerHTML = `
+        <tr>
+          <th class="sticky left-0 min-w-40 bg-slate-950 p-3 text-left">
+            หน่วยงาน
+          </th>
+          ${dates.map(date => `
+            <th class="min-w-12 p-3">
+              ${Number(date.slice(-2))}
+            </th>
+          `).join('')}
+          <th class="min-w-16 p-3 text-blue-300">
+            รวม
+          </th>
+        </tr>
+      `;
+
+      const tbody = element('matrixBody');
+      tbody.innerHTML = '';
+
+      PROVINCES.forEach(province => {
+        const total = dates.reduce(
+          (sum, date) => sum + matrix[province][date],
+          0
+        );
+
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+          <td class="sticky left-0 bg-slate-900 p-3 text-left font-medium text-slate-200">
+            ${province}
+          </td>
+          ${dates.map(date => `
+            <td class="p-3 font-mono ${
+              matrix[province][date] > 0
+                ? 'text-blue-300'
+                : 'text-slate-600'
+            }">
+              ${matrix[province][date]}
+            </td>
+          `).join('')}
+          <td class="bg-blue-950/30 p-3 font-mono font-semibold text-blue-300">
+            ${total}
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    }
+
+    function openAdmin() {
+      element('adminModal').classList.remove('hidden');
+      element('adminModal').classList.add('flex');
+
+      element('pinSection').classList.remove('hidden');
+      element('targetSection').classList.add('hidden');
+      element('pinError').classList.add('hidden');
+
+      element('adminPassword').value = '';
+      state.adminToken = '';
+
+      setTimeout(() => {
+        element('adminPassword').focus();
+      }, 100);
+    }
+
+    function closeAdmin() {
+      element('adminModal').classList.add('hidden');
+      element('adminModal').classList.remove('flex');
+
+      element('adminPassword').value = '';
+      state.adminToken = '';
+    }
+
+    async function verifyAdmin() {
+      const password = element('adminPassword').value;
+      const button = element('verifyButton');
+      const errorBox = element('pinError');
+
+      errorBox.classList.add('hidden');
+
+      if (!password) {
+        errorBox.textContent = 'กรุณากรอกรหัสผู้ดูแล';
+        errorBox.classList.remove('hidden');
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = 'กำลังตรวจสอบ...';
+
+      try {
+        const result = await postApi({
+          action: 'verifyAdmin',
+          password: password
+        });
+
+        if (result.status !== 'success') {
+          throw new Error(
+            result.message || 'รหัสผู้ดูแลไม่ถูกต้อง'
+          );
+        }
+
+        state.adminToken = result.token;
+        element('adminPassword').value = '';
+
+        element('pinSection').classList.add('hidden');
+        element('targetSection').classList.remove('hidden');
+
+        buildTargetInputs();
+      } catch (error) {
+        errorBox.textContent = error.message;
+        errorBox.classList.remove('hidden');
+      } finally {
+        button.disabled = false;
+        button.innerHTML = `
+          <i data-lucide="log-in" class="h-4 w-4"></i>
+          ตรวจสอบสิทธิ์
+        `;
+        lucide.createIcons();
+      }
+    }
+
+    function buildTargetInputs() {
+      const targets = getCurrentTargets();
+      const container = element('targetInputs');
+
+      element('targetMonthLabel').textContent =
+        formatMonth(state.selectedMonth);
+
+      container.innerHTML = '';
+
+      PROVINCES.forEach(province => {
+        const label = document.createElement('label');
+
+        label.className =
+          'block rounded-xl border border-slate-800 ' +
+          'bg-slate-950/40 p-3';
+
+        label.innerHTML = `
+          <span class="mb-2 block text-xs text-slate-400">
+            ภ.จว.${province}
+          </span>
+          <input
+            type="number"
+            min="0"
+            step="1"
+            value="${targets[province]}"
+            data-province="${province}"
+            class="target-input w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-white outline-none focus:border-blue-500"
+          >
+        `;
+
+        container.appendChild(label);
+      });
+    }
+
+    async function saveAdminTargets() {
+      const button = element('saveTargetButton');
+      const data = {};
+
+      document
+        .querySelectorAll('.target-input')
+        .forEach(input => {
+          data[input.dataset.province] = Math.max(
+            0,
+            Math.floor(Number(input.value) || 0)
+          );
+        });
+
+      button.disabled = true;
+      button.textContent = 'กำลังบันทึก...';
+
+      try {
+        const result = await postApi({
+          action: 'saveTargets',
+          token: state.adminToken,
+          month: state.selectedMonth,
+          data: data
+        });
+
+        if (result.status !== 'success') {
+          throw new Error(
+            result.message || 'บันทึกข้อมูลไม่สำเร็จ'
+          );
+        }
+
+        state.allTargets = result.allTargets || {};
+        renderDashboard();
+        closeAdmin();
+
+        showToast(
+          'บันทึกเป้าหมายประจำเดือนเรียบร้อยแล้ว',
+          'success'
+        );
+      } catch (error) {
+        showToast(error.message, 'error');
+
+        if (
+          error.message.includes('หมดอายุ') ||
+          error.message.includes('สิทธิ์')
+        ) {
+          openAdmin();
+        }
+      } finally {
+        button.disabled = false;
+        button.innerHTML = `
+          <i data-lucide="save" class="h-4 w-4"></i>
+          บันทึกเป้าหมาย
+        `;
+        lucide.createIcons();
+      }
+    }
+
+    async function postApi(payload) {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      return response.json();
+    }
+
+    function setStatus(type, message) {
+      const dot = element('statusDot');
+      const status = element('syncStatus');
+
+      dot.className = 'h-2 w-2 rounded-full';
+
+      if (type === 'success') {
+        dot.classList.add('bg-emerald-400');
+      } else if (type === 'loading') {
+        dot.classList.add('bg-yellow-400', 'animate-pulse');
+      } else if (type === 'error') {
+        dot.classList.add('bg-red-400');
+      } else {
+        dot.classList.add('bg-slate-500');
+      }
+
+      status.textContent = message;
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = element('toast');
+
+      toast.className =
+        'fixed bottom-4 right-4 z-[60] max-w-sm ' +
+        'rounded-xl border px-4 py-3 text-sm shadow-2xl';
+
+      if (type === 'success') {
+        toast.classList.add(
+          'border-emerald-500/30',
+          'bg-emerald-950',
+          'text-emerald-200'
+        );
+      } else {
+        toast.classList.add(
+          'border-red-500/30',
+          'bg-red-950',
+          'text-red-200'
+        );
+      }
+
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+
+      clearTimeout(showToast.timer);
+
+      showToast.timer = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 4000);
+    }
+
+    function formatMonth(yearMonth) {
+      if (!yearMonth) {
+        return '-';
+      }
+
+      const [year, month] = yearMonth.split('-').map(Number);
+
+      return new Intl.DateTimeFormat('th-TH', {
+        month: 'long',
+        year: 'numeric'
+      }).format(new Date(year, month - 1, 1));
+    }
+
+    function formatShortDate(dateString) {
+      const [, month, day] = dateString.split('-');
+
+      return `${Number(day)}/${Number(month)}`;
+    }
+
+    function formatNumber(value) {
+      return new Intl.NumberFormat('th-TH').format(value || 0);
+    }
+
+    function getLastDateOfMonth(yearMonth) {
+      const [year, month] = yearMonth.split('-').map(Number);
+      const lastDay = new Date(year, month, 0).getDate();
+
+      return `${yearMonth}-${String(lastDay).padStart(2, '0')}`;
+    }
+
+    function enumerateDates(startDate, endDate) {
+      const dates = [];
+      const current = parseLocalDate(startDate);
+      const last = parseLocalDate(endDate);
+
+      while (current <= last) {
+        dates.push(toLocalDateString(current));
+        current.setDate(current.getDate() + 1);
+      }
+
+      return dates;
+    }
+
+    function parseLocalDate(value) {
+      const [year, month, day] = value.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+
+    function toLocalDateString(date) {
+      return [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, '0'),
+        String(date.getDate()).padStart(2, '0')
+      ].join('-');
     }
   </script>
 </body>
