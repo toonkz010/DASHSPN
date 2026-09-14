@@ -25,7 +25,8 @@
     .header-panel { position: relative; overflow: hidden; background: radial-gradient(circle at 90% 0%, rgba(250, 204, 21, 0.18), transparent 30%), linear-gradient(135deg, rgba(30, 58, 138, 0.96), rgba(15, 23, 42, 0.98)); border: 1px solid rgba(250, 204, 21, 0.22); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34); }
     .header-panel::after { position: absolute; top: -155px; right: -90px; width: 290px; height: 290px; border: 48px solid rgba(255, 255, 255, 0.035); border-radius: 999px; pointer-events: none; content: ""; }
     
-    .logo-frame { display: flex; width: 120px; height: 135px; flex: 0 0 auto; align-items: center; justify-content: center; padding: 10px; overflow: hidden; border: 1px solid rgba(250, 204, 21, 0.35); border-radius: 24px; background: linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035)); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.30); }
+    /* ขยายโลโก้ให้เด่นตามข้อ 5 */
+    .logo-frame { display: flex; width: 140px; height: 160px; flex: 0 0 auto; align-items: center; justify-content: center; padding: 12px; overflow: hidden; border: 1px solid rgba(250, 204, 21, 0.35); border-radius: 28px; background: linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035)); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.30); }
     .logo-frame img { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45)); }
     
     .summary-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
@@ -33,38 +34,40 @@
     .summary-card::after { position: absolute; right: -38px; bottom: -72px; width: 145px; height: 145px; border-radius: 999px; background: rgba(59, 130, 246, 0.06); pointer-events: none; content: ""; }
     .summary-card:hover { transform: translateY(-3px); border-color: rgba(96, 165, 250, 0.35); box-shadow: 0 22px 50px rgba(0, 0, 0, 0.30); }
     .summary-card p, .summary-card h2 { max-width: 100%; overflow-wrap: anywhere; }
-    .table-scroll { width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .bordered-table, .matrix-table { width: 100%; border-collapse: collapse; }
+    
+    /* ตั้งค่า Scroll ตารางรายวันให้มีจำกัดความสูงเพื่อให้หัวตาราง sticky ทำงาน */
+    .table-scroll { width: 100%; max-width: 100%; max-height: 550px; overflow: auto; -webkit-overflow-scrolling: touch; }
+    .bordered-table, .matrix-table { width: 100%; border-collapse: separate; border-spacing: 0; }
     .bordered-table { min-width: 900px; }
     .matrix-table { min-width: 1100px; }
-    .bordered-table th, .bordered-table td, .matrix-table th, .matrix-table td { border: 1px solid rgba(100, 116, 139, 0.42); vertical-align: middle; white-space: nowrap; }
+    .bordered-table th, .bordered-table td, .matrix-table th, .matrix-table td { border-bottom: 1px solid rgba(100, 116, 139, 0.42); border-right: 1px solid rgba(100, 116, 139, 0.42); vertical-align: middle; white-space: nowrap; }
+    .bordered-table th:first-child, .bordered-table td:first-child, .matrix-table th:first-child, .matrix-table td:first-child { border-left: 1px solid rgba(100, 116, 139, 0.42); }
+    .bordered-table tr:first-child th, .matrix-table tr:first-child th { border-top: 1px solid rgba(100, 116, 139, 0.42); }
     
-    /* ตรึงหัวตารางและคอลัมน์ */
-    .sticky-header th { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(8px); }
-    .sticky-column { position: sticky; left: 0; z-index: 25; }
-    
+    /* ตรึงหัวตาราง ภ.จว (ข้อ 2) */
+    .sticky-header th { position: sticky; top: 0; z-index: 20; background-color: #020617; }
+    .sticky-column { position: sticky; left: 0; z-index: 21; background-color: #0f172a; }
+    .matrix-table th.sticky-column { z-index: 30; } /* มุมตาราง */
+
     .custom-scrollbar::-webkit-scrollbar { width: 7px; height: 7px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { border-radius: 999px; background: #475569; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
     .modal-backdrop { backdrop-filter: blur(7px); }
 
-    /* CSS โหมดนำเสนอเต็มจอ และ อนิเมชัน */
     .animate-fade { animation: fadeIn 0.8s ease-in-out; }
     @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
     .presenting section.hidden { display: none !important; }
     .presenting .header-panel, .presenting footer { display: none !important; }
     
-    /* CSS โหมดพิมพ์ PDF พื้นขาว (A4 แนวนอน) */
     @media print {
       @page { size: A4 landscape; margin: 10mm; }
       body { background: white !important; color: black !important; min-height: auto; }
       * { color: black !important; text-shadow: none !important; box-shadow: none !important; }
-      .header-controls, #missingAlert, button, .present-clock, #presentNav, #btnToggleSettings { display: none !important; }
+      .header-controls, #missingAlert, button, .present-clock, #presentNav, #btnToggleSettings, #monthControlContainer { display: none !important; }
       .glass-panel { background: white !important; border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 20px; }
       canvas { filter: invert(1) hue-rotate(180deg); }
       .bg-slate-950, .bg-slate-900, .bg-slate-800, .bg-emerald-950, .bg-blue-950 { background: #f8f9fa !important; }
-      table th, table td { border: 1px solid #666 !important; }
-      .sticky-header th, .sticky-column, td.sticky, th.sticky { position: static !important; box-shadow: none !important; }
+      .sticky-header th, .sticky-column { position: static !important; }
     }
 
     @media (max-width: 1279px) { .summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
@@ -72,15 +75,14 @@
       body { background-attachment: scroll; }
       .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
       .summary-card { min-height: 142px; padding: 14px !important; }
-      .header-controls { display: grid !important; width: 100%; grid-template-columns: 1fr 1fr; }
-      .header-control, .header-control select, .header-control input { width: 100%; min-width: 0; }
-      .admin-button { grid-column: 1 / -1; justify-content: center; }
-      .chart-wrapper { height: 380px !important; }
+      
+      /* กราฟแท่งบนมือถือปรับให้สูงขึ้นเพื่อโชว์ ภ.จว ครบ (ข้อ 3) */
+      #provinceChartWrapper { height: 480px !important; }
     }
     @media (max-width: 480px) {
       .summary-grid { grid-template-columns: minmax(0, 1fr); }
       .summary-card { min-height: auto; }
-      .logo-frame { width: 85px; height: 95px; padding: 5px; border-radius: 15px; }
+      .logo-frame { width: 100px; height: 115px; padding: 8px; border-radius: 18px; }
       .header-title { font-size: 1.1rem !important; }
       .header-subtitle { font-size: 0.75rem !important; }
     }
@@ -88,15 +90,14 @@
 </head>
 <body class="min-h-screen p-3 text-sm text-slate-200 md:p-6">
   <main class="mx-auto max-w-7xl">
-    <!-- ส่วนหัว -->
     <header class="header-panel mb-6 rounded-3xl p-4 md:p-6">
-      <div class="relative z-10 flex flex-col justify-between gap-5 xl:flex-row xl:items-center">
-        <div class="header-brand flex min-w-0 items-center gap-4 md:gap-5">
+      <div class="relative z-10 flex flex-col justify-between gap-5 xl:flex-row xl:items-start">
+        <div class="header-brand flex min-w-0 items-center gap-4 md:gap-5 w-full">
           <div class="logo-frame">
             <img src="./logo-police-region-3.png" alt="ตราสัญลักษณ์ตำรวจภูธรภาค 3" onerror="handleLogoError(this)">
             <div id="logoFallback" class="hidden items-center justify-center"><i data-lucide="shield" class="h-12 w-12 text-yellow-300"></i></div>
           </div>
-          <div class="min-w-0">
+          <div class="min-w-0 flex-1">
             <span class="inline-flex rounded-full border border-yellow-400/25 bg-yellow-400/10 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-yellow-300 md:text-xs">POLICE REGION 3</span>
             <h1 class="header-title mt-2 text-xl font-bold leading-tight tracking-tight text-white md:text-3xl">ระบบติดตามผลการปราบปรามหนี้นอกระบบ</h1>
             <p class="header-subtitle mt-1 text-xs text-blue-200/80 md:text-sm">ศูนย์ปราบปรามหนี้นอกระบบ ตำรวจภูธรภาค 3</p>
@@ -105,55 +106,58 @@
               <span id="syncStatus">กำลังเตรียมข้อมูล</span><span class="text-slate-500">•</span><span>อัปเดตล่าสุด</span>
               <span id="lastUpdated" class="font-mono text-yellow-300">-</span>
             </div>
-            <button id="btnToggleSettings" type="button" onclick="toggleSettings()" class="mt-3 flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20">
-              <i data-lucide="sliders-horizontal" class="h-4 w-4"></i> แสดงเครื่องมือตั้งค่าและส่งออก
-            </button>
+            
+            <!-- (ข้อ 4) เลือกเดือนโชว์ตลอด + ปุ่มเครื่องมือเพิ่มเติม -->
+            <div id="monthControlContainer" class="mt-4 flex flex-wrap items-center gap-3">
+              <label class="flex items-center rounded-xl border border-white/20 bg-slate-950/80 px-3 py-2 shadow-lg">
+                <i data-lucide="calendar-days" class="mr-2 h-4 w-4 flex-shrink-0 text-yellow-300"></i>
+                <select id="monthSelector" class="min-w-0 cursor-pointer bg-transparent text-xs font-semibold text-white outline-none"></select>
+              </label>
+              
+              <button id="btnToggleSettings" type="button" onclick="toggleSettings()" class="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/20">
+                <i data-lucide="sliders-horizontal" class="h-4 w-4"></i> เครื่องมือเพิ่มเติม
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- แถบตั้งค่า -->
-        <div id="controlPanel" class="header-controls hidden relative w-full flex-wrap items-center gap-2 xl:w-auto">
-          <label class="header-control flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2">
-            <i data-lucide="calendar-days" class="mr-2 h-4 w-4 flex-shrink-0 text-yellow-300"></i>
-            <select id="monthSelector" class="min-w-0 cursor-pointer bg-transparent text-xs font-semibold text-white outline-none"></select>
-          </label>
-          <label class="header-control flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2">
+        <!-- แถบตั้งค่าที่ถูกซ่อนโดยปริยาย (ข้อ 4) -->
+        <div id="controlPanel" class="hidden relative w-full flex-wrap items-center gap-2 pt-4 mt-2 border-t border-slate-700/50 xl:justify-end">
+          <label class="flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2 w-full md:w-auto">
             <span class="mr-2 flex-shrink-0 text-[11px] text-slate-400">ตั้งแต่</span>
-            <input type="date" id="startDate" class="min-w-0 bg-transparent text-[11px] text-slate-200 outline-none">
+            <input type="date" id="startDate" class="min-w-0 bg-transparent text-[11px] text-slate-200 outline-none w-full">
           </label>
-          <label class="header-control flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2">
+          <label class="flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2 w-full md:w-auto">
             <span class="mr-2 flex-shrink-0 text-[11px] text-slate-400">ถึง</span>
-            <input type="date" id="endDate" class="min-w-0 bg-transparent text-[11px] text-slate-200 outline-none">
+            <input type="date" id="endDate" class="min-w-0 bg-transparent text-[11px] text-slate-200 outline-none w-full">
           </label>
           
-          <button type="button" onclick="exportToCSV()" title="โหลด Excel (CSV)" class="admin-button flex items-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-300 transition hover:bg-emerald-500/20">
+          <button type="button" onclick="exportToCSV()" title="โหลด Excel" class="flex-1 md:flex-none flex items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-300 transition hover:bg-emerald-500/20">
             <i data-lucide="sheet" class="h-4 w-4"></i> Excel
           </button>
-          <button type="button" onclick="window.print()" title="พิมพ์ / Save เป็น PDF" class="admin-button flex items-center gap-2 rounded-xl border border-slate-400/30 bg-slate-500/10 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-500/20">
+          <button type="button" onclick="window.print()" title="พิมพ์ / Save เป็น PDF" class="flex-1 md:flex-none flex items-center justify-center gap-2 rounded-xl border border-slate-400/30 bg-slate-500/10 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-500/20">
             <i data-lucide="printer" class="h-4 w-4"></i> PDF
           </button>
-          <button type="button" onclick="togglePresentation()" title="นำเสนอเต็มจอ" class="admin-button flex items-center gap-2 rounded-xl border border-purple-400/30 bg-purple-500/10 px-3 py-2 text-xs font-semibold text-purple-300 transition hover:bg-purple-500/20">
+          <button type="button" onclick="togglePresentation()" title="นำเสนอเต็มจอ" class="flex-1 md:flex-none flex items-center justify-center gap-2 rounded-xl border border-purple-400/30 bg-purple-500/10 px-3 py-2 text-xs font-semibold text-purple-300 transition hover:bg-purple-500/20">
             <i data-lucide="monitor-play" class="h-4 w-4"></i> Present
           </button>
-          <button type="button" onclick="openAdmin()" class="admin-button flex items-center gap-2 rounded-xl border border-yellow-400/30 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200 transition hover:bg-yellow-400/20">
+          <button type="button" onclick="openAdmin()" class="flex-1 md:flex-none flex items-center justify-center gap-2 rounded-xl border border-yellow-400/30 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200 transition hover:bg-yellow-400/20">
             <i data-lucide="settings" class="h-4 w-4"></i> จัดการเป้าหมาย
           </button>
-          <button type="button" onclick="fetchDataFromServer()" title="อัปเดตข้อมูล" class="refresh-button admin-button flex items-center justify-center gap-2 rounded-xl border border-blue-400/25 bg-blue-500/15 p-2.5 transition hover:bg-blue-500/25">
-            <i id="refreshIcon" data-lucide="refresh-cw" class="h-4 w-4 text-blue-200"></i> รีเฟรช
+          <button type="button" onclick="fetchDataFromServer()" title="อัปเดตข้อมูล" class="flex-1 md:flex-none flex items-center justify-center gap-2 rounded-xl border border-blue-400/25 bg-blue-500/15 px-3 py-2 transition hover:bg-blue-500/25">
+            <i id="refreshIcon" data-lucide="refresh-cw" class="h-4 w-4 text-blue-200"></i> อัปเดต
           </button>
         </div>
       </div>
     </header>
 
-    <!-- นาฬิกาและปุ่มควบคุม โหมดพรีเซนต์ -->
     <div id="clockDisplay" class="present-clock hidden fixed top-6 right-6 z-50 text-4xl font-mono font-bold text-yellow-300 drop-shadow-2xl"></div>
     <div id="presentNav" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] items-center gap-6 rounded-full border border-slate-600 bg-slate-900/95 px-6 py-3 shadow-2xl backdrop-blur-xl">
-      <button onclick="prevSlide()" class="rounded-full p-2 text-slate-300 transition hover:bg-slate-700 hover:text-white" title="ก่อนหน้า (ลูกศรซ้าย)"><i data-lucide="chevron-left" class="h-7 w-7"></i></button>
-      <button onclick="togglePresentation()" class="rounded-full p-2 text-rose-400 transition hover:bg-rose-950/80 hover:text-rose-300" title="ออกจากการนำเสนอ (ESC)"><i data-lucide="x" class="h-7 w-7"></i></button>
-      <button onclick="nextSlide()" class="rounded-full p-2 text-slate-300 transition hover:bg-slate-700 hover:text-white" title="ถัดไป (ลูกศรขวา)"><i data-lucide="chevron-right" class="h-7 w-7"></i></button>
+      <button onclick="prevSlide()" class="rounded-full p-2 text-slate-300 transition hover:bg-slate-700 hover:text-white"><i data-lucide="chevron-left" class="h-7 w-7"></i></button>
+      <button onclick="togglePresentation()" class="rounded-full p-2 text-rose-400 transition hover:bg-rose-950/80 hover:text-rose-300"><i data-lucide="x" class="h-7 w-7"></i></button>
+      <button onclick="nextSlide()" class="rounded-full p-2 text-slate-300 transition hover:bg-slate-700 hover:text-white"><i data-lucide="chevron-right" class="h-7 w-7"></i></button>
     </div>
 
-    <!-- การ์ดสรุป -->
     <section id="sec-cards" class="summary-grid">
       <article class="glass-panel summary-card rounded-2xl p-5">
         <div class="relative z-10 flex justify-between gap-3">
@@ -224,7 +228,6 @@
       </div>
     </section>
 
-    <!-- กราฟ -->
     <section id="sec-charts" class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
       <article class="glass-panel rounded-2xl p-4 md:p-5">
         <div class="mb-4">
@@ -239,22 +242,22 @@
           <h2 class="font-semibold text-white">ลำดับผลจับกุมเทียบเป้าหมาย</h2>
           <p class="text-[11px] text-slate-500">เรียงลำดับตามเปอร์เซ็นต์ผลจับกุมของแต่ละ ภ.จว.</p>
         </div>
-        <div class="chart-wrapper h-72"><canvas id="provinceChart"></canvas></div>
+        <div id="provinceChartWrapper" class="chart-wrapper h-72"><canvas id="provinceChart"></canvas></div>
       </article>
     </section>
 
-    <!-- ตารางจัดอันดับ (มีการตรึงคอลัมน์ ภ.จว. ด้านซ้าย) -->
+    <!-- (ข้อ 1) กลับไปใช้ตารางลำดับผลการจับกุมแบบธรรมดา ไม่ต้องตรึง -->
     <section id="sec-ranking" class="glass-panel mt-4 overflow-hidden rounded-2xl">
       <div class="border-b border-slate-800 p-4 md:px-5">
         <h2 class="font-semibold text-white">ลำดับผลจับกุมเทียบเป้าหมาย</h2>
         <p class="text-[11px] text-slate-500">จัดอันดับจากเปอร์เซ็นต์ของเป้าหมาย</p>
       </div>
-      <div class="table-scroll custom-scrollbar relative">
-        <table class="bordered-table text-left text-sm relative">
-          <thead class="sticky-header bg-slate-950/90 text-xs text-slate-300 shadow-md">
+      <div class="table-scroll custom-scrollbar">
+        <table class="bordered-table text-left text-sm">
+          <thead class="bg-slate-950/70 text-xs text-slate-300">
             <tr>
-              <th class="p-3 text-center sticky left-0 z-[30] bg-slate-950 min-w-[65px] w-[65px]">อันดับ</th>
-              <th class="p-3 sticky left-[65px] z-[30] bg-slate-950 shadow-[3px_0_5px_-1px_rgba(0,0,0,0.4)] min-w-[130px]">หน่วยงาน</th>
+              <th class="p-3 text-center">อันดับ</th>
+              <th class="p-3">หน่วยงาน</th>
               <th class="p-3 text-center">เป้าหมาย</th>
               <th class="p-3 text-center">ผลจับกุม</th>
               <th class="p-3 text-center">คงเหลือ</th>
@@ -266,7 +269,6 @@
       </div>
     </section>
 
-    <!-- ตารางรายวัน (มีการตรึงวันที่ด้านซ้าย) -->
     <section id="sec-matrix" class="glass-panel mt-4 overflow-hidden rounded-2xl">
       <div class="flex items-center justify-between border-b border-slate-800 p-4 md:px-5">
         <div>
@@ -277,7 +279,8 @@
       </div>
       <div class="table-scroll custom-scrollbar relative">
         <table class="matrix-table text-center text-xs relative">
-          <thead id="matrixHeader" class="sticky-header bg-slate-950/90 text-slate-300 shadow-md"></thead>
+          <!-- (ข้อ 2) ตรึงหัวตาราง ภ.จว. -->
+          <thead id="matrixHeader" class="sticky-header bg-slate-950 text-slate-300 shadow-md"></thead>
           <tbody id="matrixBody"></tbody>
           <tfoot id="matrixFooter" class="bg-slate-800 font-semibold text-white"></tfoot>
         </table>
@@ -287,7 +290,6 @@
     <footer class="py-6 text-center text-[11px] text-slate-600">ระบบติดตามผลการปราบปรามหนี้นอกระบบ ตำรวจภูธรภาค 3</footer>
   </main>
 
-  <!-- หน้าต่างผู้ดูแล -->
   <div id="adminModal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 p-4">
     <div class="glass-panel max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl">
       <div class="flex items-center justify-between border-b border-slate-800 p-5">
@@ -324,7 +326,6 @@
 
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbz41GG_9gW6eVt1bWW_mIWDwPnQR0njup8gGVqQ-XPjH-BPzNSRMUXUsB60H5dpgkKc/exec';
-
     const PROVINCES = ['ชัยภูมิ', 'นครราชสีมา', 'บุรีรัมย์', 'ยโสธร', 'ศรีสะเกษ', 'สุรินทร์', 'อำนาจเจริญ', 'อุบลราชธานี'];
     const CHART_COLORS = ['#facc15', '#cbd5e1', '#d97706', '#60a5fa', '#34d399', '#a78bfa', '#22d3ee', '#fb7185'];
     const state = { records: [], validMonths: [], allTargets: {}, selectedMonth: '', adminToken: '', dailyChart: null, provinceChart: null };
@@ -517,13 +518,10 @@
         const progressWidth = item.percent === null ? 0 : Math.min(item.percent, 100);
         const progressColor = item.percent !== null && item.percent >= 100 ? 'bg-emerald-500' : 'bg-blue-500';
 
+        // ข้อ 1: เอา sticky ออก กลับเป็นแบบปกติ
         row.innerHTML = `
-          <td class="p-3 text-center sticky left-0 z-10 bg-slate-900 w-[65px] min-w-[65px]">
-            <span class="inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 font-bold ${rankClass}">${index + 1}</span>
-          </td>
-          <td class="p-3 font-medium text-slate-200 sticky left-[65px] z-10 bg-slate-900 shadow-[3px_0_5px_-1px_rgba(0,0,0,0.4)] min-w-[130px]">
-            ภ.จว.${item.province}
-          </td>
+          <td class="p-3 text-center"><span class="inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 font-bold ${rankClass}">${index + 1}</span></td>
+          <td class="p-3 font-medium text-slate-200">ภ.จว.${item.province}</td>
           <td class="p-3 text-center font-mono text-blue-300">${formatNumber(item.target)}</td>
           <td class="bg-emerald-950/15 p-3 text-center font-mono font-bold text-emerald-400">${formatNumber(item.actual)}</td>
           <td class="p-3 text-center font-mono font-semibold ${item.remaining > 0 ? 'text-red-400' : 'text-emerald-400'}">${item.target === 0 ? '-' : item.remaining > 0 ? formatNumber(item.remaining) : '✓'}</td>
@@ -541,8 +539,8 @@
       const totalRow = document.createElement('tr');
       totalRow.className = 'bg-blue-950/40 font-semibold text-white';
       totalRow.innerHTML = `
-        <td class="p-3 text-center sticky left-0 z-10 bg-slate-800 w-[65px] min-w-[65px]">-</td>
-        <td class="p-3 sticky left-[65px] z-10 bg-slate-800 shadow-[3px_0_5px_-1px_rgba(0,0,0,0.4)] min-w-[130px]">รวมตำรวจภูธรภาค 3</td>
+        <td class="p-3 text-center">-</td>
+        <td class="p-3">รวมตำรวจภูธรภาค 3</td>
         <td class="p-3 text-center font-mono text-blue-300">${formatNumber(totalTarget)}</td>
         <td class="p-3 text-center font-mono text-emerald-400">${formatNumber(totalActual)}</td>
         <td class="p-3 text-center font-mono ${totalRemaining > 0 ? 'text-rose-300' : 'text-emerald-400'}">${totalTarget === 0 ? '-' : totalRemaining > 0 ? formatNumber(totalRemaining) : '✓'}</td>
@@ -578,12 +576,14 @@
           labels: ranking.map((item, index) => `${index + 1}. ${item.province}`),
           datasets: [{ label: 'เปอร์เซ็นต์ของเป้า', data: ranking.map(item => item.percent === null ? 0 : Number(item.percent.toFixed(2))), backgroundColor: ranking.map((_, index) => CHART_COLORS[index % CHART_COLORS.length]), borderRadius: 7 }]
         },
+        // ข้อ 3: แสดงชื่อ ภ.จว. ให้ครบ ไม่ตัดคำ (autoSkip: false)
         options: {
           responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+          layout: { padding: { left: 5, right: 15 } },
           plugins: { legend: { display: false }, tooltip: { callbacks: { label(context) { const item = ranking[context.dataIndex]; if (item.target === 0) return [`จับกุม ${formatNumber(item.actual)} ราย`, 'ยังไม่ได้กำหนดเป้าหมาย']; return [`${item.percent.toFixed(1)}% ของเป้า`, `จับกุม ${formatNumber(item.actual)} จากเป้า ${formatNumber(item.target)} ราย`]; } } } },
           scales: {
             x: { beginAtZero: true, ticks: { color: '#94a3b8', callback: value => `${value}%` }, grid: { color: 'rgba(148, 163, 184, 0.08)' } },
-            y: { ticks: { color: '#e2e8f0', font: { family: 'Prompt' }, autoSkip: false, crossAlign: 'near' }, grid: { display: false } }
+            y: { ticks: { color: '#e2e8f0', font: { family: 'Prompt' }, autoSkip: false }, grid: { display: false } }
           }
         }
       });
@@ -596,7 +596,8 @@
       records.forEach(record => { if (matrix[record.dateStr] && record.province in matrix[record.dateStr]) matrix[record.dateStr][record.province]++; });
 
       const header = getElement('matrixHeader');
-      header.innerHTML = `<tr><th class="sticky-column min-w-[120px] bg-slate-950 p-3 shadow-[3px_0_5px_-1px_rgba(0,0,0,0.4)]">วันที่</th>${PROVINCES.map(province => `<th class="min-w-[110px] p-3">${province}</th>`).join('')}<th class="min-w-[110px] bg-blue-950/60 p-3 text-blue-300">รวมรายวัน</th></tr>`;
+      // ข้อ 2: ตรึงหัวตาราง ภ.จว.
+      header.innerHTML = `<tr><th class="sticky-column bg-slate-950 p-3 shadow-[3px_0_5px_-1px_rgba(0,0,0,0.4)] z-[30]">วันที่</th>${PROVINCES.map(province => `<th class="p-3 bg-slate-950 z-[20]">${province}</th>`).join('')}<th class="bg-blue-950/90 p-3 text-blue-300 z-[20]">รวมรายวัน</th></tr>`;
 
       const tbody = getElement('matrixBody'); const footer = getElement('matrixFooter');
       tbody.innerHTML = ''; footer.innerHTML = '';
