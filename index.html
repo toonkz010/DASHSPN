@@ -576,6 +576,16 @@
           labels: ranking.map((item, index) => `${index + 1}. ${item.province}`),
           datasets: [{ label: 'เปอร์เซ็นต์ของเป้า', data: ranking.map(item => item.percent === null ? 0 : Number(item.percent.toFixed(2))), backgroundColor: ranking.map((_, index) => CHART_COLORS[index % CHART_COLORS.length]), borderRadius: 7 }]
         },
+        // แก้ไข: ลบ layout: { padding: { left: 0 } } ออก เพื่อให้ระบบเว้นที่ให้ชื่อจังหวัดอัตโนมัติ
+        options: {
+          responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label(context) { const item = ranking[context.dataIndex]; if (item.target === 0) return [`จับกุม ${formatNumber(item.actual)} ราย`, 'ยังไม่ได้กำหนดเป้าหมาย']; return [`${item.percent.toFixed(1)}% ของเป้า`, `จับกุม ${formatNumber(item.actual)} จากเป้า ${formatNumber(item.target)} ราย`]; } } } },
+          scales: {
+            x: { beginAtZero: true, ticks: { color: '#94a3b8', callback: value => `${value}%` }, grid: { color: 'rgba(148, 163, 184, 0.08)' } },
+            y: { ticks: { color: '#e2e8f0', font: { family: 'Prompt' }, autoSkip: false, crossAlign: 'near' }, grid: { display: false } }
+          }
+        }
+      });
         // 2) แก้ไขชื่อจว.ขาดหายในมือถือ (autoSkip: false) และเพิ่ม padding
         options: {
           responsive: true, maintainAspectRatio: false, indexAxis: 'y', layout: { padding: { left: 0 } },
