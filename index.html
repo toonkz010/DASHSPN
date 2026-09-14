@@ -2,909 +2,313 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  >
-
-  <title>
-    ระบบติดตามผลการปราบปรามหนี้นอกระบบ | ตำรวจภูธรภาค 3
-  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ระบบติดตามผลการปราบปรามหนี้นอกระบบ | ตำรวจภูธรภาค 3</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet"
-  >
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       min-width: 320px;
       overflow-x: hidden;
       font-family: "Prompt", sans-serif;
       background:
-        radial-gradient(
-          circle at 5% 0%,
-          rgba(37, 99, 235, 0.22),
-          transparent 30%
-        ),
-        radial-gradient(
-          circle at 95% 5%,
-          rgba(250, 204, 21, 0.10),
-          transparent 26%
-        ),
-        linear-gradient(
-          180deg,
-          #020617 0%,
-          #071226 50%,
-          #020617 100%
-        );
+        radial-gradient(circle at 5% 0%, rgba(37, 99, 235, .22), transparent 30%),
+        radial-gradient(circle at 95% 5%, rgba(250, 204, 21, .10), transparent 26%),
+        linear-gradient(180deg, #020617 0%, #071226 50%, #020617 100%);
       background-attachment: fixed;
     }
-
-    button,
-    input,
-    select {
-      max-width: 100%;
-      font-family: "Prompt", sans-serif;
-    }
-
-    input[type="date"] {
-      color-scheme: dark;
-    }
-
+    button, input, select { max-width: 100%; font-family: "Prompt", sans-serif; }
+    input[type="date"] { color-scheme: dark; }
     .glass-panel {
-      background: linear-gradient(
-        145deg,
-        rgba(15, 23, 42, 0.92),
-        rgba(15, 23, 42, 0.65)
-      );
-      border: 1px solid rgba(148, 163, 184, 0.17);
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+      background: linear-gradient(145deg, rgba(15,23,42,.92), rgba(15,23,42,.65));
+      border: 1px solid rgba(148,163,184,.17);
+      box-shadow: 0 18px 45px rgba(0,0,0,.22);
       backdrop-filter: blur(16px);
     }
-
     .header-panel {
       position: relative;
       overflow: hidden;
       background:
-        radial-gradient(
-          circle at 90% 0%,
-          rgba(250, 204, 21, 0.18),
-          transparent 30%
-        ),
-        linear-gradient(
-          135deg,
-          rgba(30, 58, 138, 0.96),
-          rgba(15, 23, 42, 0.98)
-        );
-      border: 1px solid rgba(250, 204, 21, 0.22);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
+        radial-gradient(circle at 90% 0%, rgba(250,204,21,.18), transparent 30%),
+        linear-gradient(135deg, rgba(30,58,138,.96), rgba(15,23,42,.98));
+      border: 1px solid rgba(250,204,21,.22);
+      box-shadow: 0 24px 60px rgba(0,0,0,.34);
     }
-
     .header-panel::after {
-      position: absolute;
-      top: -155px;
-      right: -90px;
-      width: 290px;
-      height: 290px;
-      border: 48px solid rgba(255, 255, 255, 0.035);
-      border-radius: 999px;
-      pointer-events: none;
-      content: "";
+      position: absolute; top: -155px; right: -90px; width: 290px; height: 290px;
+      border: 48px solid rgba(255,255,255,.035); border-radius: 999px;
+      pointer-events: none; content: "";
     }
-
     .logo-frame {
-      display: flex;
-      width: 94px;
-      height: 105px;
-      flex: 0 0 auto;
-      align-items: center;
-      justify-content: center;
-      padding: 7px;
-      overflow: hidden;
-      border: 1px solid rgba(250, 204, 21, 0.35);
-      border-radius: 20px;
-      background: linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.13),
-        rgba(255, 255, 255, 0.035)
-      );
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.30);
+      display: flex; width: 94px; height: 105px; flex: 0 0 auto;
+      align-items: center; justify-content: center; padding: 7px; overflow: hidden;
+      border: 1px solid rgba(250,204,21,.35); border-radius: 20px;
+      background: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.035));
+      box-shadow: 0 14px 34px rgba(0,0,0,.30);
     }
-
-    .logo-frame img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45));
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .summary-card {
-      position: relative;
-      min-width: 0;
-      min-height: 150px;
-      overflow: hidden;
-      transition:
-        transform 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-    }
-
-    .summary-card::after {
-      position: absolute;
-      right: -38px;
-      bottom: -72px;
-      width: 145px;
-      height: 145px;
-      border-radius: 999px;
-      background: rgba(59, 130, 246, 0.06);
-      pointer-events: none;
-      content: "";
-    }
-
-    .summary-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(96, 165, 250, 0.35);
-      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.30);
-    }
-
-    .summary-card p,
-    .summary-card h2 {
-      max-width: 100%;
-      overflow-wrap: anywhere;
-    }
-
-    .table-scroll {
-      width: 100%;
-      max-width: 100%;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .bordered-table {
-      width: 100%;
-      min-width: 900px;
-      border-collapse: collapse;
-    }
-
-    .bordered-table th,
-    .bordered-table td {
-      border: 1px solid rgba(100, 116, 139, 0.42);
-      vertical-align: middle;
-      white-space: nowrap;
-    }
-
-    .matrix-table {
-      width: 100%;
-      min-width: 1100px;
-      border-collapse: collapse;
-    }
-
-    .matrix-table th,
-    .matrix-table td {
-      border: 1px solid rgba(100, 116, 139, 0.45);
-      vertical-align: middle;
-      white-space: nowrap;
-    }
-
-    .sticky-column {
-      position: sticky;
-      left: 0;
-      z-index: 3;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      border-radius: 999px;
-      background: #475569;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-
-    .modal-backdrop {
-      backdrop-filter: blur(7px);
-    }
-
-    @media (max-width: 1279px) {
-      .summary-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
+    .logo-frame img { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(0,0,0,.45)); }
+    .summary-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 16px; }
+    .summary-card { position: relative; min-width: 0; min-height: 150px; overflow: hidden; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+    .summary-card::after { position: absolute; right: -38px; bottom: -72px; width: 145px; height: 145px; border-radius: 999px; background: rgba(59,130,246,.06); pointer-events: none; content: ""; }
+    .summary-card:hover { transform: translateY(-3px); border-color: rgba(96,165,250,.35); box-shadow: 0 22px 50px rgba(0,0,0,.30); }
+    .summary-card p, .summary-card h2 { max-width: 100%; overflow-wrap: anywhere; }
+    .table-scroll { width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .bordered-table { width: 100%; min-width: 900px; border-collapse: collapse; }
+    .bordered-table th, .bordered-table td { border: 1px solid rgba(100,116,139,.42); vertical-align: middle; white-space: nowrap; }
+    .matrix-table { width: 100%; min-width: 1100px; border-collapse: collapse; }
+    .matrix-table th, .matrix-table td { border: 1px solid rgba(100,116,139,.45); vertical-align: middle; white-space: nowrap; }
+    .sticky-column { position: sticky; left: 0; z-index: 3; }
+    .custom-scrollbar::-webkit-scrollbar { width: 7px; height: 7px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { border-radius: 999px; background: #475569; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .modal-backdrop { backdrop-filter: blur(7px); }
+    @media (max-width: 1279px) { .summary-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
     @media (max-width: 767px) {
-      body {
-        background-attachment: scroll;
-      }
-
-      .summary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-      }
-
-      .summary-card {
-        min-height: 142px;
-        padding: 14px !important;
-      }
-
-      .header-brand {
-        align-items: flex-start;
-      }
-
-      .header-title {
-        font-size: 1.1rem !important;
-        line-height: 1.45 !important;
-      }
-
-      .header-controls {
-        display: grid !important;
-        width: 100%;
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .header-control {
-        width: 100%;
-        min-width: 0;
-      }
-
-      .header-control select,
-      .header-control input {
-        width: 100%;
-        min-width: 0;
-      }
-
-      .admin-button {
-        grid-column: 1 / -1;
-        justify-content: center;
-      }
-
-      .refresh-button {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-      }
-
-      .chart-wrapper {
-        height: 310px !important;
-      }
+      body { background-attachment: scroll; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+      .summary-card { min-height: 142px; padding: 14px !important; }
+      .header-brand { align-items: flex-start; }
+      .header-title { font-size: 1.1rem !important; line-height: 1.45 !important; }
+      .header-controls { display: grid !important; width: 100%; grid-template-columns: 1fr 1fr; }
+      .header-control { width: 100%; min-width: 0; }
+      .header-control select, .header-control input { width: 100%; min-width: 0; }
+      .admin-button { grid-column: 1 / -1; justify-content: center; }
+      .refresh-button { position: absolute; top: 12px; right: 12px; }
+      .chart-wrapper { height: 310px !important; }
     }
-
     @media (max-width: 480px) {
-      .summary-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .summary-card {
-        min-height: auto;
-      }
-
-      .header-controls {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .admin-button {
-        grid-column: auto;
-      }
-
-      .logo-frame {
-        width: 68px;
-        height: 77px;
-        padding: 5px;
-        border-radius: 15px;
-      }
-
-      .header-title {
-        font-size: 1rem !important;
-      }
-
-      .header-subtitle {
-        font-size: 0.68rem !important;
-      }
-
-      .status-line {
-        align-items: flex-start;
-        line-height: 1.5;
-      }
+      .summary-grid { grid-template-columns: minmax(0,1fr); }
+      .summary-card { min-height: auto; }
+      .header-controls { grid-template-columns: minmax(0,1fr); }
+      .admin-button { grid-column: auto; }
+      .logo-frame { width: 68px; height: 77px; padding: 5px; border-radius: 15px; }
+      .header-title { font-size: 1rem !important; }
+      .header-subtitle { font-size: .68rem !important; }
+      .status-line { align-items: flex-start; line-height: 1.5; }
     }
   </style>
 </head>
 
 <body class="min-h-screen p-3 text-sm text-slate-200 md:p-6">
   <main class="mx-auto max-w-7xl">
-    <!-- ส่วนหัว -->
     <header class="header-panel mb-6 rounded-3xl p-4 md:p-6">
-      <div
-        class="relative z-10 flex flex-col justify-between gap-5 xl:flex-row xl:items-center"
-      >
+      <div class="relative z-10 flex flex-col justify-between gap-5 xl:flex-row xl:items-center">
         <div class="header-brand flex min-w-0 items-center gap-4 md:gap-5">
           <div class="logo-frame">
-            <img
-              src="./logo-police-region-3.png"
-              alt="ตราสัญลักษณ์ตำรวจภูธรภาค 3"
-              onerror="handleLogoError(this)"
-            >
-
-            <div
-              id="logoFallback"
-              class="hidden items-center justify-center"
-            >
-              <i
-                data-lucide="shield"
-                class="h-12 w-12 text-yellow-300"
-              ></i>
+            <img src="./logo-police-region-3.png" alt="ตราสัญลักษณ์ตำรวจภูธรภาค 3" onerror="handleLogoError(this)">
+            <div id="logoFallback" class="hidden items-center justify-center">
+              <i data-lucide="shield" class="h-12 w-12 text-yellow-300"></i>
             </div>
           </div>
 
           <div class="min-w-0">
-            <span
-              class="inline-flex rounded-full border border-yellow-400/25 bg-yellow-400/10 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-yellow-300 md:text-xs"
-            >
-              POLICE REGION 3
-            </span>
-
-            <h1
-              class="header-title mt-2 text-xl font-bold leading-tight tracking-tight text-white md:text-3xl"
-            >
-              ระบบติดตามผลการปราบปรามหนี้นอกระบบ
-            </h1>
-
-            <p
-              class="header-subtitle mt-1 text-xs text-blue-200/80 md:text-sm"
-            >
-              ศูนย์ปราบปรามหนี้นอกระบบ ตำรวจภูธรภาค 3
-            </p>
-
-            <div
-              class="status-line mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-300"
-            >
-              <span
-                id="statusDot"
-                class="h-2 w-2 flex-shrink-0 rounded-full bg-slate-500"
-              ></span>
-
+            <span class="inline-flex rounded-full border border-yellow-400/25 bg-yellow-400/10 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-yellow-300 md:text-xs">POLICE REGION 3</span>
+            <h1 class="header-title mt-2 text-xl font-bold leading-tight tracking-tight text-white md:text-3xl">ระบบติดตามผลการปราบปรามหนี้นอกระบบ</h1>
+            <p class="header-subtitle mt-1 text-xs text-blue-200/80 md:text-sm">ศูนย์ปราบปรามหนี้นอกระบบ ตำรวจภูธรภาค 3</p>
+            <div class="status-line mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-300">
+              <span id="statusDot" class="h-2 w-2 flex-shrink-0 rounded-full bg-slate-500"></span>
               <span id="syncStatus">กำลังเตรียมข้อมูล</span>
               <span class="text-slate-500">•</span>
               <span>อัปเดตล่าสุด</span>
-
-              <span
-                id="lastUpdated"
-                class="font-mono text-yellow-300"
-              >
-                -
-              </span>
+              <span id="lastUpdated" class="font-mono text-yellow-300">-</span>
             </div>
           </div>
         </div>
 
-        <div
-          class="header-controls relative flex w-full flex-wrap items-center gap-2 xl:w-auto"
-        >
-          <label
-            class="header-control flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2"
-          >
-            <i
-              data-lucide="calendar-days"
-              class="mr-2 h-4 w-4 flex-shrink-0 text-yellow-300"
-            ></i>
-
-            <select
-              id="monthSelector"
-              class="min-w-0 cursor-pointer bg-transparent text-xs font-semibold text-white outline-none"
-            ></select>
+        <div class="header-controls relative flex w-full flex-wrap items-center gap-2 xl:w-auto">
+          <label class="header-control flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2">
+            <i data-lucide="calendar-days" class="mr-2 h-4 w-4 flex-shrink-0 text-yellow-300"></i>
+            <select id="monthSelector" class="min-w-0 cursor-pointer bg-transparent text-xs font-semibold text-white outline-none"></select>
           </label>
 
-          <label
-            class="header-control flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2"
-          >
-            <span class="mr-2 flex-shrink-0 text-[11px] text-slate-400">
-              ตั้งแต่
-            </span>
-
-            <input
-              type="date"
-              id="startDate"
-              class="min-w-0 bg-transparent text-[11px] text-slate-200 outline-none"
-            >
+          <label class="header-control flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2">
+            <span class="mr-2 flex-shrink-0 text-[11px] text-slate-400">ตั้งแต่</span>
+            <input type="date" id="startDate" class="min-w-0 bg-transparent text-[11px] text-slate-200 outline-none">
           </label>
 
-          <label
-            class="header-control flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2"
-          >
-            <span class="mr-2 flex-shrink-0 text-[11px] text-slate-400">
-              ถึง
-            </span>
-
-            <input
-              type="date"
-              id="endDate"
-              class="min-w-0 bg-transparent text-[11px] text-slate-200 outline-none"
-            >
+          <label class="header-control flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2">
+            <span class="mr-2 flex-shrink-0 text-[11px] text-slate-400">ถึง</span>
+            <input type="date" id="endDate" class="min-w-0 bg-transparent text-[11px] text-slate-200 outline-none">
           </label>
 
-          <button
-            type="button"
-            onclick="openAdmin()"
-            class="admin-button flex items-center gap-2 rounded-xl border border-yellow-400/30 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200 transition hover:bg-yellow-400/20"
-          >
+          <button type="button" onclick="openAdmin()" class="admin-button flex items-center gap-2 rounded-xl border border-yellow-400/30 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200 transition hover:bg-yellow-400/20">
             <i data-lucide="settings" class="h-4 w-4"></i>
             จัดการเป้าหมาย
           </button>
 
-          <button
-            type="button"
-            onclick="fetchDataFromServer()"
-            title="อัปเดตข้อมูล"
-            class="refresh-button rounded-xl border border-blue-400/25 bg-blue-500/15 p-2.5 transition hover:bg-blue-500/25"
-          >
-            <i
-              id="refreshIcon"
-              data-lucide="refresh-cw"
-              class="h-4 w-4 text-blue-200"
-            ></i>
+          <button type="button" onclick="fetchDataFromServer(true)" title="อัปเดตข้อมูล" class="refresh-button rounded-xl border border-blue-400/25 bg-blue-500/15 p-2.5 transition hover:bg-blue-500/25">
+            <i id="refreshIcon" data-lucide="refresh-cw" class="h-4 w-4 text-blue-200"></i>
           </button>
         </div>
       </div>
     </header>
 
-    <!-- การ์ดสรุป -->
     <section class="summary-grid">
       <article class="glass-panel summary-card rounded-2xl p-5">
         <div class="relative z-10 flex justify-between gap-3">
           <div class="min-w-0">
-            <p class="text-xs font-medium text-slate-400">
-              ผลการจับกุมสะสม
-            </p>
-
-            <h2
-              id="totalCases"
-              class="mt-2 font-mono text-3xl font-extrabold text-white"
-            >
-              0
-            </h2>
-
-            <p class="mt-1 text-[11px] text-slate-500">
-              ตามช่วงวันที่ที่เลือก
-            </p>
+            <p class="text-xs font-medium text-slate-400">ผลการจับกุมสะสม</p>
+            <h2 id="totalCases" class="mt-2 font-mono text-3xl font-extrabold text-white">0</h2>
+            <p class="mt-1 text-[11px] text-slate-500">ตามช่วงวันที่ที่เลือก</p>
           </div>
-
-          <div class="h-fit flex-shrink-0 rounded-xl bg-blue-500/10 p-2.5">
-            <i
-              data-lucide="shield-check"
-              class="h-5 w-5 text-blue-300"
-            ></i>
-          </div>
+          <div class="h-fit flex-shrink-0 rounded-xl bg-blue-500/10 p-2.5"><i data-lucide="shield-check" class="h-5 w-5 text-blue-300"></i></div>
         </div>
       </article>
 
       <article class="glass-panel summary-card rounded-2xl p-5">
         <div class="relative z-10 flex justify-between gap-3">
           <div class="min-w-0 flex-1">
-            <p class="text-xs font-medium text-slate-400">
-              ผลการจับกุมรายวัน
-            </p>
-
-            <div class="mt-2 flex items-baseline gap-2">
-              <h2
-                id="dailyArrestCases"
-                class="font-mono text-3xl font-extrabold text-amber-400"
-              >
-                0
-              </h2>
-
-              <span class="text-xs text-slate-500">
-                ราย
-              </span>
-            </div>
-
-            <input
-              type="date"
-              id="dailyArrestDate"
-              class="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950/50 px-2 py-1.5 text-[11px] text-slate-300 outline-none"
-            >
+            <p class="text-xs font-medium text-slate-400">ผลการจับกุมรายวัน</p>
+            <div class="mt-2 flex items-baseline gap-2"><h2 id="dailyArrestCases" class="font-mono text-3xl font-extrabold text-amber-400">0</h2><span class="text-xs text-slate-500">ราย</span></div>
+            <input type="date" id="dailyArrestDate" class="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950/50 px-2 py-1.5 text-[11px] text-slate-300 outline-none">
           </div>
-
-          <div class="h-fit flex-shrink-0 rounded-xl bg-amber-500/10 p-2.5">
-            <i
-              data-lucide="calendar-check"
-              class="h-5 w-5 text-amber-300"
-            ></i>
-          </div>
+          <div class="h-fit flex-shrink-0 rounded-xl bg-amber-500/10 p-2.5"><i data-lucide="calendar-check" class="h-5 w-5 text-amber-300"></i></div>
         </div>
       </article>
 
       <article class="glass-panel summary-card rounded-2xl p-5">
         <div class="relative z-10 flex justify-between gap-3">
           <div class="min-w-0">
-            <p class="text-xs font-medium text-slate-400">
-              ภ.จว.ที่มีผลจับกุมสูงสุด
-            </p>
-
-            <h2
-              id="topProvince"
-              class="mt-2 text-xl font-extrabold leading-tight text-blue-300"
-            >
-              -
-            </h2>
-
-            <p
-              id="topProvinceCount"
-              class="mt-2 text-[11px] leading-relaxed text-slate-400"
-            >
-              ยังไม่มีผลการจับกุม
-            </p>
+            <p class="text-xs font-medium text-slate-400">ภ.จว.ที่มีผลจับกุมสูงสุด</p>
+            <h2 id="topProvince" class="mt-2 text-xl font-extrabold leading-tight text-blue-300">-</h2>
+            <p id="topProvinceCount" class="mt-2 text-[11px] leading-relaxed text-slate-400">ยังไม่มีผลการจับกุม</p>
           </div>
-
-          <div class="h-fit flex-shrink-0 rounded-xl bg-blue-500/10 p-2.5">
-            <i
-              data-lucide="trophy"
-              class="h-5 w-5 text-blue-300"
-            ></i>
-          </div>
+          <div class="h-fit flex-shrink-0 rounded-xl bg-blue-500/10 p-2.5"><i data-lucide="trophy" class="h-5 w-5 text-blue-300"></i></div>
         </div>
       </article>
 
       <article class="glass-panel summary-card rounded-2xl p-5">
         <div class="relative z-10 flex justify-between gap-3">
           <div class="min-w-0">
-            <p class="text-xs font-medium text-slate-400">
-              จับกุมได้กี่เปอร์เซ็นต์
-            </p>
-
-            <h2
-              id="targetPercent"
-              class="mt-2 font-mono text-3xl font-extrabold text-emerald-400"
-            >
-              0.0%
-            </h2>
-
-            <p class="mt-1 text-[11px] text-slate-500">
-              จากเป้าหมาย
-              <span
-                id="totalTarget"
-                class="font-mono text-slate-300"
-              >
-                0
-              </span>
-              ราย
-            </p>
+            <p class="text-xs font-medium text-slate-400">จับกุมได้กี่เปอร์เซ็นต์</p>
+            <h2 id="targetPercent" class="mt-2 font-mono text-3xl font-extrabold text-emerald-400">0.0%</h2>
+            <p class="mt-1 text-[11px] text-slate-500">จากเป้าหมาย <span id="totalTarget" class="font-mono text-slate-300">0</span> ราย</p>
           </div>
-
-          <div class="h-fit flex-shrink-0 rounded-xl bg-emerald-500/10 p-2.5">
-            <i
-              data-lucide="percent"
-              class="h-5 w-5 text-emerald-300"
-            ></i>
-          </div>
+          <div class="h-fit flex-shrink-0 rounded-xl bg-emerald-500/10 p-2.5"><i data-lucide="percent" class="h-5 w-5 text-emerald-300"></i></div>
         </div>
       </article>
 
       <article class="glass-panel summary-card rounded-2xl p-5">
         <div class="relative z-10 flex justify-between gap-3">
           <div class="min-w-0">
-            <p class="text-xs font-medium text-slate-400">
-              คงเหลือตามเป้าหมาย
-            </p>
-
-            <h2
-              id="remainingTarget"
-              class="mt-2 font-mono text-3xl font-extrabold text-rose-400"
-            >
-              0
-            </h2>
-
-            <p class="mt-1 text-[11px] text-slate-500">
-              จำนวนที่ต้องดำเนินการเพิ่ม
-            </p>
+            <p class="text-xs font-medium text-slate-400">คงเหลือตามเป้าหมาย</p>
+            <h2 id="remainingTarget" class="mt-2 font-mono text-3xl font-extrabold text-rose-400">0</h2>
+            <p class="mt-1 text-[11px] text-slate-500">จำนวนที่ต้องดำเนินการเพิ่ม</p>
           </div>
-
-          <div class="h-fit flex-shrink-0 rounded-xl bg-rose-500/10 p-2.5">
-            <i
-              data-lucide="target"
-              class="h-5 w-5 text-rose-300"
-            ></i>
-          </div>
+          <div class="h-fit flex-shrink-0 rounded-xl bg-rose-500/10 p-2.5"><i data-lucide="target" class="h-5 w-5 text-rose-300"></i></div>
         </div>
       </article>
     </section>
 
-    <!-- แจ้งเตือน -->
-    <section
-      id="missingAlert"
-      class="mt-4 hidden rounded-2xl border border-red-500/20 bg-red-950/30 p-4"
-    >
+    <section id="missingAlert" class="mt-4 hidden rounded-2xl border border-red-500/20 bg-red-950/30 p-4">
       <div class="flex items-start gap-3">
-        <i
-          data-lucide="triangle-alert"
-          class="mt-0.5 h-5 w-5 flex-shrink-0 text-red-400"
-        ></i>
-
+        <i data-lucide="triangle-alert" class="mt-0.5 h-5 w-5 flex-shrink-0 text-red-400"></i>
         <div class="min-w-0">
-          <p class="font-semibold text-red-200">
-            หน่วยงานที่ยังดำเนินการไม่ครบตามเป้าหมาย
-          </p>
-
-          <div
-            id="missingList"
-            class="mt-2 flex flex-wrap gap-2"
-          ></div>
+          <p class="font-semibold text-red-200">หน่วยงานที่ยังดำเนินการไม่ครบตามเป้าหมาย</p>
+          <div id="missingList" class="mt-2 flex flex-wrap gap-2"></div>
         </div>
       </div>
     </section>
 
-    <!-- กราฟ -->
     <section class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
       <article class="glass-panel rounded-2xl p-4 md:p-5">
-        <div class="mb-4">
-          <h2 class="font-semibold text-white">
-            แนวโน้มผลการจับกุมรายวัน
-          </h2>
-
-          <p class="text-[11px] text-slate-500">
-            จำนวนผลจับกุมตามช่วงวันที่ที่เลือก
-          </p>
-        </div>
-
-        <div class="chart-wrapper h-72">
-          <canvas id="dailyTrendChart"></canvas>
-        </div>
+        <div class="mb-4"><h2 class="font-semibold text-white">แนวโน้มผลการจับกุมรายวัน</h2><p class="text-[11px] text-slate-500">จำนวนผลจับกุมตามช่วงวันที่ที่เลือก</p></div>
+        <div class="chart-wrapper h-72"><canvas id="dailyTrendChart"></canvas></div>
       </article>
-
       <article class="glass-panel rounded-2xl p-4 md:p-5">
-        <div class="mb-4">
-          <h2 class="font-semibold text-white">
-            ลำดับผลจับกุมเทียบเป้าหมาย
-          </h2>
-
-          <p class="text-[11px] text-slate-500">
-            เรียงลำดับตามเปอร์เซ็นต์ผลจับกุมของแต่ละ ภ.จว.
-          </p>
-        </div>
-
-        <div class="chart-wrapper h-72">
-          <canvas id="provinceChart"></canvas>
-        </div>
+        <div class="mb-4"><h2 class="font-semibold text-white">ลำดับผลจับกุมเทียบเป้าหมาย</h2><p class="text-[11px] text-slate-500">เรียงลำดับตามเปอร์เซ็นต์ผลจับกุมของแต่ละ ภ.จว.</p></div>
+        <div class="chart-wrapper h-72"><canvas id="provinceChart"></canvas></div>
       </article>
     </section>
 
-    <!-- ตารางจัดอันดับ -->
     <section class="glass-panel mt-4 overflow-hidden rounded-2xl">
       <div class="border-b border-slate-800 p-4 md:px-5">
-        <h2 class="font-semibold text-white">
-          ลำดับผลจับกุมเทียบเป้าหมาย
-        </h2>
-
-        <p class="text-[11px] text-slate-500">
-          จัดอันดับจากเปอร์เซ็นต์ของเป้าหมาย หากเท่ากันจะพิจารณาจำนวนจับกุม
-        </p>
+        <h2 class="font-semibold text-white">ลำดับผลจับกุมเทียบเป้าหมาย</h2>
+        <p class="text-[11px] text-slate-500">จัดอันดับจากเปอร์เซ็นต์ของเป้าหมาย หากเท่ากันจะพิจารณาจำนวนจับกุม</p>
       </div>
-
       <div class="table-scroll custom-scrollbar">
         <table class="bordered-table text-left text-sm">
-          <thead class="bg-slate-950/70 text-xs text-slate-300">
-            <tr>
-              <th class="p-3 text-center">อันดับ</th>
-              <th class="p-3">หน่วยงาน</th>
-              <th class="p-3 text-center">เป้าหมาย</th>
-              <th class="p-3 text-center">ผลจับกุม</th>
-              <th class="p-3 text-center">คงเหลือ</th>
-              <th class="p-3 text-center">เปอร์เซ็นต์ของเป้า</th>
-            </tr>
-          </thead>
-
+          <thead class="bg-slate-950/70 text-xs text-slate-300"><tr>
+            <th class="p-3 text-center">อันดับ</th><th class="p-3">หน่วยงาน</th><th class="p-3 text-center">เป้าหมาย</th><th class="p-3 text-center">ผลจับกุม</th><th class="p-3 text-center">คงเหลือ</th><th class="p-3 text-center">เปอร์เซ็นต์ของเป้า</th>
+          </tr></thead>
           <tbody id="summaryBody"></tbody>
         </table>
       </div>
     </section>
 
-    <!-- ตารางรายวัน -->
     <section class="glass-panel mt-4 overflow-hidden rounded-2xl">
-      <div
-        class="flex items-center justify-between border-b border-slate-800 p-4 md:px-5"
-      >
-        <div>
-          <h2 class="font-semibold text-white">
-            ตารางผลการจับกุมรายวัน
-          </h2>
-
-          <p class="text-[11px] text-slate-500">
-            แสดงผลรายวัน รายจังหวัด และผลรวม
-          </p>
-        </div>
-
-        <i
-          data-lucide="table-properties"
-          class="h-5 w-5 text-blue-300"
-        ></i>
+      <div class="flex items-center justify-between border-b border-slate-800 p-4 md:px-5">
+        <div><h2 class="font-semibold text-white">ตารางผลการจับกุมรายวัน</h2><p class="text-[11px] text-slate-500">แสดงผลรายวัน รายจังหวัด และผลรวม</p></div>
+        <i data-lucide="table-properties" class="h-5 w-5 text-blue-300"></i>
       </div>
-
       <div class="table-scroll custom-scrollbar">
         <table class="matrix-table text-center text-xs">
-          <thead
-            id="matrixHeader"
-            class="bg-slate-950/80 text-slate-300"
-          ></thead>
-
+          <thead id="matrixHeader" class="bg-slate-950/80 text-slate-300"></thead>
           <tbody id="matrixBody"></tbody>
-
-          <tfoot
-            id="matrixFooter"
-            class="bg-slate-800 font-semibold text-white"
-          ></tfoot>
+          <tfoot id="matrixFooter" class="bg-slate-800 font-semibold text-white"></tfoot>
         </table>
       </div>
     </section>
 
-    <footer class="py-6 text-center text-[11px] text-slate-600">
-      ระบบติดตามผลการปราบปรามหนี้นอกระบบ ตำรวจภูธรภาค 3
-    </footer>
+    <footer class="py-6 text-center text-[11px] text-slate-600">ระบบติดตามผลการปราบปรามหนี้นอกระบบ ตำรวจภูธรภาค 3</footer>
   </main>
 
-  <!-- หน้าต่างผู้ดูแล -->
-  <div
-    id="adminModal"
-    class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 p-4"
-  >
-    <div
-      class="glass-panel max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl"
-    >
-      <div
-        class="flex items-center justify-between border-b border-slate-800 p-5"
-      >
-        <div>
-          <h2 class="text-lg font-semibold text-white">
-            จัดการเป้าหมายรายเดือน
-          </h2>
-
-          <p class="text-xs text-slate-500">
-            สำหรับเจ้าหน้าที่ผู้รับผิดชอบ
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onclick="closeAdmin()"
-          class="rounded-xl p-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"
-        >
-          <i data-lucide="x" class="h-5 w-5"></i>
-        </button>
+  <div id="adminModal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 p-4">
+    <div class="glass-panel max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl">
+      <div class="flex items-center justify-between border-b border-slate-800 p-5">
+        <div><h2 class="text-lg font-semibold text-white">จัดการเป้าหมายรายเดือน</h2><p class="text-xs text-slate-500">สำหรับเจ้าหน้าที่ผู้รับผิดชอบ</p></div>
+        <button type="button" onclick="closeAdmin()" class="rounded-xl p-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"><i data-lucide="x" class="h-5 w-5"></i></button>
       </div>
 
       <div id="passwordSection" class="p-5">
-        <label
-          for="adminPassword"
-          class="mb-2 block text-xs font-medium text-slate-300"
-        >
-          รหัสผู้ดูแล
-        </label>
-
-        <input
-          id="adminPassword"
-          type="password"
-          autocomplete="current-password"
-          placeholder="กรอกรหัสผู้ดูแล"
-          class="w-full rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-blue-500"
-        >
-
-        <p
-          id="passwordError"
-          class="mt-2 hidden text-xs text-red-400"
-        ></p>
-
-        <button
-          id="verifyButton"
-          type="button"
-          onclick="verifyAdmin()"
-          class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <i data-lucide="log-in" class="h-4 w-4"></i>
-          ตรวจสอบสิทธิ์
-        </button>
+        <label for="adminPassword" class="mb-2 block text-xs font-medium text-slate-300">รหัสผู้ดูแล</label>
+        <input id="adminPassword" type="password" autocomplete="current-password" placeholder="กรอกรหัสผู้ดูแล" class="w-full rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-blue-500">
+        <p id="passwordError" class="mt-2 hidden text-xs text-red-400"></p>
+        <button id="verifyButton" type="button" onclick="verifyAdmin()" class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"><i data-lucide="log-in" class="h-4 w-4"></i>ตรวจสอบสิทธิ์</button>
       </div>
 
       <div id="targetSection" class="hidden p-5">
-        <div
-          class="mb-4 rounded-xl border border-blue-500/20 bg-blue-500/10 p-3"
-        >
-          <p class="text-xs text-blue-200">
-            กำหนดเป้าหมายประจำเดือน
-          </p>
-
-          <p
-            id="targetMonthLabel"
-            class="mt-1 font-semibold text-white"
-          ></p>
-        </div>
-
-        <div
-          id="targetInputs"
-          class="grid grid-cols-1 gap-3 sm:grid-cols-2"
-        ></div>
-
-        <button
-          id="saveTargetButton"
-          type="button"
-          onclick="saveAdminTargets()"
-          class="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <i data-lucide="save" class="h-4 w-4"></i>
-          บันทึกเป้าหมาย
-        </button>
+        <div class="mb-4 rounded-xl border border-blue-500/20 bg-blue-500/10 p-3"><p class="text-xs text-blue-200">กำหนดเป้าหมายประจำเดือน</p><p id="targetMonthLabel" class="mt-1 font-semibold text-white"></p></div>
+        <div id="targetInputs" class="grid grid-cols-1 gap-3 sm:grid-cols-2"></div>
+        <button id="saveTargetButton" type="button" onclick="saveAdminTargets()" class="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"><i data-lucide="save" class="h-4 w-4"></i>บันทึกเป้าหมาย</button>
       </div>
     </div>
   </div>
 
-  <!-- ข้อความแจ้งเตือน -->
-  <div
-    id="toast"
-    class="fixed bottom-4 right-4 z-[60] hidden max-w-sm rounded-xl border px-4 py-3 text-sm shadow-2xl"
-  ></div>
+  <div id="toast" class="fixed bottom-4 right-4 z-[60] hidden max-w-sm rounded-xl border px-4 py-3 text-sm shadow-2xl"></div>
 
   <script>
-    /*
-     * หาก Deploy ใหม่แล้ว URL เปลี่ยน
-     * ให้นำ URL ที่ลงท้าย /exec มาแทนค่าในบรรทัดนี้
-     */
-    const API_URL =
-      'https://script.google.com/macros/s/AKfycbz41GG_9gW6eVt1bWW_mIWDwPnQR0njup8gGVqQ-XPjH-BPzNSRMUXUsB60H5dpgkKc/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz41GG_9gW6eVt1bWW_mIWDwPnQR0njup8gGVqQ-XPjH-BPzNSRMUXUsB60H5dpgkKc/exec';
 
     const PROVINCES = [
-      'ชัยภูมิ',
-      'นครราชสีมา',
-      'บุรีรัมย์',
-      'ยโสธร',
-      'ศรีสะเกษ',
-      'สุรินทร์',
-      'อำนาจเจริญ',
-      'อุบลราชธานี'
+      'ชัยภูมิ','นครราชสีมา','บุรีรัมย์','ยโสธร',
+      'ศรีสะเกษ','สุรินทร์','อำนาจเจริญ','อุบลราชธานี'
     ];
 
     const CHART_COLORS = [
-      '#facc15',
-      '#cbd5e1',
-      '#d97706',
-      '#60a5fa',
-      '#34d399',
-      '#a78bfa',
-      '#22d3ee',
-      '#fb7185'
+      '#facc15','#cbd5e1','#d97706','#60a5fa',
+      '#34d399','#a78bfa','#22d3ee','#fb7185'
     ];
 
     const state = {
-      records: [],
+      summary: {},
       validMonths: [],
       allTargets: {},
       selectedMonth: '',
       adminToken: '',
       dailyChart: null,
-      provinceChart: null
+      provinceChart: null,
+      loading: false
     };
 
     const getElement = id => document.getElementById(id);
@@ -912,69 +316,44 @@
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
 
-      getElement('monthSelector').addEventListener(
-        'change',
-        handleMonthChange
-      );
+      getElement('monthSelector').addEventListener('change', handleMonthChange);
+      getElement('startDate').addEventListener('change', renderDashboard);
+      getElement('endDate').addEventListener('change', renderDashboard);
+      getElement('dailyArrestDate').addEventListener('change', renderDailyArrest);
+      getElement('adminPassword').addEventListener('keydown', event => {
+        if (event.key === 'Enter') verifyAdmin();
+      });
+      getElement('adminModal').addEventListener('click', event => {
+        if (event.target.id === 'adminModal') closeAdmin();
+      });
 
-      getElement('startDate').addEventListener(
-        'change',
-        renderDashboard
-      );
-
-      getElement('endDate').addEventListener(
-        'change',
-        renderDashboard
-      );
-
-      getElement('dailyArrestDate').addEventListener(
-        'change',
-        renderDailyArrest
-      );
-
-      getElement('adminPassword').addEventListener(
-        'keydown',
-        event => {
-          if (event.key === 'Enter') {
-            verifyAdmin();
-          }
-        }
-      );
-
-      getElement('adminModal').addEventListener(
-        'click',
-        event => {
-          if (event.target.id === 'adminModal') {
-            closeAdmin();
-          }
-        }
-      );
-
-      fetchDataFromServer();
+      fetchDataFromServer(false);
     });
 
     function handleLogoError(image) {
       image.style.display = 'none';
-
       const fallback = getElement('logoFallback');
-
       fallback.classList.remove('hidden');
       fallback.classList.add('flex');
     }
 
-    async function fetchDataFromServer() {
-      setStatus('loading', 'กำลังอัปเดตข้อมูล');
+    async function fetchDataFromServer(forceRefresh = false) {
+      if (state.loading) return;
+      state.loading = true;
+
+      setStatus('loading', forceRefresh ? 'กำลังอัปเดตข้อมูลใหม่' : 'กำลังโหลดข้อมูล');
       getElement('refreshIcon').classList.add('animate-spin');
 
       try {
-        const response = await fetch(
-          `${API_URL}?action=getData&_=${Date.now()}`,
-          {
-            method: 'GET',
-            cache: 'no-store',
-            redirect: 'follow'
-          }
-        );
+        const url = forceRefresh
+          ? `${API_URL}?action=getData&refresh=1`
+          : `${API_URL}?action=getData`;
+
+        const response = await fetch(url, {
+          method: 'GET',
+          redirect: 'follow',
+          cache: 'default'
+        });
 
         if (!response.ok) {
           throw new Error(`เชื่อมต่อไม่สำเร็จ HTTP ${response.status}`);
@@ -983,97 +362,62 @@
         const result = await response.json();
 
         if (result.status !== 'success') {
-          throw new Error(
-            result.message || 'ไม่สามารถอ่านข้อมูลได้'
-          );
+          throw new Error(result.message || 'ไม่สามารถอ่านข้อมูลได้');
         }
 
-        state.records = Array.isArray(result.records)
-          ? result.records
-          : [];
-
-        state.validMonths = Array.isArray(result.validMonths)
-          ? result.validMonths
-          : [];
-
-        state.allTargets =
-          result.allTargets && typeof result.allTargets === 'object'
-            ? result.allTargets
-            : {};
+        state.summary = result.summary && typeof result.summary === 'object' ? result.summary : {};
+        state.validMonths = Array.isArray(result.validMonths) ? result.validMonths : [];
+        state.allTargets = result.allTargets && typeof result.allTargets === 'object' ? result.allTargets : {};
 
         buildMonthSelector();
         renderDashboard();
 
-        setStatus('success', 'ข้อมูลเป็นปัจจุบัน');
-
-        getElement('lastUpdated').textContent =
-          new Intl.DateTimeFormat('th-TH', {
-            dateStyle: 'medium',
-            timeStyle: 'short'
-          }).format(new Date());
+        setStatus('success', forceRefresh ? 'อัปเดตข้อมูลเรียบร้อยแล้ว' : 'ข้อมูลพร้อมใช้งาน');
+        getElement('lastUpdated').textContent = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date());
       } catch (error) {
         console.error(error);
-
         setStatus('error', 'เชื่อมต่อข้อมูลไม่สำเร็จ');
         showToast(error.message, 'error');
       } finally {
+        state.loading = false;
         getElement('refreshIcon').classList.remove('animate-spin');
       }
     }
 
     function buildMonthSelector() {
       const selector = getElement('monthSelector');
-      const previousMonth =
-        state.selectedMonth || selector.value;
-
+      const previousMonth = state.selectedMonth || selector.value;
       selector.innerHTML = '';
 
-      const sortedMonths = [...state.validMonths].sort().reverse();
-
-      sortedMonths.forEach(yearMonth => {
+      [...state.validMonths].sort().reverse().forEach(yearMonth => {
         const option = document.createElement('option');
-
         option.value = yearMonth;
         option.textContent = formatMonth(yearMonth);
-
         selector.appendChild(option);
       });
 
-      if (
-        previousMonth &&
-        state.validMonths.includes(previousMonth)
-      ) {
+      if (previousMonth && state.validMonths.includes(previousMonth)) {
         selector.value = previousMonth;
       }
 
-      state.selectedMonth =
-        selector.value || state.validMonths[0] || '';
-
+      state.selectedMonth = selector.value || state.validMonths[0] || '';
       applyMonthDateRange();
     }
 
     function handleMonthChange() {
       state.selectedMonth = getElement('monthSelector').value;
-
       applyMonthDateRange();
       renderDashboard();
     }
 
     function applyMonthDateRange() {
-      if (!state.selectedMonth) {
-        return;
-      }
+      if (!state.selectedMonth) return;
 
       const firstDate = `${state.selectedMonth}-01`;
       const lastDate = getLastDateOfMonth(state.selectedMonth);
 
-      const dateInputs = [
-        getElement('startDate'),
-        getElement('endDate'),
-        getElement('dailyArrestDate')
-      ];
-
-      dateInputs.forEach(input => {
+      ['startDate','endDate','dailyArrestDate'].forEach(id => {
+        const input = getElement(id);
         input.min = firstDate;
         input.max = lastDate;
       });
@@ -1089,257 +433,143 @@
         return;
       }
 
-      const startDate =
-        getElement('startDate').value ||
-        `${state.selectedMonth}-01`;
-
-      const endDate =
-        getElement('endDate').value ||
-        getLastDateOfMonth(state.selectedMonth);
+      const startDate = getElement('startDate').value || `${state.selectedMonth}-01`;
+      const endDate = getElement('endDate').value || getLastDateOfMonth(state.selectedMonth);
 
       if (startDate > endDate) {
-        showToast(
-          'วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด',
-          'error'
-        );
-
+        showToast('วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด', 'error');
         return;
       }
 
-      const filteredRecords = state.records.filter(record =>
-        record.yearMonth === state.selectedMonth &&
-        record.dateStr >= startDate &&
-        record.dateStr <= endDate &&
-        PROVINCES.includes(record.province)
-      );
-
+      const monthData = state.summary[state.selectedMonth] || { provinces: {}, daily: {} };
+      const filtered = getFilteredSummary_(monthData, startDate, endDate);
       const targets = getCurrentTargets();
-      const provinceCounts = createProvinceCounts(filteredRecords);
-      const ranking = createRanking(targets, provinceCounts);
+      const ranking = createRanking(targets, filtered.provinces);
+      const totalCases = Object.values(filtered.provinces).reduce((sum, value) => sum + value, 0);
+      const totalTarget = PROVINCES.reduce((sum, province) => sum + targets[province], 0);
+      const remainingTarget = Math.max(totalTarget - totalCases, 0);
+      const totalPercent = totalTarget > 0 ? (totalCases / totalTarget) * 100 : 0;
 
-      const totalCases = filteredRecords.length;
-
-      const totalTarget = PROVINCES.reduce(
-        (sum, province) => sum + targets[province],
-        0
-      );
-
-      const remainingTarget = Math.max(
-        totalTarget - totalCases,
-        0
-      );
-
-      const totalPercent =
-        totalTarget > 0
-          ? (totalCases / totalTarget) * 100
-          : 0;
-
-      getElement('totalCases').textContent =
-        formatNumber(totalCases);
-
-      getElement('totalTarget').textContent =
-        formatNumber(totalTarget);
-
-      getElement('remainingTarget').textContent =
-        formatNumber(remainingTarget);
-
-      getElement('targetPercent').textContent =
-        `${totalPercent.toFixed(1)}%`;
+      getElement('totalCases').textContent = formatNumber(totalCases);
+      getElement('totalTarget').textContent = formatNumber(totalTarget);
+      getElement('remainingTarget').textContent = formatNumber(remainingTarget);
+      getElement('targetPercent').textContent = `${totalPercent.toFixed(1)}%`;
 
       renderDailyArrest();
       renderTopProvince(ranking);
       renderMissingAlert(ranking, totalTarget);
       renderSummaryTable(ranking);
-      renderCharts(
-        filteredRecords,
-        ranking,
-        startDate,
-        endDate
-      );
-      renderMatrix(
-        filteredRecords,
-        startDate,
-        endDate
-      );
+      renderCharts(filtered, ranking, startDate, endDate);
+      renderMatrix(filtered, startDate, endDate);
     }
 
     function clearDashboard() {
       getElement('totalCases').textContent = '0';
       getElement('dailyArrestCases').textContent = '0';
       getElement('topProvince').textContent = '-';
-      getElement('topProvinceCount').textContent =
-        'ยังไม่มีผลการจับกุม';
+      getElement('topProvinceCount').textContent = 'ยังไม่มีผลการจับกุม';
       getElement('targetPercent').textContent = '0.0%';
       getElement('totalTarget').textContent = '0';
       getElement('remainingTarget').textContent = '0';
+      getElement('summaryBody').innerHTML = '';
+      getElement('matrixHeader').innerHTML = '';
+      getElement('matrixBody').innerHTML = '';
+      getElement('matrixFooter').innerHTML = '';
     }
 
-    function renderDailyArrest() {
-      const selectedDate =
-        getElement('dailyArrestDate').value;
+    function getFilteredSummary_(monthData, startDate, endDate) {
+      const provinceCounts = Object.fromEntries(PROVINCES.map(p => [p, 0]));
+      const daily = {};
 
-      if (!selectedDate) {
-        getElement('dailyArrestCases').textContent = '0';
-        return;
-      }
+      Object.entries(monthData.daily || {}).forEach(([date, values]) => {
+        if (date < startDate || date > endDate) return;
+        daily[date] = Object.fromEntries(
+          PROVINCES.map(province => [province, Number(values?.[province]) || 0])
+        );
+        PROVINCES.forEach(province => {
+          provinceCounts[province] += daily[date][province];
+        });
+      });
 
-      const total = state.records.filter(record =>
-        record.dateStr === selectedDate &&
-        PROVINCES.includes(record.province)
-      ).length;
-
-      getElement('dailyArrestCases').textContent =
-        formatNumber(total);
+      return { provinces: provinceCounts, daily };
     }
 
     function getCurrentTargets() {
-      const savedTargets =
-        state.allTargets[state.selectedMonth] || {};
-
-      const targets = {};
-
-      PROVINCES.forEach(province => {
-        targets[province] = Math.max(
-          0,
-          Math.floor(Number(savedTargets[province]) || 0)
-        );
-      });
-
-      return targets;
-    }
-
-    function createProvinceCounts(records) {
-      const counts = Object.fromEntries(
-        PROVINCES.map(province => [province, 0])
+      const savedTargets = state.allTargets[state.selectedMonth] || {};
+      return Object.fromEntries(
+        PROVINCES.map(province => [province, Math.max(0, Math.floor(Number(savedTargets[province]) || 0))])
       );
-
-      records.forEach(record => {
-        if (record.province in counts) {
-          counts[record.province]++;
-        }
-      });
-
-      return counts;
     }
 
     function createRanking(targets, counts) {
-      return PROVINCES
-        .map(province => {
-          const target = targets[province];
-          const actual = counts[province];
-          const remaining = Math.max(target - actual, 0);
+      return PROVINCES.map(province => {
+        const target = targets[province];
+        const actual = counts[province] || 0;
+        const remaining = Math.max(target - actual, 0);
+        const percent = target > 0 ? (actual / target) * 100 : null;
+        return { province, target, actual, remaining, percent };
+      }).sort((a, b) => {
+        const aHasTarget = a.target > 0;
+        const bHasTarget = b.target > 0;
+        if (aHasTarget !== bHasTarget) return bHasTarget - aHasTarget;
+        return (b.percent ?? -1) - (a.percent ?? -1) || b.actual - a.actual || a.province.localeCompare(b.province, 'th');
+      });
+    }
 
-          const percent =
-            target > 0
-              ? (actual / target) * 100
-              : null;
-
-          return {
-            province,
-            target,
-            actual,
-            remaining,
-            percent
-          };
-        })
-        .sort((a, b) => {
-          const aHasTarget = a.target > 0;
-          const bHasTarget = b.target > 0;
-
-          if (aHasTarget !== bHasTarget) {
-            return bHasTarget - aHasTarget;
-          }
-
-          const aPercent = a.percent ?? -1;
-          const bPercent = b.percent ?? -1;
-
-          return (
-            bPercent - aPercent ||
-            b.actual - a.actual ||
-            a.province.localeCompare(b.province, 'th')
-          );
-        });
+    function renderDailyArrest() {
+      const selectedDate = getElement('dailyArrestDate').value;
+      const monthData = state.summary[state.selectedMonth] || { daily: {} };
+      const values = monthData.daily?.[selectedDate] || {};
+      const total = PROVINCES.reduce((sum, province) => sum + (Number(values[province]) || 0), 0);
+      getElement('dailyArrestCases').textContent = formatNumber(total);
     }
 
     function renderTopProvince(ranking) {
-      const topProvince = [...ranking].sort((a, b) =>
-        b.actual - a.actual ||
-        (b.percent ?? -1) - (a.percent ?? -1) ||
-        a.province.localeCompare(b.province, 'th')
-      )[0];
+      const topProvince = [...ranking].sort((a, b) => b.actual - a.actual || (b.percent ?? -1) - (a.percent ?? -1) || a.province.localeCompare(b.province, 'th'))[0];
 
       if (!topProvince || topProvince.actual === 0) {
         getElement('topProvince').textContent = '-';
-        getElement('topProvinceCount').textContent =
-          'ยังไม่มีผลการจับกุม';
-
+        getElement('topProvinceCount').textContent = 'ยังไม่มีผลการจับกุม';
         return;
       }
 
-      getElement('topProvince').textContent =
-        `ภ.จว.${topProvince.province}`;
-
-      const percentText =
-        topProvince.percent === null
-          ? 'ยังไม่ได้กำหนดเป้าหมาย'
-          : `${topProvince.percent.toFixed(1)}% ของเป้า`;
-
-      getElement('topProvinceCount').textContent =
-        `${formatNumber(topProvince.actual)} ราย • ${percentText}`;
+      getElement('topProvince').textContent = `ภ.จว.${topProvince.province}`;
+      const percentText = topProvince.percent === null ? 'ยังไม่ได้กำหนดเป้าหมาย' : `${topProvince.percent.toFixed(1)}% ของเป้า`;
+      getElement('topProvinceCount').textContent = `${formatNumber(topProvince.actual)} ราย • ${percentText}`;
     }
 
     function renderMissingAlert(ranking, totalTarget) {
       const alertBox = getElement('missingAlert');
       const list = getElement('missingList');
-
       list.innerHTML = '';
 
       if (totalTarget === 0) {
         alertBox.classList.remove('hidden');
-
         const badge = document.createElement('span');
-
-        badge.className =
-          'rounded-lg border border-yellow-600/30 ' +
-          'bg-yellow-950/60 px-2.5 py-1 text-xs text-yellow-200';
-
-        badge.textContent =
-          'ยังไม่ได้กำหนดเป้าหมายประจำเดือนนี้';
-
+        badge.className = 'rounded-lg border border-yellow-600/30 bg-yellow-950/60 px-2.5 py-1 text-xs text-yellow-200';
+        badge.textContent = 'ยังไม่ได้กำหนดเป้าหมายประจำเดือนนี้';
         list.appendChild(badge);
         return;
       }
 
-      const missingItems = ranking.filter(item =>
-        item.target > 0 &&
-        item.remaining > 0
-      );
+      const missingItems = ranking.filter(item => item.target > 0 && item.remaining > 0);
 
-      if (missingItems.length === 0) {
+      if (!missingItems.length) {
         alertBox.classList.add('hidden');
         return;
       }
 
       alertBox.classList.remove('hidden');
-
       missingItems.forEach(item => {
         const badge = document.createElement('span');
-
-        badge.className =
-          'rounded-lg border border-red-700/40 ' +
-          'bg-red-900/60 px-2.5 py-1 text-xs text-white';
-
-        badge.textContent =
-          `ภ.จว.${item.province} คงเหลือ ` +
-          `${formatNumber(item.remaining)} ราย`;
-
+        badge.className = 'rounded-lg border border-red-700/40 bg-red-900/60 px-2.5 py-1 text-xs text-white';
+        badge.textContent = `ภ.จว.${item.province} คงเหลือ ${formatNumber(item.remaining)} ราย`;
         list.appendChild(badge);
       });
     }
 
     function renderSummaryTable(ranking) {
       const tbody = getElement('summaryBody');
-
       tbody.innerHTML = '';
 
       let totalTarget = 0;
@@ -1349,504 +579,166 @@
         totalTarget += item.target;
         totalActual += item.actual;
 
-        const rankClass = getRankClass(index);
         const row = document.createElement('tr');
-
-        row.className =
-          'transition hover:bg-slate-800/50';
-
-        const percentText =
-          item.percent === null
-            ? '-'
-            : `${item.percent.toFixed(1)}%`;
-
-        const progressWidth =
-          item.percent === null
-            ? 0
-            : Math.min(item.percent, 100);
-
-        const progressColor =
-          item.percent !== null && item.percent >= 100
-            ? 'bg-emerald-500'
-            : 'bg-blue-500';
+        row.className = 'transition hover:bg-slate-800/50';
+        const percentText = item.percent === null ? '-' : `${item.percent.toFixed(1)}%`;
+        const progressWidth = item.percent === null ? 0 : Math.min(item.percent, 100);
+        const progressColor = item.percent !== null && item.percent >= 100 ? 'bg-emerald-500' : 'bg-blue-500';
+        const rankClass = getRankClass(index);
 
         row.innerHTML = `
-          <td class="p-3 text-center">
-            <span
-              class="inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 font-bold ${rankClass}"
-            >
-              ${index + 1}
-            </span>
-          </td>
-
-          <td class="p-3 font-medium text-slate-200">
-            ภ.จว.${item.province}
-          </td>
-
-          <td class="p-3 text-center font-mono text-blue-300">
-            ${formatNumber(item.target)}
-          </td>
-
-          <td class="bg-emerald-950/15 p-3 text-center font-mono font-bold text-emerald-400">
-            ${formatNumber(item.actual)}
-          </td>
-
-          <td
-            class="p-3 text-center font-mono font-semibold ${
-              item.remaining > 0
-                ? 'text-red-400'
-                : 'text-emerald-400'
-            }"
-          >
-            ${
-              item.target === 0
-                ? '-'
-                : item.remaining > 0
-                  ? formatNumber(item.remaining)
-                  : '✓'
-            }
-          </td>
-
-          <td class="min-w-[210px] p-3">
-            <div class="flex items-center justify-center gap-3">
-              <span
-                class="w-16 text-right font-mono ${
-                  item.percent !== null && item.percent >= 100
-                    ? 'text-emerald-400'
-                    : 'text-slate-200'
-                }"
-              >
-                ${percentText}
-              </span>
-
-              <div
-                class="h-2.5 w-28 overflow-hidden rounded-full border border-slate-600 bg-slate-700/60"
-              >
-                <div
-                  class="h-full rounded-full ${progressColor}"
-                  style="width: ${progressWidth}%"
-                ></div>
-              </div>
-            </div>
-          </td>
+          <td class="p-3 text-center"><span class="inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 font-bold ${rankClass}">${index + 1}</span></td>
+          <td class="p-3 font-medium text-slate-200">ภ.จว.${item.province}</td>
+          <td class="p-3 text-center font-mono text-blue-300">${formatNumber(item.target)}</td>
+          <td class="bg-emerald-950/15 p-3 text-center font-mono font-bold text-emerald-400">${formatNumber(item.actual)}</td>
+          <td class="p-3 text-center font-mono font-semibold ${item.remaining > 0 ? 'text-red-400' : 'text-emerald-400'}">${item.target === 0 ? '-' : item.remaining > 0 ? formatNumber(item.remaining) : '✓'}</td>
+          <td class="min-w-[210px] p-3"><div class="flex items-center justify-center gap-3"><span class="w-16 text-right font-mono ${item.percent !== null && item.percent >= 100 ? 'text-emerald-400' : 'text-slate-200'}">${percentText}</span><div class="h-2.5 w-28 overflow-hidden rounded-full border border-slate-600 bg-slate-700/60"><div class="h-full rounded-full ${progressColor}" style="width:${progressWidth}%"></div></div></div></td>
         `;
-
         tbody.appendChild(row);
       });
 
-      const totalRemaining = Math.max(
-        totalTarget - totalActual,
-        0
-      );
-
-      const totalPercent =
-        totalTarget > 0
-          ? (totalActual / totalTarget) * 100
-          : 0;
-
+      const totalRemaining = Math.max(totalTarget - totalActual, 0);
+      const totalPercent = totalTarget > 0 ? (totalActual / totalTarget) * 100 : 0;
       const totalRow = document.createElement('tr');
-
-      totalRow.className =
-        'bg-blue-950/40 font-semibold text-white';
-
+      totalRow.className = 'bg-blue-950/40 font-semibold text-white';
       totalRow.innerHTML = `
         <td class="p-3 text-center">-</td>
-
-        <td class="p-3">
-          รวมตำรวจภูธรภาค 3
-        </td>
-
-        <td class="p-3 text-center font-mono text-blue-300">
-          ${formatNumber(totalTarget)}
-        </td>
-
-        <td class="p-3 text-center font-mono text-emerald-400">
-          ${formatNumber(totalActual)}
-        </td>
-
-        <td
-          class="p-3 text-center font-mono ${
-            totalRemaining > 0
-              ? 'text-rose-300'
-              : 'text-emerald-400'
-          }"
-        >
-          ${
-            totalTarget === 0
-              ? '-'
-              : totalRemaining > 0
-                ? formatNumber(totalRemaining)
-                : '✓'
-          }
-        </td>
-
-        <td class="p-3 text-center font-mono text-emerald-300">
-          ${totalTarget > 0 ? `${totalPercent.toFixed(1)}%` : '-'}
-        </td>
+        <td class="p-3">รวมตำรวจภูธรภาค 3</td>
+        <td class="p-3 text-center font-mono text-blue-300">${formatNumber(totalTarget)}</td>
+        <td class="p-3 text-center font-mono text-emerald-400">${formatNumber(totalActual)}</td>
+        <td class="p-3 text-center font-mono ${totalRemaining > 0 ? 'text-rose-300' : 'text-emerald-400'}">${totalTarget === 0 ? '-' : totalRemaining > 0 ? formatNumber(totalRemaining) : '✓'}</td>
+        <td class="p-3 text-center font-mono text-emerald-300">${totalTarget > 0 ? `${totalPercent.toFixed(1)}%` : '-'}</td>
       `;
-
       tbody.appendChild(totalRow);
     }
 
-    function getRankClass(index) {
-      if (index === 0) {
-        return 'bg-yellow-400 text-slate-950';
-      }
-
-      if (index === 1) {
-        return 'bg-slate-300 text-slate-900';
-      }
-
-      if (index === 2) {
-        return 'bg-amber-700 text-white';
-      }
-
-      return 'bg-slate-700 text-slate-200';
-    }
-
-    function renderCharts(
-      records,
-      ranking,
-      startDate,
-      endDate
-    ) {
+    function renderCharts(filtered, ranking, startDate, endDate) {
       const dates = enumerateDates(startDate, endDate);
+      const dailyCounts = dates.map(date => {
+        const values = filtered.daily[date] || {};
+        return PROVINCES.reduce((sum, province) => sum + (Number(values[province]) || 0), 0);
+      });
 
-      const dailyCounts = Object.fromEntries(
-        dates.map(date => [date, 0])
-      );
+      if (state.dailyChart) state.dailyChart.destroy();
+      if (state.provinceChart) state.provinceChart.destroy();
 
-      records.forEach(record => {
-        if (record.dateStr in dailyCounts) {
-          dailyCounts[record.dateStr]++;
+      state.dailyChart = new Chart(getElement('dailyTrendChart'), {
+        type: 'line',
+        data: {
+          labels: dates.map(formatShortDate),
+          datasets: [{
+            label: 'ผลจับกุม',
+            data: dailyCounts,
+            borderColor: '#60a5fa',
+            backgroundColor: 'rgba(96,165,250,.14)',
+            borderWidth: 2,
+            fill: true,
+            tension: .35,
+            pointRadius: 3,
+            pointHoverRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#cbd5e1', font: { family: 'Prompt' } } } },
+          scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,.07)' } },
+            y: { beginAtZero: true, ticks: { color: '#94a3b8', precision: 0 }, grid: { color: 'rgba(148,163,184,.08)' } }
+          }
         }
       });
 
-      if (state.dailyChart) {
-        state.dailyChart.destroy();
-      }
-
-      if (state.provinceChart) {
-        state.provinceChart.destroy();
-      }
-
-      state.dailyChart = new Chart(
-        getElement('dailyTrendChart'),
-        {
-          type: 'line',
-
-          data: {
-            labels: dates.map(formatShortDate),
-
-            datasets: [{
-              label: 'ผลจับกุม',
-              data: dates.map(date => dailyCounts[date]),
-              borderColor: '#60a5fa',
-              backgroundColor: 'rgba(96, 165, 250, 0.14)',
-              borderWidth: 2,
-              fill: true,
-              tension: 0.35,
-              pointRadius: 3,
-              pointHoverRadius: 5
-            }]
-          },
-
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-
-            plugins: {
-              legend: {
-                labels: {
-                  color: '#cbd5e1',
-                  font: {
-                    family: 'Prompt'
-                  }
-                }
-              }
-            },
-
-            scales: {
-              x: {
-                ticks: {
-                  color: '#94a3b8'
-                },
-
-                grid: {
-                  color: 'rgba(148, 163, 184, 0.07)'
-                }
-              },
-
-              y: {
-                beginAtZero: true,
-
-                ticks: {
-                  color: '#94a3b8',
-                  precision: 0
-                },
-
-                grid: {
-                  color: 'rgba(148, 163, 184, 0.08)'
+      state.provinceChart = new Chart(getElement('provinceChart'), {
+        type: 'bar',
+        data: {
+          labels: ranking.map((item, index) => `${index + 1}. ${item.province}`),
+          datasets: [{
+            label: 'เปอร์เซ็นต์ของเป้า',
+            data: ranking.map(item => item.percent === null ? 0 : Number(item.percent.toFixed(2))),
+            backgroundColor: ranking.map((_, index) => CHART_COLORS[index % CHART_COLORS.length]),
+            borderRadius: 7,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label(context) {
+                  const item = ranking[context.dataIndex];
+                  if (item.target === 0) return [`จับกุม ${formatNumber(item.actual)} ราย`, 'ยังไม่ได้กำหนดเป้าหมาย'];
+                  return [`${item.percent.toFixed(1)}% ของเป้า`, `จับกุม ${formatNumber(item.actual)} จากเป้า ${formatNumber(item.target)} ราย`];
                 }
               }
             }
-          }
-        }
-      );
-
-      state.provinceChart = new Chart(
-        getElement('provinceChart'),
-        {
-          type: 'bar',
-
-          data: {
-            labels: ranking.map(
-              (item, index) =>
-                `${index + 1}. ${item.province}`
-            ),
-
-            datasets: [{
-              label: 'เปอร์เซ็นต์ของเป้า',
-
-              data: ranking.map(item =>
-                item.percent === null
-                  ? 0
-                  : Number(item.percent.toFixed(2))
-              ),
-
-              backgroundColor: ranking.map(
-                (_, index) =>
-                  CHART_COLORS[index % CHART_COLORS.length]
-              ),
-
-              borderRadius: 7,
-              borderSkipped: false
-            }]
           },
-
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: 'y',
-
-            plugins: {
-              legend: {
-                display: false
-              },
-
-              tooltip: {
-                callbacks: {
-                  label(context) {
-                    const item = ranking[context.dataIndex];
-
-                    if (item.target === 0) {
-                      return [
-                        `จับกุม ${formatNumber(item.actual)} ราย`,
-                        'ยังไม่ได้กำหนดเป้าหมาย'
-                      ];
-                    }
-
-                    return [
-                      `${item.percent.toFixed(1)}% ของเป้า`,
-                      `จับกุม ${formatNumber(item.actual)} ` +
-                      `จากเป้า ${formatNumber(item.target)} ราย`
-                    ];
-                  }
-                }
-              }
-            },
-
-            scales: {
-              x: {
-                beginAtZero: true,
-
-                ticks: {
-                  color: '#94a3b8',
-
-                  callback(value) {
-                    return `${value}%`;
-                  }
-                },
-
-                grid: {
-                  color: 'rgba(148, 163, 184, 0.08)'
-                }
-              },
-
-              y: {
-                ticks: {
-                  color: '#e2e8f0',
-
-                  font: {
-                    family: 'Prompt'
-                  }
-                },
-
-                grid: {
-                  display: false
-                }
-              }
-            }
+          scales: {
+            x: { beginAtZero: true, ticks: { color: '#94a3b8', callback: value => `${value}%` }, grid: { color: 'rgba(148,163,184,.08)' } },
+            y: { ticks: { color: '#e2e8f0', font: { family: 'Prompt' } }, grid: { display: false } }
           }
         }
-      );
+      });
     }
 
-    function renderMatrix(
-      records,
-      startDate,
-      endDate
-    ) {
+    function renderMatrix(filtered, startDate, endDate) {
       const dates = enumerateDates(startDate, endDate);
-
-      const matrix = {};
-
-      dates.forEach(date => {
-        matrix[date] = Object.fromEntries(
-          PROVINCES.map(province => [province, 0])
-        );
-      });
-
-      records.forEach(record => {
-        if (
-          matrix[record.dateStr] &&
-          record.province in matrix[record.dateStr]
-        ) {
-          matrix[record.dateStr][record.province]++;
-        }
-      });
-
       const header = getElement('matrixHeader');
-
-      header.innerHTML = `
-        <tr>
-          <th class="sticky-column min-w-[120px] bg-slate-950 p-3">
-            วันที่
-          </th>
-
-          ${PROVINCES.map(province => `
-            <th class="min-w-[110px] p-3">
-              ${province}
-            </th>
-          `).join('')}
-
-          <th class="min-w-[110px] bg-blue-950/60 p-3 text-blue-300">
-            รวมรายวัน
-          </th>
-        </tr>
-      `;
-
       const tbody = getElement('matrixBody');
       const footer = getElement('matrixFooter');
 
+      header.innerHTML = `<tr><th class="sticky-column min-w-[120px] bg-slate-950 p-3">วันที่</th>${PROVINCES.map(province => `<th class="min-w-[110px] p-3">${province}</th>`).join('')}<th class="min-w-[110px] bg-blue-950/60 p-3 text-blue-300">รวมรายวัน</th></tr>`;
       tbody.innerHTML = '';
       footer.innerHTML = '';
 
-      const provinceTotals = Object.fromEntries(
-        PROVINCES.map(province => [province, 0])
-      );
-
+      const provinceTotals = Object.fromEntries(PROVINCES.map(province => [province, 0]));
       let grandTotal = 0;
 
       dates.forEach((date, index) => {
-        const dailyTotal = PROVINCES.reduce(
-          (sum, province) => {
-            const value = matrix[date][province];
-
-            provinceTotals[province] += value;
-
-            return sum + value;
-          },
-          0
-        );
-
+        const values = filtered.daily[date] || {};
+        const dailyTotal = PROVINCES.reduce((sum, province) => {
+          const value = Number(values[province]) || 0;
+          provinceTotals[province] += value;
+          return sum + value;
+        }, 0);
         grandTotal += dailyTotal;
 
         const row = document.createElement('tr');
-
-        row.className =
-          index % 2 === 0
-            ? 'bg-slate-950/20 hover:bg-slate-800/60'
-            : 'bg-slate-900/35 hover:bg-slate-800/60';
-
+        row.className = index % 2 === 0 ? 'bg-slate-950/20 hover:bg-slate-800/60' : 'bg-slate-900/35 hover:bg-slate-800/60';
         row.innerHTML = `
-          <td class="sticky-column bg-slate-900 p-3 font-medium text-slate-200">
-            ${formatDisplayDate(date)}
-          </td>
-
+          <td class="sticky-column bg-slate-900 p-3 font-medium text-slate-200">${formatDisplayDate(date)}</td>
           ${PROVINCES.map(province => {
-            const value = matrix[date][province];
-
-            return `
-              <td
-                class="p-3 font-mono ${
-                  value > 0
-                    ? 'bg-blue-500/10 font-semibold text-blue-300'
-                    : 'text-slate-600'
-                }"
-              >
-                ${value > 0 ? formatNumber(value) : '-'}
-              </td>
-            `;
+            const value = Number(values[province]) || 0;
+            return `<td class="p-3 font-mono ${value > 0 ? 'bg-blue-500/10 font-semibold text-blue-300' : 'text-slate-600'}">${value > 0 ? formatNumber(value) : '-'}</td>`;
           }).join('')}
-
-          <td
-            class="bg-blue-950/30 p-3 font-mono font-bold ${
-              dailyTotal > 0
-                ? 'text-yellow-300'
-                : 'text-slate-600'
-            }"
-          >
-            ${dailyTotal > 0 ? formatNumber(dailyTotal) : '-'}
-          </td>
+          <td class="bg-blue-950/30 p-3 font-mono font-bold ${dailyTotal > 0 ? 'text-yellow-300' : 'text-slate-600'}">${dailyTotal > 0 ? formatNumber(dailyTotal) : '-'}</td>
         `;
-
         tbody.appendChild(row);
       });
 
-      footer.innerHTML = `
-        <tr>
-          <td class="sticky-column bg-slate-800 p-3">
-            รวมทั้งหมด
-          </td>
-
-          ${PROVINCES.map(province => `
-            <td class="p-3 font-mono text-emerald-300">
-              ${formatNumber(provinceTotals[province])}
-            </td>
-          `).join('')}
-
-          <td class="bg-blue-950 p-3 font-mono text-base text-yellow-300">
-            ${formatNumber(grandTotal)}
-          </td>
-        </tr>
-      `;
+      footer.innerHTML = `<tr><td class="sticky-column bg-slate-800 p-3">รวมทั้งหมด</td>${PROVINCES.map(province => `<td class="p-3 font-mono text-emerald-300">${formatNumber(provinceTotals[province])}</td>`).join('')}<td class="bg-blue-950 p-3 font-mono text-base text-yellow-300">${formatNumber(grandTotal)}</td></tr>`;
     }
 
     function openAdmin() {
       const modal = getElement('adminModal');
-
       modal.classList.remove('hidden');
       modal.classList.add('flex');
-
       getElement('passwordSection').classList.remove('hidden');
       getElement('targetSection').classList.add('hidden');
       getElement('passwordError').classList.add('hidden');
-
       getElement('adminPassword').value = '';
       state.adminToken = '';
-
-      setTimeout(() => {
-        getElement('adminPassword').focus();
-      }, 100);
+      setTimeout(() => getElement('adminPassword').focus(), 100);
     }
 
     function closeAdmin() {
       const modal = getElement('adminModal');
-
       modal.classList.add('hidden');
       modal.classList.remove('flex');
-
       getElement('adminPassword').value = '';
       state.adminToken = '';
     }
@@ -1855,7 +747,6 @@
       const password = getElement('adminPassword').value;
       const button = getElement('verifyButton');
       const errorBox = getElement('passwordError');
-
       errorBox.classList.add('hidden');
 
       if (!password) {
@@ -1864,75 +755,35 @@
         return;
       }
 
-      setButtonLoading(
-        button,
-        true,
-        'กำลังตรวจสอบ...'
-      );
+      setButtonLoading(button, true, 'กำลังตรวจสอบ...');
 
       try {
-        const result = await postApi({
-          action: 'verifyAdmin',
-          password
-        });
-
-        if (result.status !== 'success') {
-          throw new Error(
-            result.message || 'รหัสผู้ดูแลไม่ถูกต้อง'
-          );
-        }
+        const result = await postApi({ action: 'verifyAdmin', password });
+        if (result.status !== 'success') throw new Error(result.message || 'รหัสผู้ดูแลไม่ถูกต้อง');
 
         state.adminToken = result.token;
-
         getElement('adminPassword').value = '';
         getElement('passwordSection').classList.add('hidden');
         getElement('targetSection').classList.remove('hidden');
-
         buildTargetInputs();
       } catch (error) {
         errorBox.textContent = error.message;
         errorBox.classList.remove('hidden');
       } finally {
-        setButtonLoading(
-          button,
-          false,
-          'ตรวจสอบสิทธิ์',
-          'log-in'
-        );
+        setButtonLoading(button, false, 'ตรวจสอบสิทธิ์', 'log-in');
       }
     }
 
     function buildTargetInputs() {
       const targets = getCurrentTargets();
       const container = getElement('targetInputs');
-
-      getElement('targetMonthLabel').textContent =
-        formatMonth(state.selectedMonth);
-
+      getElement('targetMonthLabel').textContent = formatMonth(state.selectedMonth);
       container.innerHTML = '';
 
       PROVINCES.forEach(province => {
         const label = document.createElement('label');
-
-        label.className =
-          'block rounded-xl border border-slate-800 ' +
-          'bg-slate-950/40 p-3';
-
-        label.innerHTML = `
-          <span class="mb-2 block text-xs text-slate-400">
-            ภ.จว.${province}
-          </span>
-
-          <input
-            type="number"
-            min="0"
-            step="1"
-            value="${targets[province]}"
-            data-province="${province}"
-            class="target-input w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-white outline-none focus:border-blue-500"
-          >
-        `;
-
+        label.className = 'block rounded-xl border border-slate-800 bg-slate-950/40 p-3';
+        label.innerHTML = `<span class="mb-2 block text-xs text-slate-400">ภ.จว.${province}</span><input type="number" min="0" step="1" value="${targets[province]}" data-province="${province}" class="target-input w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-white outline-none focus:border-blue-500">`;
         container.appendChild(label);
       });
     }
@@ -1940,63 +791,28 @@
     async function saveAdminTargets() {
       const button = getElement('saveTargetButton');
       const targets = {};
+      document.querySelectorAll('.target-input').forEach(input => {
+        targets[input.dataset.province] = Math.max(0, Math.floor(Number(input.value) || 0));
+      });
 
-      document
-        .querySelectorAll('.target-input')
-        .forEach(input => {
-          targets[input.dataset.province] = Math.max(
-            0,
-            Math.floor(Number(input.value) || 0)
-          );
-        });
-
-      setButtonLoading(
-        button,
-        true,
-        'กำลังบันทึก...'
-      );
+      setButtonLoading(button, true, 'กำลังบันทึก...');
 
       try {
-        const result = await postApi({
-          action: 'saveTargets',
-          token: state.adminToken,
-          month: state.selectedMonth,
-          data: targets
-        });
+        const result = await postApi({ action: 'saveTargets', token: state.adminToken, month: state.selectedMonth, data: targets });
+        if (result.status !== 'success') throw new Error(result.message || 'บันทึกข้อมูลไม่สำเร็จ');
 
-        if (result.status !== 'success') {
-          throw new Error(
-            result.message || 'บันทึกข้อมูลไม่สำเร็จ'
-          );
-        }
-
-        state.allTargets =
-          result.allTargets || state.allTargets;
-
+        state.allTargets = result.allTargets || state.allTargets;
         renderDashboard();
         closeAdmin();
-
-        showToast(
-          'บันทึกเป้าหมายประจำเดือนเรียบร้อยแล้ว',
-          'success'
-        );
+        showToast('บันทึกเป้าหมายประจำเดือนเรียบร้อยแล้ว', 'success');
       } catch (error) {
         showToast(error.message, 'error');
-
-        if (
-          error.message.includes('หมดอายุ') ||
-          error.message.includes('สิทธิ์')
-        ) {
+        if (error.message.includes('หมดอายุ') || error.message.includes('สิทธิ์')) {
           closeAdmin();
           openAdmin();
         }
       } finally {
-        setButtonLoading(
-          button,
-          false,
-          'บันทึกเป้าหมาย',
-          'save'
-        );
+        setButtonLoading(button, false, 'บันทึกเป้าหมาย', 'save');
       }
     }
 
@@ -2007,166 +823,92 @@
         redirect: 'follow'
       });
 
-      if (!response.ok) {
-        throw new Error(`เชื่อมต่อไม่สำเร็จ HTTP ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`เชื่อมต่อไม่สำเร็จ HTTP ${response.status}`);
       return response.json();
     }
 
-    function setButtonLoading(
-      button,
-      loading,
-      text,
-      iconName = ''
-    ) {
+    function setButtonLoading(button, loading, text, iconName = '') {
       button.disabled = loading;
-
       if (loading) {
         button.textContent = text;
         return;
       }
-
-      button.innerHTML = iconName
-        ? `
-          <i data-lucide="${iconName}" class="h-4 w-4"></i>
-          ${text}
-        `
-        : text;
-
+      button.innerHTML = iconName ? `<i data-lucide="${iconName}" class="h-4 w-4"></i>${text}` : text;
       lucide.createIcons();
     }
 
     function setStatus(type, message) {
       const dot = getElement('statusDot');
-
-      dot.className =
-        'h-2 w-2 flex-shrink-0 rounded-full';
-
-      if (type === 'success') {
-        dot.classList.add('bg-emerald-400');
-      } else if (type === 'loading') {
-        dot.classList.add(
-          'bg-yellow-400',
-          'animate-pulse'
-        );
-      } else if (type === 'error') {
-        dot.classList.add('bg-red-400');
-      } else {
-        dot.classList.add('bg-slate-500');
-      }
-
+      dot.className = 'h-2 w-2 flex-shrink-0 rounded-full';
+      if (type === 'success') dot.classList.add('bg-emerald-400');
+      else if (type === 'loading') dot.classList.add('bg-yellow-400', 'animate-pulse');
+      else if (type === 'error') dot.classList.add('bg-red-400');
+      else dot.classList.add('bg-slate-500');
       getElement('syncStatus').textContent = message;
     }
 
     function showToast(message, type = 'success') {
       const toast = getElement('toast');
-
-      toast.className =
-        'fixed bottom-4 right-4 z-[60] max-w-sm ' +
-        'rounded-xl border px-4 py-3 text-sm shadow-2xl';
-
-      if (type === 'success') {
-        toast.classList.add(
-          'border-emerald-500/30',
-          'bg-emerald-950',
-          'text-emerald-200'
-        );
-      } else {
-        toast.classList.add(
-          'border-red-500/30',
-          'bg-red-950',
-          'text-red-200'
-        );
-      }
-
+      toast.className = 'fixed bottom-4 right-4 z-[60] max-w-sm rounded-xl border px-4 py-3 text-sm shadow-2xl';
+      if (type === 'success') toast.classList.add('border-emerald-500/30', 'bg-emerald-950', 'text-emerald-200');
+      else toast.classList.add('border-red-500/30', 'bg-red-950', 'text-red-200');
       toast.textContent = message;
       toast.classList.remove('hidden');
-
       clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
 
-      showToast.timer = setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 4000);
+    function getRankClass(index) {
+      if (index === 0) return 'bg-yellow-400 text-slate-950';
+      if (index === 1) return 'bg-slate-300 text-slate-900';
+      if (index === 2) return 'bg-amber-700 text-white';
+      return 'bg-slate-700 text-slate-200';
     }
 
     function formatMonth(yearMonth) {
-      if (!yearMonth) {
-        return '-';
-      }
-
-      const [year, month] =
-        yearMonth.split('-').map(Number);
-
-      return new Intl.DateTimeFormat('th-TH', {
-        month: 'long',
-        year: 'numeric'
-      }).format(new Date(year, month - 1, 1));
+      if (!yearMonth) return '-';
+      const [year, month] = yearMonth.split('-').map(Number);
+      return new Intl.DateTimeFormat('th-TH', { month: 'long', year: 'numeric' }).format(new Date(year, month - 1, 1));
     }
 
     function formatShortDate(dateString) {
-      const [, month, day] =
-        dateString.split('-').map(Number);
-
+      const [, month, day] = dateString.split('-').map(Number);
       return `${day}/${month}`;
     }
 
     function formatDisplayDate(dateString) {
-      const [year, month, day] =
-        dateString.split('-').map(Number);
-
-      return new Intl.DateTimeFormat('th-TH', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      }).format(new Date(year, month - 1, day));
+      const [year, month, day] = dateString.split('-').map(Number);
+      return new Intl.DateTimeFormat('th-TH', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(year, month - 1, day));
     }
 
     function formatNumber(value) {
-      return new Intl.NumberFormat('th-TH').format(
-        Number(value) || 0
-      );
+      return new Intl.NumberFormat('th-TH').format(Number(value) || 0);
     }
 
     function getLastDateOfMonth(yearMonth) {
-      const [year, month] =
-        yearMonth.split('-').map(Number);
-
-      const lastDay =
-        new Date(year, month, 0).getDate();
-
-      return (
-        `${yearMonth}-` +
-        String(lastDay).padStart(2, '0')
-      );
+      const [year, month] = yearMonth.split('-').map(Number);
+      const lastDay = new Date(year, month, 0).getDate();
+      return `${yearMonth}-${String(lastDay).padStart(2, '0')}`;
     }
 
     function enumerateDates(startDate, endDate) {
       const dates = [];
       const current = parseLocalDate(startDate);
       const last = parseLocalDate(endDate);
-
       while (current <= last) {
         dates.push(toLocalDateString(current));
         current.setDate(current.getDate() + 1);
       }
-
       return dates;
     }
 
     function parseLocalDate(value) {
-      const [year, month, day] =
-        value.split('-').map(Number);
-
+      const [year, month, day] = value.split('-').map(Number);
       return new Date(year, month - 1, day);
     }
 
     function toLocalDateString(date) {
-      return [
-        date.getFullYear(),
-        String(date.getMonth() + 1).padStart(2, '0'),
-        String(date.getDate()).padStart(2, '0')
-      ].join('-');
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     }
   </script>
 </body>
