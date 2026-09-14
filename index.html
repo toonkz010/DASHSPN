@@ -20,11 +20,15 @@
     }
     button, input, select { max-width: 100%; font-family: "Prompt", sans-serif; }
     input[type="date"] { color-scheme: dark; }
+    
     .glass-panel { background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.65)); border: 1px solid rgba(148, 163, 184, 0.17); box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22); backdrop-filter: blur(16px); }
     .header-panel { position: relative; overflow: hidden; background: radial-gradient(circle at 90% 0%, rgba(250, 204, 21, 0.18), transparent 30%), linear-gradient(135deg, rgba(30, 58, 138, 0.96), rgba(15, 23, 42, 0.98)); border: 1px solid rgba(250, 204, 21, 0.22); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34); }
     .header-panel::after { position: absolute; top: -155px; right: -90px; width: 290px; height: 290px; border: 48px solid rgba(255, 255, 255, 0.035); border-radius: 999px; pointer-events: none; content: ""; }
-    .logo-frame { display: flex; width: 94px; height: 105px; flex: 0 0 auto; align-items: center; justify-content: center; padding: 7px; overflow: hidden; border: 1px solid rgba(250, 204, 21, 0.35); border-radius: 20px; background: linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035)); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.30); }
+    
+    /* 7) ขยายโลโก้ให้เด่นขึ้น */
+    .logo-frame { display: flex; width: 120px; height: 135px; flex: 0 0 auto; align-items: center; justify-content: center; padding: 10px; overflow: hidden; border: 1px solid rgba(250, 204, 21, 0.35); border-radius: 24px; background: linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035)); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.30); }
     .logo-frame img { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45)); }
+    
     .summary-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
     .summary-card { position: relative; min-width: 0; min-height: 150px; overflow: hidden; transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
     .summary-card::after { position: absolute; right: -38px; bottom: -72px; width: 145px; height: 145px; border-radius: 999px; background: rgba(59, 130, 246, 0.06); pointer-events: none; content: ""; }
@@ -35,7 +39,11 @@
     .bordered-table { min-width: 900px; }
     .matrix-table { min-width: 1100px; }
     .bordered-table th, .bordered-table td, .matrix-table th, .matrix-table td { border: 1px solid rgba(100, 116, 139, 0.42); vertical-align: middle; white-space: nowrap; }
-    .sticky-column { position: sticky; left: 0; z-index: 3; }
+    
+    /* 4) ตรึงหัวตารางรายวัน */
+    .sticky-header th { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(8px); }
+    .sticky-column { position: sticky; left: 0; z-index: 25; }
+    
     .custom-scrollbar::-webkit-scrollbar { width: 7px; height: 7px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { border-radius: 999px; background: #475569; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
@@ -52,11 +60,12 @@
       @page { size: A4 landscape; margin: 10mm; }
       body { background: white !important; color: black !important; min-height: auto; }
       * { color: black !important; text-shadow: none !important; box-shadow: none !important; }
-      .header-controls, #missingAlert, button, .present-clock { display: none !important; }
+      .header-controls, #missingAlert, button, .present-clock, #presentNav, #btnToggleSettings { display: none !important; }
       .glass-panel { background: white !important; border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 20px; }
       canvas { filter: invert(1) hue-rotate(180deg); }
       .bg-slate-950, .bg-slate-900, .bg-slate-800, .bg-emerald-950, .bg-blue-950 { background: #f8f9fa !important; }
       table th, table td { border: 1px solid #666 !important; }
+      .sticky-header th { position: static; }
     }
 
     @media (max-width: 1279px) { .summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
@@ -67,16 +76,16 @@
       .header-controls { display: grid !important; width: 100%; grid-template-columns: 1fr 1fr; }
       .header-control, .header-control select, .header-control input { width: 100%; min-width: 0; }
       .admin-button { grid-column: 1 / -1; justify-content: center; }
-      .refresh-button { position: absolute; top: 12px; right: 12px; }
-      .chart-wrapper { height: 310px !important; }
+      
+      /* 2) ปรับขนาดพื้นที่กราฟในมือถือให้สูงขึ้น ป้องกันรายชื่อจว.หาย */
+      .chart-wrapper { height: 380px !important; }
     }
     @media (max-width: 480px) {
       .summary-grid { grid-template-columns: minmax(0, 1fr); }
       .summary-card { min-height: auto; }
-      .header-controls { grid-template-columns: minmax(0, 1fr); }
-      .logo-frame { width: 68px; height: 77px; padding: 5px; border-radius: 15px; }
-      .header-title { font-size: 1rem !important; }
-      .header-subtitle { font-size: 0.68rem !important; }
+      .logo-frame { width: 85px; height: 95px; padding: 5px; border-radius: 15px; }
+      .header-title { font-size: 1.1rem !important; }
+      .header-subtitle { font-size: 0.75rem !important; }
     }
   </style>
 </head>
@@ -99,10 +108,15 @@
               <span id="syncStatus">กำลังเตรียมข้อมูล</span><span class="text-slate-500">•</span><span>อัปเดตล่าสุด</span>
               <span id="lastUpdated" class="font-mono text-yellow-300">-</span>
             </div>
+            <!-- 1) ปุ่มเปิด/ปิด แถบเครื่องมือตั้งค่า -->
+            <button id="btnToggleSettings" type="button" onclick="toggleSettings()" class="mt-3 flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20">
+              <i data-lucide="sliders-horizontal" class="h-4 w-4"></i> แสดงเครื่องมือตั้งค่าและส่งออก
+            </button>
           </div>
         </div>
 
-        <div class="header-controls relative flex w-full flex-wrap items-center gap-2 xl:w-auto">
+        <!-- แถบตั้งค่า (ถูกซ่อนไว้เป็นค่าเริ่มต้น) -->
+        <div id="controlPanel" class="header-controls hidden relative w-full flex-wrap items-center gap-2 xl:w-auto">
           <label class="header-control flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2">
             <i data-lucide="calendar-days" class="mr-2 h-4 w-4 flex-shrink-0 text-yellow-300"></i>
             <select id="monthSelector" class="min-w-0 cursor-pointer bg-transparent text-xs font-semibold text-white outline-none"></select>
@@ -128,24 +142,31 @@
           <button type="button" onclick="openAdmin()" class="admin-button flex items-center gap-2 rounded-xl border border-yellow-400/30 bg-yellow-400/10 px-3 py-2 text-xs font-semibold text-yellow-200 transition hover:bg-yellow-400/20">
             <i data-lucide="settings" class="h-4 w-4"></i> จัดการเป้าหมาย
           </button>
-          <button type="button" onclick="fetchDataFromServer()" title="อัปเดตข้อมูล" class="refresh-button rounded-xl border border-blue-400/25 bg-blue-500/15 p-2.5 transition hover:bg-blue-500/25">
-            <i id="refreshIcon" data-lucide="refresh-cw" class="h-4 w-4 text-blue-200"></i>
+          <button type="button" onclick="fetchDataFromServer()" title="อัปเดตข้อมูล" class="refresh-button admin-button flex items-center justify-center gap-2 rounded-xl border border-blue-400/25 bg-blue-500/15 p-2.5 transition hover:bg-blue-500/25">
+            <i id="refreshIcon" data-lucide="refresh-cw" class="h-4 w-4 text-blue-200"></i> รีเฟรช
           </button>
         </div>
       </div>
     </header>
 
-    <!-- นาฬิกาโหมดพรีเซนต์ -->
+    <!-- นาฬิกาและปุ่มควบคุม โหมดพรีเซนต์ -->
     <div id="clockDisplay" class="present-clock hidden fixed top-6 right-6 z-50 text-4xl font-mono font-bold text-yellow-300 drop-shadow-2xl"></div>
+    <!-- 5) ปุ่มเลื่อนสไลด์เอง -->
+    <div id="presentNav" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] items-center gap-6 rounded-full border border-slate-600 bg-slate-900/95 px-6 py-3 shadow-2xl backdrop-blur-xl">
+      <button onclick="prevSlide()" class="rounded-full p-2 text-slate-300 transition hover:bg-slate-700 hover:text-white" title="ก่อนหน้า (ลูกศรซ้าย)"><i data-lucide="chevron-left" class="h-7 w-7"></i></button>
+      <button onclick="togglePresentation()" class="rounded-full p-2 text-rose-400 transition hover:bg-rose-950/80 hover:text-rose-300" title="ออกจากการนำเสนอ (ESC)"><i data-lucide="x" class="h-7 w-7"></i></button>
+      <button onclick="nextSlide()" class="rounded-full p-2 text-slate-300 transition hover:bg-slate-700 hover:text-white" title="ถัดไป (ลูกศรขวา)"><i data-lucide="chevron-right" class="h-7 w-7"></i></button>
+    </div>
 
-    <!-- 1. การ์ดสรุปเรียงลำดับใหม่ -->
+    <!-- การ์ดสรุป -->
     <section id="sec-cards" class="summary-grid">
       <article class="glass-panel summary-card rounded-2xl p-5">
         <div class="relative z-10 flex justify-between gap-3">
           <div class="min-w-0">
             <p class="text-xs font-medium text-slate-400">ผลการจับกุมสะสม</p>
             <h2 id="totalCases" class="mt-2 font-mono text-3xl font-extrabold text-white">0</h2>
-            <p class="mt-1 text-[11px] text-slate-500">ตามช่วงวันที่ที่เลือก</p>
+            <!-- 8) ระบุเดือน -->
+            <p id="cumulativeMonthText" class="mt-1 text-[11px] text-slate-500">ประจำเดือน...</p>
           </div>
           <div class="h-fit flex-shrink-0 rounded-xl bg-blue-500/10 p-2.5"><i data-lucide="shield-check" class="h-5 w-5 text-blue-300"></i></div>
         </div>
@@ -165,7 +186,8 @@
       <article class="glass-panel summary-card rounded-2xl p-5">
         <div class="relative z-10 flex justify-between gap-3">
           <div class="min-w-0">
-            <p class="text-xs font-medium text-slate-400">จับกุมได้กี่เปอร์เซ็นต์</p>
+            <!-- 6) เปลี่ยนหัวเป็น ความคืบหน้าผลการจับกุม -->
+            <p class="text-xs font-medium text-slate-400">ความคืบหน้าผลการจับกุม</p>
             <h2 id="targetPercent" class="mt-2 font-mono text-3xl font-extrabold text-emerald-400">0.0%</h2>
             <p class="mt-1 text-[11px] text-slate-500">จากเป้าหมาย <span id="totalTarget" class="font-mono text-slate-300">0</span> ราย</p>
           </div>
@@ -198,7 +220,6 @@
         </div>
       </article>
       
-      <!-- แจ้งเตือนรวมอยู่ใน section เดียวกันเพื่อให้พรีเซนต์โชว์พร้อมกัน -->
       <div id="missingAlert" class="col-span-1 mt-0 hidden rounded-2xl border border-red-500/20 bg-red-950/30 p-4 sm:col-span-2 xl:col-span-5">
         <div class="flex items-start gap-3">
           <i data-lucide="triangle-alert" class="mt-0.5 h-5 w-5 flex-shrink-0 text-red-400"></i>
@@ -210,7 +231,7 @@
       </div>
     </section>
 
-    <!-- 2. กราฟ -->
+    <!-- กราฟ -->
     <section id="sec-charts" class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
       <article class="glass-panel rounded-2xl p-4 md:p-5">
         <div class="mb-4">
@@ -229,22 +250,22 @@
       </article>
     </section>
 
-    <!-- 3. ตารางจัดอันดับเรียงตามชื่อจังหวัด -->
+    <!-- ตารางจัดอันดับ -->
     <section id="sec-ranking" class="glass-panel mt-4 overflow-hidden rounded-2xl">
       <div class="border-b border-slate-800 p-4 md:px-5">
         <h2 class="font-semibold text-white">ลำดับผลจับกุมเทียบเป้าหมาย</h2>
-        <p class="text-[11px] text-slate-500">จัดเรียงตามชื่อ ภ.จว.</p>
+        <p class="text-[11px] text-slate-500">จัดอันดับจากเปอร์เซ็นต์ของเป้าหมาย</p>
       </div>
       <div class="table-scroll custom-scrollbar">
         <table class="bordered-table text-left text-sm">
           <thead class="bg-slate-950/70 text-xs text-slate-300">
             <tr>
-              <th class="p-3 text-center">ลำดับ</th>
+              <th class="p-3 text-center">อันดับ</th>
               <th class="p-3">หน่วยงาน</th>
               <th class="p-3 text-center">เป้าหมาย</th>
               <th class="p-3 text-center">ผลจับกุม</th>
               <th class="p-3 text-center">คงเหลือ</th>
-              <th class="p-3 text-center">เปอร์เซ็นต์ของเป้า</th>
+              <th class="p-3 text-center">ความคืบหน้าของเป้า</th>
             </tr>
           </thead>
           <tbody id="summaryBody"></tbody>
@@ -252,7 +273,7 @@
       </div>
     </section>
 
-    <!-- 4. ตารางรายวัน -->
+    <!-- ตารางรายวัน -->
     <section id="sec-matrix" class="glass-panel mt-4 overflow-hidden rounded-2xl">
       <div class="flex items-center justify-between border-b border-slate-800 p-4 md:px-5">
         <div>
@@ -262,8 +283,9 @@
         <i data-lucide="table-properties" class="h-5 w-5 text-blue-300"></i>
       </div>
       <div class="table-scroll custom-scrollbar">
-        <table class="matrix-table text-center text-xs">
-          <thead id="matrixHeader" class="bg-slate-950/80 text-slate-300"></thead>
+        <table class="matrix-table text-center text-xs relative">
+          <!-- 4) ตรึงหัวตารางรายวัน -->
+          <thead id="matrixHeader" class="sticky-header bg-slate-950/90 text-slate-300 shadow-md"></thead>
           <tbody id="matrixBody"></tbody>
           <tfoot id="matrixFooter" class="bg-slate-800 font-semibold text-white"></tfoot>
         </table>
@@ -273,7 +295,7 @@
     <footer class="py-6 text-center text-[11px] text-slate-600">ระบบติดตามผลการปราบปรามหนี้นอกระบบ ตำรวจภูธรภาค 3</footer>
   </main>
 
-  <!-- หน้าต่างผู้ดูแล (Admin Modal) -->
+  <!-- หน้าต่างผู้ดูแล -->
   <div id="adminModal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 p-4">
     <div class="glass-panel max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl">
       <div class="flex items-center justify-between border-b border-slate-800 p-5">
@@ -309,16 +331,11 @@
   <div id="toast" class="fixed bottom-4 right-4 z-[60] hidden max-w-sm rounded-xl border px-4 py-3 text-sm shadow-2xl"></div>
 
   <script>
-    /*
-     * ⚠️ ข้อควรระวัง: อย่าลืมเปลี่ยน URL ตรงนี้กลับเป็น API ของคุณหลัง Deploy ใหม่ (New version)
-     */
     const API_URL = 'https://script.google.com/macros/s/AKfycbz41GG_9gW6eVt1bWW_mIWDwPnQR0njup8gGVqQ-XPjH-BPzNSRMUXUsB60H5dpgkKc/exec';
 
     const PROVINCES = ['ชัยภูมิ', 'นครราชสีมา', 'บุรีรัมย์', 'ยโสธร', 'ศรีสะเกษ', 'สุรินทร์', 'อำนาจเจริญ', 'อุบลราชธานี'];
     const CHART_COLORS = ['#facc15', '#cbd5e1', '#d97706', '#60a5fa', '#34d399', '#a78bfa', '#22d3ee', '#fb7185'];
-
     const state = { records: [], validMonths: [], allTargets: {}, selectedMonth: '', adminToken: '', dailyChart: null, provinceChart: null };
-
     const getElement = id => document.getElementById(id);
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -331,6 +348,11 @@
       getElement('adminModal').addEventListener('click', event => { if (event.target.id === 'adminModal') closeAdmin(); });
       fetchDataFromServer();
     });
+
+    function toggleSettings() {
+      const panel = getElement('controlPanel');
+      panel.classList.toggle('hidden'); panel.classList.toggle('flex');
+    }
 
     function handleLogoError(image) {
       image.style.display = 'none';
@@ -355,7 +377,6 @@
         setStatus('success', 'ข้อมูลเป็นปัจจุบัน');
         getElement('lastUpdated').textContent = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date());
       } catch (error) {
-        console.error(error);
         setStatus('error', 'เชื่อมต่อข้อมูลไม่สำเร็จ'); showToast(error.message, 'error');
       } finally { getElement('refreshIcon').classList.remove('animate-spin'); }
     }
@@ -365,13 +386,11 @@
       const previousMonth = state.selectedMonth || selector.value;
       selector.innerHTML = '';
       const sortedMonths = [...state.validMonths].sort().reverse();
-
       sortedMonths.forEach(yearMonth => {
         const option = document.createElement('option');
         option.value = yearMonth; option.textContent = formatMonth(yearMonth);
         selector.appendChild(option);
       });
-
       if (previousMonth && state.validMonths.includes(previousMonth)) selector.value = previousMonth;
       state.selectedMonth = selector.value || state.validMonths[0] || '';
       applyMonthDateRange();
@@ -386,20 +405,13 @@
       if (!state.selectedMonth) return;
       const firstDate = `${state.selectedMonth}-01`;
       const lastDate = getLastDateOfMonth(state.selectedMonth);
-      
       const dateInputs = [getElement('startDate'), getElement('endDate')];
       dateInputs.forEach(input => { input.min = firstDate; input.max = lastDate; });
       getElement('startDate').value = firstDate; getElement('endDate').value = lastDate;
-      
       const dailyInput = getElement('dailyArrestDate');
       dailyInput.min = firstDate; dailyInput.max = lastDate;
-      
-      // เลือกวันที่ก่อนวันปัจจุบัน 1 วัน
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
+      const today = new Date(); const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
       const yesterdayStr = toLocalDateString(yesterday);
-      
       if (yesterdayStr.startsWith(state.selectedMonth)) dailyInput.value = yesterdayStr;
       else dailyInput.value = lastDate;
     }
@@ -408,8 +420,10 @@
       if (!state.selectedMonth) { clearDashboard(); return; }
       const startDate = getElement('startDate').value || `${state.selectedMonth}-01`;
       const endDate = getElement('endDate').value || getLastDateOfMonth(state.selectedMonth);
-
       if (startDate > endDate) { showToast('วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด', 'error'); return; }
+
+      // 8) เปลี่ยนข้อความเป็นประจำเดือน...
+      getElement('cumulativeMonthText').textContent = 'ประจำเดือน ' + formatMonth(state.selectedMonth);
 
       const filteredRecords = state.records.filter(record => record.yearMonth === state.selectedMonth && record.dateStr >= startDate && record.dateStr <= endDate && PROVINCES.includes(record.province));
       const targets = getCurrentTargets();
@@ -433,6 +447,7 @@
       getElement('totalCases').textContent = '0'; getElement('dailyArrestCases').textContent = '0';
       getElement('topProvince').textContent = '-'; getElement('topProvinceCount').textContent = 'ยังไม่มีผลการจับกุม';
       getElement('targetPercent').textContent = '0.0%'; getElement('totalTarget').textContent = '0'; getElement('remainingTarget').textContent = '0';
+      getElement('cumulativeMonthText').textContent = 'ตามช่วงวันที่ที่เลือก';
     }
 
     function renderDailyArrest() {
@@ -455,6 +470,7 @@
       return counts;
     }
 
+    // 3) เรียงลำดับตามเปอร์เซ็นต์ (มากไปน้อย)
     function createRanking(targets, counts) {
       return PROVINCES.map(province => {
         const target = targets[province];
@@ -462,11 +478,16 @@
         const remaining = Math.max(target - actual, 0);
         const percent = target > 0 ? (actual / target) * 100 : null;
         return { province, target, actual, remaining, percent };
-      }).sort((a, b) => a.province.localeCompare(b.province, 'th')); // เรียงลำดับชื่อ ก-ฮ
+      }).sort((a, b) => {
+        const aHasTarget = a.target > 0; const bHasTarget = b.target > 0;
+        if (aHasTarget !== bHasTarget) return bHasTarget - aHasTarget;
+        const aPercent = a.percent ?? -1; const bPercent = b.percent ?? -1;
+        return (bPercent - aPercent) || (b.actual - a.actual) || a.province.localeCompare(b.province, 'th');
+      });
     }
 
     function renderTopProvince(ranking) {
-      const topProvince = [...ranking].sort((a, b) => b.actual - a.actual || (b.percent ?? -1) - (a.percent ?? -1) || a.province.localeCompare(b.province, 'th'))[0];
+      const topProvince = [...ranking][0]; // ตัวแรกคือสูงสุดเพราะ sort มาแล้ว
       if (!topProvince || topProvince.actual === 0) {
         getElement('topProvince').textContent = '-'; getElement('topProvinceCount').textContent = 'ยังไม่มีผลการจับกุม'; return;
       }
@@ -476,14 +497,11 @@
     }
 
     function renderMissingAlert(ranking, totalTarget) {
-      const alertBox = getElement('missingAlert'); const list = getElement('missingList');
-      list.innerHTML = '';
+      const alertBox = getElement('missingAlert'); const list = getElement('missingList'); list.innerHTML = '';
       if (totalTarget === 0) {
         alertBox.classList.remove('hidden');
-        const badge = document.createElement('span');
-        badge.className = 'rounded-lg border border-yellow-600/30 bg-yellow-950/60 px-2.5 py-1 text-xs text-yellow-200';
-        badge.textContent = 'ยังไม่ได้กำหนดเป้าหมายประจำเดือนนี้';
-        list.appendChild(badge); return;
+        list.innerHTML = `<span class="rounded-lg border border-yellow-600/30 bg-yellow-950/60 px-2.5 py-1 text-xs text-yellow-200">ยังไม่ได้กำหนดเป้าหมายประจำเดือนนี้</span>`;
+        return;
       }
       const missingItems = ranking.filter(item => item.target > 0 && item.remaining > 0);
       if (missingItems.length === 0) { alertBox.classList.add('hidden'); return; }
@@ -517,12 +535,9 @@
           <td class="min-w-[210px] p-3">
             <div class="flex items-center justify-center gap-3">
               <span class="w-16 text-right font-mono ${item.percent !== null && item.percent >= 100 ? 'text-emerald-400' : 'text-slate-200'}">${percentText}</span>
-              <div class="h-2.5 w-28 overflow-hidden rounded-full border border-slate-600 bg-slate-700/60">
-                <div class="h-full rounded-full ${progressColor}" style="width: ${progressWidth}%"></div>
-              </div>
+              <div class="h-2.5 w-28 overflow-hidden rounded-full border border-slate-600 bg-slate-700/60"><div class="h-full rounded-full ${progressColor}" style="width: ${progressWidth}%"></div></div>
             </div>
-          </td>
-        `;
+          </td>`;
         tbody.appendChild(row);
       });
 
@@ -530,13 +545,7 @@
       const totalPercent = totalTarget > 0 ? (totalActual / totalTarget) * 100 : 0;
       const totalRow = document.createElement('tr');
       totalRow.className = 'bg-blue-950/40 font-semibold text-white';
-      totalRow.innerHTML = `
-        <td class="p-3 text-center">-</td><td class="p-3">รวมตำรวจภูธรภาค 3</td>
-        <td class="p-3 text-center font-mono text-blue-300">${formatNumber(totalTarget)}</td>
-        <td class="p-3 text-center font-mono text-emerald-400">${formatNumber(totalActual)}</td>
-        <td class="p-3 text-center font-mono ${totalRemaining > 0 ? 'text-rose-300' : 'text-emerald-400'}">${totalTarget === 0 ? '-' : totalRemaining > 0 ? formatNumber(totalRemaining) : '✓'}</td>
-        <td class="p-3 text-center font-mono text-emerald-300">${totalTarget > 0 ? `${totalPercent.toFixed(1)}%` : '-'}</td>
-      `;
+      totalRow.innerHTML = `<td class="p-3 text-center">-</td><td class="p-3">รวมตำรวจภูธรภาค 3</td><td class="p-3 text-center font-mono text-blue-300">${formatNumber(totalTarget)}</td><td class="p-3 text-center font-mono text-emerald-400">${formatNumber(totalActual)}</td><td class="p-3 text-center font-mono ${totalRemaining > 0 ? 'text-rose-300' : 'text-emerald-400'}">${totalTarget === 0 ? '-' : totalRemaining > 0 ? formatNumber(totalRemaining) : '✓'}</td><td class="p-3 text-center font-mono text-emerald-300">${totalTarget > 0 ? `${totalPercent.toFixed(1)}%` : '-'}</td>`;
       tbody.appendChild(totalRow);
     }
 
@@ -558,31 +567,22 @@
       state.dailyChart = new Chart(getElement('dailyTrendChart'), {
         type: 'line',
         data: { labels: dates.map(formatShortDate), datasets: [{ label: 'ผลจับกุม', data: dates.map(date => dailyCounts[date]), borderColor: '#60a5fa', backgroundColor: 'rgba(96, 165, 250, 0.14)', borderWidth: 2, fill: true, tension: 0.35, pointRadius: 3, pointHoverRadius: 5 }] },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#cbd5e1', font: { family: 'Prompt' } } } },
-          scales: {
-            x: { ticks: { color: '#94a3b8', maxRotation: 45, minRotation: 45 }, grid: { color: 'rgba(148, 163, 184, 0.07)' } },
-            y: { beginAtZero: true, ticks: { color: '#94a3b8', precision: 0 }, grid: { color: 'rgba(148, 163, 184, 0.08)' } }
-          }
-        }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#cbd5e1', font: { family: 'Prompt' } } } }, scales: { x: { ticks: { color: '#94a3b8', maxRotation: 45, minRotation: 45 }, grid: { color: 'rgba(148, 163, 184, 0.07)' } }, y: { beginAtZero: true, ticks: { color: '#94a3b8', precision: 0 }, grid: { color: 'rgba(148, 163, 184, 0.08)' } } } }
       });
 
       state.provinceChart = new Chart(getElement('provinceChart'), {
         type: 'bar',
         data: {
           labels: ranking.map((item, index) => `${index + 1}. ${item.province}`),
-          datasets: [{ label: 'เปอร์เซ็นต์ของเป้า', data: ranking.map(item => item.percent === null ? 0 : Number(item.percent.toFixed(2))), backgroundColor: ranking.map((_, index) => CHART_COLORS[index % CHART_COLORS.length]), borderRadius: 7, borderSkipped: false }]
+          datasets: [{ label: 'เปอร์เซ็นต์ของเป้า', data: ranking.map(item => item.percent === null ? 0 : Number(item.percent.toFixed(2))), backgroundColor: ranking.map((_, index) => CHART_COLORS[index % CHART_COLORS.length]), borderRadius: 7 }]
         },
+        // 2) แก้ไขชื่อจว.ขาดหายในมือถือ (autoSkip: false) และเพิ่ม padding
         options: {
-          responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-          plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label(context) { const item = ranking[context.dataIndex]; if (item.target === 0) return [`จับกุม ${formatNumber(item.actual)} ราย`, 'ยังไม่ได้กำหนดเป้าหมาย']; return [`${item.percent.toFixed(1)}% ของเป้า`, `จับกุม ${formatNumber(item.actual)} จากเป้า ${formatNumber(item.target)} ราย`]; } } }
-          },
+          responsive: true, maintainAspectRatio: false, indexAxis: 'y', layout: { padding: { left: 0 } },
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label(context) { const item = ranking[context.dataIndex]; if (item.target === 0) return [`จับกุม ${formatNumber(item.actual)} ราย`, 'ยังไม่ได้กำหนดเป้าหมาย']; return [`${item.percent.toFixed(1)}% ของเป้า`, `จับกุม ${formatNumber(item.actual)} จากเป้า ${formatNumber(item.target)} ราย`]; } } } },
           scales: {
             x: { beginAtZero: true, ticks: { color: '#94a3b8', callback: value => `${value}%` }, grid: { color: 'rgba(148, 163, 184, 0.08)' } },
-            y: { ticks: { color: '#e2e8f0', font: { family: 'Prompt' }, autoSkip: false }, grid: { display: false } } // แก้มือถือชื่อจว.หาย
+            y: { ticks: { color: '#e2e8f0', font: { family: 'Prompt' }, autoSkip: false, crossAlign: 'near' }, grid: { display: false } }
           }
         }
       });
@@ -595,6 +595,7 @@
       records.forEach(record => { if (matrix[record.dateStr] && record.province in matrix[record.dateStr]) matrix[record.dateStr][record.province]++; });
 
       const header = getElement('matrixHeader');
+      // 4) หัวตารางผูก CSS .sticky-header ไว้ด้านบนแล้ว
       header.innerHTML = `<tr><th class="sticky-column min-w-[120px] bg-slate-950 p-3">วันที่</th>${PROVINCES.map(province => `<th class="min-w-[110px] p-3">${province}</th>`).join('')}<th class="min-w-[110px] bg-blue-950/60 p-3 text-blue-300">รวมรายวัน</th></tr>`;
 
       const tbody = getElement('matrixBody'); const footer = getElement('matrixFooter');
@@ -610,51 +611,14 @@
         row.innerHTML = `<td class="sticky-column bg-slate-900 p-3 font-medium text-slate-200">${formatDisplayDate(date)}</td>${PROVINCES.map(province => { const value = matrix[date][province]; return `<td class="p-3 font-mono ${value > 0 ? 'bg-blue-500/10 font-semibold text-blue-300' : 'text-slate-600'}">${value > 0 ? formatNumber(value) : '-'}</td>`; }).join('')}<td class="bg-blue-950/30 p-3 font-mono font-bold ${dailyTotal > 0 ? 'text-yellow-300' : 'text-slate-600'}">${dailyTotal > 0 ? formatNumber(dailyTotal) : '-'}</td>`;
         tbody.appendChild(row);
       });
-
       footer.innerHTML = `<tr><td class="sticky-column bg-slate-800 p-3">รวมทั้งหมด</td>${PROVINCES.map(province => `<td class="p-3 font-mono text-emerald-300">${formatNumber(provinceTotals[province])}</td>`).join('')}<td class="bg-blue-950 p-3 font-mono text-base text-yellow-300">${formatNumber(grandTotal)}</td></tr>`;
     }
 
-    function openAdmin() {
-      const modal = getElement('adminModal'); modal.classList.remove('hidden'); modal.classList.add('flex');
-      getElement('passwordSection').classList.remove('hidden'); getElement('targetSection').classList.add('hidden'); getElement('passwordError').classList.add('hidden');
-      getElement('adminPassword').value = ''; state.adminToken = ''; setTimeout(() => { getElement('adminPassword').focus(); }, 100);
-    }
+    function openAdmin() { const modal = getElement('adminModal'); modal.classList.remove('hidden'); modal.classList.add('flex'); getElement('passwordSection').classList.remove('hidden'); getElement('targetSection').classList.add('hidden'); getElement('passwordError').classList.add('hidden'); getElement('adminPassword').value = ''; state.adminToken = ''; setTimeout(() => { getElement('adminPassword').focus(); }, 100); }
     function closeAdmin() { const modal = getElement('adminModal'); modal.classList.add('hidden'); modal.classList.remove('flex'); getElement('adminPassword').value = ''; state.adminToken = ''; }
-
-    async function verifyAdmin() {
-      const password = getElement('adminPassword').value; const button = getElement('verifyButton'); const errorBox = getElement('passwordError');
-      errorBox.classList.add('hidden');
-      if (!password) { errorBox.textContent = 'กรุณากรอกรหัสผู้ดูแล'; errorBox.classList.remove('hidden'); return; }
-      setButtonLoading(button, true, 'กำลังตรวจสอบ...');
-      try {
-        const result = await postApi({ action: 'verifyAdmin', password });
-        if (result.status !== 'success') throw new Error(result.message || 'รหัสผู้ดูแลไม่ถูกต้อง');
-        state.adminToken = result.token; getElement('adminPassword').value = ''; getElement('passwordSection').classList.add('hidden'); getElement('targetSection').classList.remove('hidden');
-        buildTargetInputs();
-      } catch (error) { errorBox.textContent = error.message; errorBox.classList.remove('hidden'); } finally { setButtonLoading(button, false, 'ตรวจสอบสิทธิ์', 'log-in'); }
-    }
-
-    function buildTargetInputs() {
-      const targets = getCurrentTargets(); const container = getElement('targetInputs');
-      getElement('targetMonthLabel').textContent = formatMonth(state.selectedMonth); container.innerHTML = '';
-      PROVINCES.forEach(province => {
-        const label = document.createElement('label'); label.className = 'block rounded-xl border border-slate-800 bg-slate-950/40 p-3';
-        label.innerHTML = `<span class="mb-2 block text-xs text-slate-400">ภ.จว.${province}</span><input type="number" min="0" step="1" value="${targets[province]}" data-province="${province}" class="target-input w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-white outline-none focus:border-blue-500">`;
-        container.appendChild(label);
-      });
-    }
-
-    async function saveAdminTargets() {
-      const button = getElement('saveTargetButton'); const targets = {};
-      document.querySelectorAll('.target-input').forEach(input => { targets[input.dataset.province] = Math.max(0, Math.floor(Number(input.value) || 0)); });
-      setButtonLoading(button, true, 'กำลังบันทึก...');
-      try {
-        const result = await postApi({ action: 'saveTargets', token: state.adminToken, month: state.selectedMonth, data: targets });
-        if (result.status !== 'success') throw new Error(result.message || 'บันทึกข้อมูลไม่สำเร็จ');
-        state.allTargets = result.allTargets || state.allTargets;
-        renderDashboard(); closeAdmin(); showToast('บันทึกเป้าหมายประจำเดือนเรียบร้อยแล้ว', 'success');
-      } catch (error) { showToast(error.message, 'error'); if (error.message.includes('หมดอายุ') || error.message.includes('สิทธิ์')) { closeAdmin(); openAdmin(); } } finally { setButtonLoading(button, false, 'บันทึกเป้าหมาย', 'save'); }
-    }
+    async function verifyAdmin() { const password = getElement('adminPassword').value; const button = getElement('verifyButton'); const errorBox = getElement('passwordError'); errorBox.classList.add('hidden'); if (!password) { errorBox.textContent = 'กรุณากรอกรหัสผู้ดูแล'; errorBox.classList.remove('hidden'); return; } setButtonLoading(button, true, 'กำลังตรวจสอบ...'); try { const result = await postApi({ action: 'verifyAdmin', password }); if (result.status !== 'success') throw new Error(result.message || 'รหัสผู้ดูแลไม่ถูกต้อง'); state.adminToken = result.token; getElement('adminPassword').value = ''; getElement('passwordSection').classList.add('hidden'); getElement('targetSection').classList.remove('hidden'); buildTargetInputs(); } catch (error) { errorBox.textContent = error.message; errorBox.classList.remove('hidden'); } finally { setButtonLoading(button, false, 'ตรวจสอบสิทธิ์', 'log-in'); } }
+    function buildTargetInputs() { const targets = getCurrentTargets(); const container = getElement('targetInputs'); getElement('targetMonthLabel').textContent = formatMonth(state.selectedMonth); container.innerHTML = ''; PROVINCES.forEach(province => { const label = document.createElement('label'); label.className = 'block rounded-xl border border-slate-800 bg-slate-950/40 p-3'; label.innerHTML = `<span class="mb-2 block text-xs text-slate-400">ภ.จว.${province}</span><input type="number" min="0" step="1" value="${targets[province]}" data-province="${province}" class="target-input w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-white outline-none focus:border-blue-500">`; container.appendChild(label); }); }
+    async function saveAdminTargets() { const button = getElement('saveTargetButton'); const targets = {}; document.querySelectorAll('.target-input').forEach(input => { targets[input.dataset.province] = Math.max(0, Math.floor(Number(input.value) || 0)); }); setButtonLoading(button, true, 'กำลังบันทึก...'); try { const result = await postApi({ action: 'saveTargets', token: state.adminToken, month: state.selectedMonth, data: targets }); if (result.status !== 'success') throw new Error(result.message || 'บันทึกข้อมูลไม่สำเร็จ'); state.allTargets = result.allTargets || state.allTargets; renderDashboard(); closeAdmin(); showToast('บันทึกเป้าหมายประจำเดือนเรียบร้อยแล้ว', 'success'); } catch (error) { showToast(error.message, 'error'); if (error.message.includes('หมดอายุ') || error.message.includes('สิทธิ์')) { closeAdmin(); openAdmin(); } } finally { setButtonLoading(button, false, 'บันทึกเป้าหมาย', 'save'); } }
 
     async function postApi(payload) { const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), redirect: 'follow' }); if (!response.ok) throw new Error(`เชื่อมต่อไม่สำเร็จ HTTP ${response.status}`); return response.json(); }
     function setButtonLoading(button, loading, text, iconName = '') { button.disabled = loading; if (loading) { button.textContent = text; return; } button.innerHTML = iconName ? `<i data-lucide="${iconName}" class="h-4 w-4"></i> ${text}` : text; lucide.createIcons(); }
@@ -669,73 +633,67 @@
     function parseLocalDate(value) { const [year, month, day] = value.split('-').map(Number); return new Date(year, month - 1, day); }
     function toLocalDateString(date) { return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-'); }
 
-    // ฟังก์ชัน Export ไป Excel / CSV
     function exportToCSV() {
-      const BOM = '\uFEFF';
-      let csv = BOM;
-      
-      csv += "ข้อมูลรายงานภาพรวม\n";
-      csv += `ประจำเดือน,${state.selectedMonth}\n`;
-      csv += `ผลการจับกุมสะสม,${getElement('totalCases').innerText.replace(/,/g, '')}\n`;
-      csv += `ผลการจับกุมรายวัน,${getElement('dailyArrestCases').innerText.replace(/,/g, '')}\n\n`;
-
-      csv += "สรุปเทียบเป้าหมาย\n";
-      csv += "อันดับ,หน่วยงาน,เป้าหมาย,ผลจับกุม,คงเหลือ,เปอร์เซ็นต์ของเป้า\n";
-      document.querySelectorAll('#summaryBody tr').forEach(row => {
-         const cols = Array.from(row.querySelectorAll('td')).map(td => `"${td.innerText.replace(/"/g, '""').trim().replace(/(\r\n|\n|\r)/gm, " ")}"`);
-         if(cols.length > 0) csv += cols.join(',') + "\n";
-      });
-      csv += "\n";
-
-      csv += "ผลการจับกุมรายวัน x จังหวัด\n";
-      const ths = Array.from(document.querySelectorAll('#matrixHeader th')).map(th => `"${th.innerText.replace(/"/g, '""').trim()}"`);
-      csv += ths.join(',') + "\n";
-      document.querySelectorAll('#matrixBody tr, #matrixFooter tr').forEach(row => {
-         const cols = Array.from(row.querySelectorAll('td')).map(td => `"${td.innerText.replace(/"/g, '""').trim().replace(/(\r\n|\n|\r)/gm, " ")}"`);
-         if(cols.length > 0) csv += cols.join(',') + "\n";
-      });
-
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `รายงานหนี้นอกระบบ_${state.selectedMonth}.csv`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const BOM = '\uFEFF'; let csv = BOM;
+      csv += "ข้อมูลรายงานภาพรวม\n"; csv += `ประจำเดือน,${state.selectedMonth}\n`; csv += `ผลการจับกุมสะสม,${getElement('totalCases').innerText.replace(/,/g, '')}\n`; csv += `ผลการจับกุมรายวัน,${getElement('dailyArrestCases').innerText.replace(/,/g, '')}\n\n`;
+      csv += "สรุปเทียบเป้าหมาย\n"; csv += "อันดับ,หน่วยงาน,เป้าหมาย,ผลจับกุม,คงเหลือ,เปอร์เซ็นต์ของเป้า\n";
+      document.querySelectorAll('#summaryBody tr').forEach(row => { const cols = Array.from(row.querySelectorAll('td')).map(td => `"${td.innerText.replace(/"/g, '""').trim().replace(/(\r\n|\n|\r)/gm, " ")}"`); if(cols.length > 0) csv += cols.join(',') + "\n"; }); csv += "\n";
+      csv += "ผลการจับกุมรายวัน x จังหวัด\n"; const ths = Array.from(document.querySelectorAll('#matrixHeader th')).map(th => `"${th.innerText.replace(/"/g, '""').trim()}"`); csv += ths.join(',') + "\n";
+      document.querySelectorAll('#matrixBody tr, #matrixFooter tr').forEach(row => { const cols = Array.from(row.querySelectorAll('td')).map(td => `"${td.innerText.replace(/"/g, '""').trim().replace(/(\r\n|\n|\r)/gm, " ")}"`); if(cols.length > 0) csv += cols.join(',') + "\n"; });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = `รายงานหนี้นอกระบบ_${state.selectedMonth}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
-    // ฟังก์ชันโหมดพรีเซนต์เต็มจอ
+    // 5) ฟังก์ชันโหมดพรีเซนต์ เลื่อนสไลด์เองได้
     let presentationTimer, refreshTimer, clockTimer;
+    let currentSlideIndex = 0;
+    const slidesList = ['sec-cards', 'sec-charts', 'sec-ranking', 'sec-matrix'];
+
+    function showSlide(idx) {
+       slidesList.forEach((id, i) => {
+          const s = getElement(id);
+          if(i === idx) { s.classList.remove('hidden'); s.classList.add('animate-fade'); } 
+          else { s.classList.add('hidden'); s.classList.remove('animate-fade'); }
+       });
+    }
+
+    function nextSlide() {
+       currentSlideIndex = (currentSlideIndex + 1) % slidesList.length;
+       showSlide(currentSlideIndex); resetPresentTimer();
+    }
+    function prevSlide() {
+       currentSlideIndex = (currentSlideIndex - 1 + slidesList.length) % slidesList.length;
+       showSlide(currentSlideIndex); resetPresentTimer();
+    }
+    function resetPresentTimer() {
+       clearInterval(presentationTimer);
+       presentationTimer = setInterval(nextSlide, 12000);
+    }
+    function handleKeydown(e) {
+       if (e.key === 'ArrowRight') nextSlide();
+       else if (e.key === 'ArrowLeft') prevSlide();
+       else if (e.key === 'Escape') togglePresentation();
+    }
+
     function togglePresentation() {
        const isPresenting = document.body.classList.toggle('presenting');
-       const slides = [ getElement('sec-cards'), getElement('sec-charts'), getElement('sec-ranking'), getElement('sec-matrix') ];
        const clock = getElement('clockDisplay');
+       const nav = getElement('presentNav');
 
        if (isPresenting) {
           document.documentElement.requestFullscreen().catch(e => console.log(e));
-          let currentSlide = 0;
-          const showSlide = (idx) => {
-             slides.forEach((s, i) => {
-                if(i === idx) { s.classList.remove('hidden'); s.classList.add('animate-fade'); } 
-                else { s.classList.add('hidden'); s.classList.remove('animate-fade'); }
-             });
-          };
-          showSlide(0);
-          
-          presentationTimer = setInterval(() => {
-             currentSlide = (currentSlide + 1) % slides.length;
-             showSlide(currentSlide);
-          }, 12000); 
-
+          currentSlideIndex = 0; showSlide(currentSlideIndex); resetPresentTimer();
           refreshTimer = setInterval(() => { fetchDataFromServer(); }, 300000); 
           clockTimer = setInterval(() => { clock.textContent = new Date().toLocaleTimeString('th-TH'); }, 1000);
           clock.classList.remove('hidden');
+          nav.classList.remove('hidden'); nav.classList.add('flex');
+          document.addEventListener('keydown', handleKeydown);
        } else {
           if (document.fullscreenElement) document.exitFullscreen();
           clearInterval(presentationTimer); clearInterval(refreshTimer); clearInterval(clockTimer);
           clock.classList.add('hidden');
-          slides.forEach(s => { s.classList.remove('hidden'); s.classList.remove('animate-fade'); });
+          nav.classList.add('hidden'); nav.classList.remove('flex');
+          slidesList.forEach(id => { const s = getElement(id); s.classList.remove('hidden', 'animate-fade'); });
+          document.removeEventListener('keydown', handleKeydown);
        }
     }
   </script>
