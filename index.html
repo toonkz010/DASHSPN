@@ -25,7 +25,6 @@
     .header-panel { position: relative; overflow: hidden; background: radial-gradient(circle at 90% 0%, rgba(250, 204, 21, 0.18), transparent 30%), linear-gradient(135deg, rgba(30, 58, 138, 0.96), rgba(15, 23, 42, 0.98)); border: 1px solid rgba(250, 204, 21, 0.22); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34); }
     .header-panel::after { position: absolute; top: -155px; right: -90px; width: 290px; height: 290px; border: 48px solid rgba(255, 255, 255, 0.035); border-radius: 999px; pointer-events: none; content: ""; }
     
-    /* ขยายโลโก้ให้เด่นตามข้อ 5 */
     .logo-frame { display: flex; width: 140px; height: 160px; flex: 0 0 auto; align-items: center; justify-content: center; padding: 12px; overflow: hidden; border: 1px solid rgba(250, 204, 21, 0.35); border-radius: 28px; background: linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035)); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.30); }
     .logo-frame img { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45)); }
     
@@ -35,7 +34,6 @@
     .summary-card:hover { transform: translateY(-3px); border-color: rgba(96, 165, 250, 0.35); box-shadow: 0 22px 50px rgba(0, 0, 0, 0.30); }
     .summary-card p, .summary-card h2 { max-width: 100%; overflow-wrap: anywhere; }
     
-    /* ตั้งค่า Scroll ตารางรายวันให้มีจำกัดความสูงเพื่อให้หัวตาราง sticky ทำงาน */
     .table-scroll { width: 100%; max-width: 100%; max-height: 550px; overflow: auto; -webkit-overflow-scrolling: touch; }
     .bordered-table, .matrix-table { width: 100%; border-collapse: separate; border-spacing: 0; }
     .bordered-table { min-width: 900px; }
@@ -44,10 +42,9 @@
     .bordered-table th:first-child, .bordered-table td:first-child, .matrix-table th:first-child, .matrix-table td:first-child { border-left: 1px solid rgba(100, 116, 139, 0.42); }
     .bordered-table tr:first-child th, .matrix-table tr:first-child th { border-top: 1px solid rgba(100, 116, 139, 0.42); }
     
-    /* ตรึงหัวตาราง ภ.จว (ข้อ 2) */
     .sticky-header th { position: sticky; top: 0; z-index: 20; background-color: #020617; }
     .sticky-column { position: sticky; left: 0; z-index: 21; background-color: #0f172a; }
-    .matrix-table th.sticky-column { z-index: 30; } /* มุมตาราง */
+    .matrix-table th.sticky-column { z-index: 30; } 
 
     .custom-scrollbar::-webkit-scrollbar { width: 7px; height: 7px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { border-radius: 999px; background: #475569; }
@@ -75,8 +72,6 @@
       body { background-attachment: scroll; }
       .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
       .summary-card { min-height: 142px; padding: 14px !important; }
-      
-      /* กราฟแท่งบนมือถือปรับให้สูงขึ้นเพื่อโชว์ ภ.จว ครบ (ข้อ 3) */
       #provinceChartWrapper { height: 480px !important; }
     }
     @media (max-width: 480px) {
@@ -107,7 +102,6 @@
               <span id="lastUpdated" class="font-mono text-yellow-300">-</span>
             </div>
             
-            <!-- (ข้อ 4) เลือกเดือนโชว์ตลอด + ปุ่มเครื่องมือเพิ่มเติม -->
             <div id="monthControlContainer" class="mt-4 flex flex-wrap items-center gap-3">
               <label class="flex items-center rounded-xl border border-white/20 bg-slate-950/80 px-3 py-2 shadow-lg">
                 <i data-lucide="calendar-days" class="mr-2 h-4 w-4 flex-shrink-0 text-yellow-300"></i>
@@ -121,7 +115,6 @@
           </div>
         </div>
 
-        <!-- แถบตั้งค่าที่ถูกซ่อนโดยปริยาย (ข้อ 4) -->
         <div id="controlPanel" class="hidden relative w-full flex-wrap items-center gap-2 pt-4 mt-2 border-t border-slate-700/50 xl:justify-end">
           <label class="flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2 w-full md:w-auto">
             <span class="mr-2 flex-shrink-0 text-[11px] text-slate-400">ตั้งแต่</span>
@@ -246,7 +239,6 @@
       </article>
     </section>
 
-    <!-- (ข้อ 1) กลับไปใช้ตารางลำดับผลการจับกุมแบบธรรมดา ไม่ต้องตรึง -->
     <section id="sec-ranking" class="glass-panel mt-4 overflow-hidden rounded-2xl">
       <div class="border-b border-slate-800 p-4 md:px-5">
         <h2 class="font-semibold text-white">ลำดับผลจับกุมเทียบเป้าหมาย</h2>
@@ -279,7 +271,6 @@
       </div>
       <div class="table-scroll custom-scrollbar relative">
         <table class="matrix-table text-center text-xs relative">
-          <!-- (ข้อ 2) ตรึงหัวตาราง ภ.จว. -->
           <thead id="matrixHeader" class="sticky-header bg-slate-950 text-slate-300 shadow-md"></thead>
           <tbody id="matrixBody"></tbody>
           <tfoot id="matrixFooter" class="bg-slate-800 font-semibold text-white"></tfoot>
@@ -325,7 +316,9 @@
   <div id="toast" class="fixed bottom-4 right-4 z-[60] hidden max-w-sm rounded-xl border px-4 py-3 text-sm shadow-2xl"></div>
 
   <script>
+    // ** เปลี่ยน URL ตรงนี้เป็น Web App URL ล่าสุดของคุณ (ลงท้ายด้วย /exec) **
     const API_URL = 'https://script.google.com/macros/s/AKfycbz41GG_9gW6eVt1bWW_mIWDwPnQR0njup8gGVqQ-XPjH-BPzNSRMUXUsB60H5dpgkKc/exec';
+    
     const PROVINCES = ['ชัยภูมิ', 'นครราชสีมา', 'บุรีรัมย์', 'ยโสธร', 'ศรีสะเกษ', 'สุรินทร์', 'อำนาจเจริญ', 'อุบลราชธานี'];
     const CHART_COLORS = ['#facc15', '#cbd5e1', '#d97706', '#60a5fa', '#34d399', '#a78bfa', '#22d3ee', '#fb7185'];
     const state = { records: [], validMonths: [], allTargets: {}, selectedMonth: '', adminToken: '', dailyChart: null, provinceChart: null };
@@ -356,11 +349,33 @@
     async function fetchDataFromServer() {
       setStatus('loading', 'กำลังอัปเดตข้อมูล');
       getElement('refreshIcon').classList.add('animate-spin');
+
+      // 1. ดึงของเก่าจาก Cache เครื่องผู้ใช้มาโชว์ก่อน (เสร็จใน 0.1 วินาที)
+      try {
+        const cachedString = localStorage.getItem('DASHBOARD_DATA_CACHE');
+        if (cachedString) {
+          const result = JSON.parse(cachedString);
+          if (result && result.records) {
+            state.records = Array.isArray(result.records) ? result.records : [];
+            state.validMonths = Array.isArray(result.validMonths) ? result.validMonths : [];
+            state.allTargets = result.allTargets && typeof result.allTargets === 'object' ? result.allTargets : {};
+            
+            if (!state.selectedMonth) buildMonthSelector(); 
+            renderDashboard();
+            setStatus('loading', 'กำลังซิงค์ข้อมูลล่าสุด...');
+          }
+        }
+      } catch (e) { console.warn('ไม่มีแคชในเครื่อง', e); }
+
+      // 2. ไปดึงของใหม่จาก Server (ซึ่ง Server เตรียมไว้ให้แล้วจาก Trigger จึงไวมาก)
       try {
         const response = await fetch(`${API_URL}?action=getData&_=${Date.now()}`, { method: 'GET', cache: 'no-store', redirect: 'follow' });
         if (!response.ok) throw new Error(`เชื่อมต่อไม่สำเร็จ HTTP ${response.status}`);
         const result = await response.json();
         if (result.status !== 'success') throw new Error(result.message || 'ไม่สามารถอ่านข้อมูลได้');
+
+        // บันทึกของใหม่ลงเครื่องไว้ใช้รอบหน้า
+        localStorage.setItem('DASHBOARD_DATA_CACHE', JSON.stringify(result));
 
         state.records = Array.isArray(result.records) ? result.records : [];
         state.validMonths = Array.isArray(result.validMonths) ? result.validMonths : [];
@@ -370,7 +385,7 @@
         setStatus('success', 'ข้อมูลเป็นปัจจุบัน');
         getElement('lastUpdated').textContent = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date());
       } catch (error) {
-        setStatus('error', 'เชื่อมต่อข้อมูลไม่สำเร็จ'); showToast(error.message, 'error');
+        setStatus('error', 'เชื่อมต่อข้อมูลไม่สำเร็จ (แสดงข้อมูลล่าสุดที่มี)'); showToast(error.message, 'error');
       } finally { getElement('refreshIcon').classList.remove('animate-spin'); }
     }
 
@@ -401,8 +416,6 @@
       const dateInputs = [getElement('startDate'), getElement('endDate')];
       dateInputs.forEach(input => { input.min = firstDate; input.max = lastDate; });
       getElement('startDate').value = firstDate; getElement('endDate').value = lastDate;
-      const dailyInput = getElement('dailyArrestDate');
-      dailyInput.min = firstDate; dailyInput.max = lastDate;
       const today = new Date(); const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
       const yesterdayStr = toLocalDateString(yesterday);
       if (yesterdayStr.startsWith(state.selectedMonth)) dailyInput.value = yesterdayStr;
@@ -518,7 +531,6 @@
         const progressWidth = item.percent === null ? 0 : Math.min(item.percent, 100);
         const progressColor = item.percent !== null && item.percent >= 100 ? 'bg-emerald-500' : 'bg-blue-500';
 
-        // ข้อ 1: เอา sticky ออก กลับเป็นแบบปกติ
         row.innerHTML = `
           <td class="p-3 text-center"><span class="inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 font-bold ${rankClass}">${index + 1}</span></td>
           <td class="p-3 font-medium text-slate-200">ภ.จว.${item.province}</td>
@@ -576,7 +588,6 @@
           labels: ranking.map((item, index) => `${index + 1}. ${item.province}`),
           datasets: [{ label: 'เปอร์เซ็นต์ของเป้า', data: ranking.map(item => item.percent === null ? 0 : Number(item.percent.toFixed(2))), backgroundColor: ranking.map((_, index) => CHART_COLORS[index % CHART_COLORS.length]), borderRadius: 7 }]
         },
-        // ข้อ 3: แสดงชื่อ ภ.จว. ให้ครบ ไม่ตัดคำ (autoSkip: false)
         options: {
           responsive: true, maintainAspectRatio: false, indexAxis: 'y',
           layout: { padding: { left: 5, right: 15 } },
@@ -596,7 +607,6 @@
       records.forEach(record => { if (matrix[record.dateStr] && record.province in matrix[record.dateStr]) matrix[record.dateStr][record.province]++; });
 
       const header = getElement('matrixHeader');
-      // ข้อ 2: ตรึงหัวตาราง ภ.จว.
       header.innerHTML = `<tr><th class="sticky-column bg-slate-950 p-3 shadow-[3px_0_5px_-1px_rgba(0,0,0,0.4)] z-[30]">วันที่</th>${PROVINCES.map(province => `<th class="p-3 bg-slate-950 z-[20]">${province}</th>`).join('')}<th class="bg-blue-950/90 p-3 text-blue-300 z-[20]">รวมรายวัน</th></tr>`;
 
       const tbody = getElement('matrixBody'); const footer = getElement('matrixFooter');
