@@ -409,13 +409,19 @@
       applyMonthDateRange(); renderDashboard();
     }
 
-    function applyMonthDateRange() {
+   function applyMonthDateRange() {
       if (!state.selectedMonth) return;
       const firstDate = `${state.selectedMonth}-01`;
       const lastDate = getLastDateOfMonth(state.selectedMonth);
       const dateInputs = [getElement('startDate'), getElement('endDate')];
       dateInputs.forEach(input => { input.min = firstDate; input.max = lastDate; });
       getElement('startDate').value = firstDate; getElement('endDate').value = lastDate;
+      
+      // เพิ่มการประกาศตัวแปร dailyInput กลับเข้ามาตรงนี้
+      const dailyInput = getElement('dailyArrestDate');
+      dailyInput.min = firstDate; 
+      dailyInput.max = lastDate;
+      
       const today = new Date(); const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
       const yesterdayStr = toLocalDateString(yesterday);
       if (yesterdayStr.startsWith(state.selectedMonth)) dailyInput.value = yesterdayStr;
