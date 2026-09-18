@@ -44,7 +44,7 @@
     
     .sticky-header th { position: sticky; top: 0; z-index: 20; background-color: #020617; }
     .sticky-column { position: sticky; left: 0; z-index: 21; background-color: #0f172a; }
-    .matrix-table th.sticky-column { z-index: 30; } 
+    .matrix-table th.sticky-column { z-index: 30; }
 
     .custom-scrollbar::-webkit-scrollbar { width: 7px; height: 7px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { border-radius: 999px; background: #475569; }
@@ -316,8 +316,11 @@
   <div id="toast" class="fixed bottom-4 right-4 z-[60] hidden max-w-sm rounded-xl border px-4 py-3 text-sm shadow-2xl"></div>
 
   <script>
-    // ** เปลี่ยน URL ตรงนี้เป็น Web App URL ล่าสุดของคุณ (ลงท้ายด้วย /exec) **
+    // URL สำหรับจัดการ Admin (รหัสผ่าน/เซฟเป้าหมาย) ต้องใช้ลิงก์ Apps Script เหมือนเดิม
     const API_URL = 'https://script.google.com/macros/s/AKfycbz41GG_9gW6eVt1bWW_mIWDwPnQR0njup8gGVqQ-XPjH-BPzNSRMUXUsB60H5dpgkKc/exec';
+    
+    // URL ดึงข้อมูลให้เว็บโหลดเร็วระดับ 0.05 วินาที ใช้ Firebase ที่เราเชื่อมไว้
+    const FIREBASE_DATA_URL = 'https://data-spn-fe78b-default-rtdb.asia-southeast1.firebasedatabase.app/dashboardData.json';
     
     const PROVINCES = ['ชัยภูมิ', 'นครราชสีมา', 'บุรีรัมย์', 'ยโสธร', 'ศรีสะเกษ', 'สุรินทร์', 'อำนาจเจริญ', 'อุบลราชธานี'];
     const CHART_COLORS = ['#facc15', '#cbd5e1', '#d97706', '#60a5fa', '#34d399', '#a78bfa', '#22d3ee', '#fb7185'];
@@ -350,7 +353,7 @@
       setStatus('loading', 'กำลังอัปเดตข้อมูล');
       getElement('refreshIcon').classList.add('animate-spin');
 
-      // 1. ดึงของเก่าจาก Cache เครื่องผู้ใช้มาโชว์ก่อน (เสร็จใน 0.1 วินาที)
+      // 1. ดึงของเก่าจาก Cache เครื่องผู้ใช้ (SWR) มาโชว์ก่อนทันที
       try {
         const cachedString = localStorage.getItem('DASHBOARD_DATA_CACHE');
         if (cachedString) {
@@ -367,12 +370,13 @@
         }
       } catch (e) { console.warn('ไม่มีแคชในเครื่อง', e); }
 
-      // 2. ไปดึงของใหม่จาก Server (ซึ่ง Server เตรียมไว้ให้แล้วจาก Trigger จึงไวมาก)
+      // 2. ไปดึงข้อมูลล่าสุดจาก Firebase
       try {
-        const response = await fetch(`${API_URL}?action=getData&_=${Date.now()}`, { method: 'GET', cache: 'no-store', redirect: 'follow' });
+        const response = await fetch(FIREBASE_DATA_URL, { cache: 'no-store' });
         if (!response.ok) throw new Error(`เชื่อมต่อไม่สำเร็จ HTTP ${response.status}`);
         const result = await response.json();
-        if (result.status !== 'success') throw new Error(result.message || 'ไม่สามารถอ่านข้อมูลได้');
+        
+        if (!result || result.status !== 'success') throw new Error('ไม่พบข้อมูลบนฐานข้อมูล Firebase');
 
         // บันทึกของใหม่ลงเครื่องไว้ใช้รอบหน้า
         localStorage.setItem('DASHBOARD_DATA_CACHE', JSON.stringify(result));
@@ -409,7 +413,7 @@
       applyMonthDateRange(); renderDashboard();
     }
 
-   function applyMonthDateRange() {
+    function applyMonthDateRange() {
       if (!state.selectedMonth) return;
       const firstDate = `${state.selectedMonth}-01`;
       const lastDate = getLastDateOfMonth(state.selectedMonth);
@@ -417,11 +421,10 @@
       dateInputs.forEach(input => { input.min = firstDate; input.max = lastDate; });
       getElement('startDate').value = firstDate; getElement('endDate').value = lastDate;
       
-      // เพิ่มการประกาศตัวแปร dailyInput กลับเข้ามาตรงนี้
       const dailyInput = getElement('dailyArrestDate');
       dailyInput.min = firstDate; 
       dailyInput.max = lastDate;
-      
+
       const today = new Date(); const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
       const yesterdayStr = toLocalDateString(yesterday);
       if (yesterdayStr.startsWith(state.selectedMonth)) dailyInput.value = yesterdayStr;
@@ -635,7 +638,7 @@
     function closeAdmin() { const modal = getElement('adminModal'); modal.classList.add('hidden'); modal.classList.remove('flex'); getElement('adminPassword').value = ''; state.adminToken = ''; }
     async function verifyAdmin() { const password = getElement('adminPassword').value; const button = getElement('verifyButton'); const errorBox = getElement('passwordError'); errorBox.classList.add('hidden'); if (!password) { errorBox.textContent = 'กรุณากรอกรหัสผู้ดูแล'; errorBox.classList.remove('hidden'); return; } setButtonLoading(button, true, 'กำลังตรวจสอบ...'); try { const result = await postApi({ action: 'verifyAdmin', password }); if (result.status !== 'success') throw new Error(result.message || 'รหัสผู้ดูแลไม่ถูกต้อง'); state.adminToken = result.token; getElement('adminPassword').value = ''; getElement('passwordSection').classList.add('hidden'); getElement('targetSection').classList.remove('hidden'); buildTargetInputs(); } catch (error) { errorBox.textContent = error.message; errorBox.classList.remove('hidden'); } finally { setButtonLoading(button, false, 'ตรวจสอบสิทธิ์', 'log-in'); } }
     function buildTargetInputs() { const targets = getCurrentTargets(); const container = getElement('targetInputs'); getElement('targetMonthLabel').textContent = formatMonth(state.selectedMonth); container.innerHTML = ''; PROVINCES.forEach(province => { const label = document.createElement('label'); label.className = 'block rounded-xl border border-slate-800 bg-slate-950/40 p-3'; label.innerHTML = `<span class="mb-2 block text-xs text-slate-400">ภ.จว.${province}</span><input type="number" min="0" step="1" value="${targets[province]}" data-province="${province}" class="target-input w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-white outline-none focus:border-blue-500">`; container.appendChild(label); }); }
-    async function saveAdminTargets() { const button = getElement('saveTargetButton'); const targets = {}; document.querySelectorAll('.target-input').forEach(input => { targets[input.dataset.province] = Math.max(0, Math.floor(Number(input.value) || 0)); }); setButtonLoading(button, true, 'กำลังบันทึก...'); try { const result = await postApi({ action: 'saveTargets', token: state.adminToken, month: state.selectedMonth, data: targets }); if (result.status !== 'success') throw new Error(result.message || 'บันทึกข้อมูลไม่สำเร็จ'); state.allTargets = result.allTargets || state.allTargets; renderDashboard(); closeAdmin(); showToast('บันทึกเป้าหมายประจำเดือนเรียบร้อยแล้ว', 'success'); } catch (error) { showToast(error.message, 'error'); if (error.message.includes('หมดอายุ') || error.message.includes('สิทธิ์')) { closeAdmin(); openAdmin(); } } finally { setButtonLoading(button, false, 'บันทึกเป้าหมาย', 'save'); } }
+    async function saveAdminTargets() { const button = getElement('saveTargetButton'); const targets = {}; document.querySelectorAll('.target-input').forEach(input => { targets[input.dataset.province] = Math.max(0, Math.floor(Number(input.value) || 0)); }); setButtonLoading(button, true, 'กำลังบันทึก...'); try { const result = await postApi({ action: 'saveTargets', token: state.adminToken, month: state.selectedMonth, data: targets }); if (result.status !== 'success') throw new Error(result.message || 'บันทึกข้อมูลไม่สำเร็จ'); state.allTargets = result.allTargets || state.allTargets; renderDashboard(); closeAdmin(); showToast('บันทึกเป้าหมายประจำเดือนเรียบร้อยแล้ว', 'success'); fetchDataFromServer(); } catch (error) { showToast(error.message, 'error'); if (error.message.includes('หมดอายุ') || error.message.includes('สิทธิ์')) { closeAdmin(); openAdmin(); } } finally { setButtonLoading(button, false, 'บันทึกเป้าหมาย', 'save'); } }
 
     async function postApi(payload) { const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), redirect: 'follow' }); if (!response.ok) throw new Error(`เชื่อมต่อไม่สำเร็จ HTTP ${response.status}`); return response.json(); }
     function setButtonLoading(button, loading, text, iconName = '') { button.disabled = loading; if (loading) { button.textContent = text; return; } button.innerHTML = iconName ? `<i data-lucide="${iconName}" class="h-4 w-4"></i> ${text}` : text; lucide.createIcons(); }
