@@ -81,6 +81,10 @@
     .rpt .rk1 { background: #ffff00 !important; } .rpt .rk2 { background: #00ff00 !important; } .rpt .rk3 { background: #ffc000 !important; }
     .rpt-capture { display: inline-block; background: #fff; padding: 10px; }
     .rpt tr.sub td { background: #deebf7; font-weight: 700; }
+    .is-collapsed { display: none !important; }
+    .presenting #annualBody.is-collapsed { display: block !important; }
+    #annualToggle svg { transition: transform 0.2s ease; }
+    #annualToggle[aria-expanded="false"] svg { transform: rotate(-90deg); }
     .rpt-legend { display: inline-block; width: 14px; height: 14px; background: #d9d9d9; border: 1px solid #94a3b8; vertical-align: -2px; margin-right: 6px; }
 
     @media print {
@@ -92,6 +96,8 @@
       canvas { filter: invert(1) hue-rotate(180deg); }
       .bg-slate-950, .bg-slate-900, .bg-slate-800, .bg-emerald-950, .bg-blue-950 { background: #f8f9fa !important; }
       .sticky-header th, .sticky-column { position: static !important; }
+      #annualBody.is-collapsed { display: block !important; }
+      #annualToggle svg { display: none; }
       .rpt-scroll { overflow: visible !important; padding: 0 !important; }
       .rpt, .rpt * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .rpt th.dayhead { color: #fff !important; }
@@ -322,11 +328,14 @@
 
     <section id="sec-annual" class="glass-panel mt-4 overflow-hidden rounded-2xl">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 p-4 md:px-5">
-        <div>
-          <h2 class="font-semibold text-white">สรุปข้อมูลประจำปี</h2>
-          <p class="text-[11px] text-slate-500">ผลการจับกุมรายเดือน รายจังหวัด รวมทั้งปี เทียบเป้าหมาย</p>
-        </div>
-        <div class="header-controls flex flex-wrap items-center gap-2">
+        <button id="annualToggle" type="button" onclick="toggleAnnual()" aria-expanded="false" aria-controls="annualBody" class="flex items-center gap-3 text-left">
+          <i data-lucide="chevron-down" class="h-5 w-5 flex-shrink-0 text-blue-300"></i>
+          <span>
+            <span class="block font-semibold text-white">สรุปข้อมูลประจำปี</span>
+            <span class="block text-[11px] text-slate-500">ผลการจับกุมรายเดือน รายจังหวัด รวมทั้งปี เทียบเป้าหมาย · กดเพื่อพับ/ขยาย</span>
+          </span>
+        </button>
+        <div id="annualControls" class="header-controls flex flex-wrap items-center gap-2">
           <label class="flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2">
             <span class="mr-2 flex-shrink-0 text-[11px] text-slate-400">ปี</span>
             <select id="annualYear" class="min-w-0 cursor-pointer bg-transparent text-xs font-semibold text-white outline-none"></select>
@@ -336,8 +345,10 @@
           </button>
         </div>
       </div>
+      <div id="annualBody">
       <div class="rpt-scroll custom-scrollbar"><div id="annualCapture" class="rpt-capture"><table id="annualTable" class="rpt"></table></div></div>
       <p id="annualNote" class="border-t border-slate-800 px-5 py-2 text-[11px] text-slate-500"></p>
+      </div>
     </section>
 
     <section id="sec-matrix" class="glass-panel mt-4 overflow-hidden rounded-2xl">
@@ -413,6 +424,7 @@
       getElement('surgeStart').addEventListener('change', handleSurgeChange);
       getElement('surgeEnd').addEventListener('change', handleSurgeChange);
       getElement('annualYear').addEventListener('change', renderAnnual);
+      initAnnualCollapsed();
       getElement('startDate').addEventListener('change', renderDashboard);
       getElement('endDate').addEventListener('change', renderDashboard);
       getElement('dailyArrestDate').addEventListener('change', renderDailyArrest);
@@ -988,6 +1000,23 @@
         setTimeout(() => URL.revokeObjectURL(url), 1000);
         showToast('บันทึกรูป JPG เรียบร้อยแล้ว', 'success');
       } catch (error) { showToast('สร้างรูปไม่สำเร็จ: ' + error.message, 'error'); }
+    }
+
+    // ===== พับ/ขยายส่วนสรุปประจำปี (จำค่าที่เลือกไว้ในเครื่อง ค่าเริ่มต้น = พับ) =====
+    function applyAnnualCollapsed(collapsed) {
+      getElement('annualBody').classList.toggle('is-collapsed', collapsed);
+      getElement('annualControls').classList.toggle('is-collapsed', collapsed);
+      getElement('annualToggle').setAttribute('aria-expanded', String(!collapsed));
+    }
+    function toggleAnnual() {
+      const collapsed = !getElement('annualBody').classList.contains('is-collapsed');
+      applyAnnualCollapsed(collapsed);
+      try { localStorage.setItem('ANNUAL_COLLAPSED', collapsed ? '1' : '0'); } catch (e) {}
+    }
+    function initAnnualCollapsed() {
+      let stored = null;
+      try { stored = localStorage.getItem('ANNUAL_COLLAPSED'); } catch (e) {}
+      applyAnnualCollapsed(stored === null ? true : stored === '1');
     }
 
     // ===== สรุปข้อมูลประจำปี =====
