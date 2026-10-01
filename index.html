@@ -11,6 +11,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -78,6 +79,8 @@
     .rpt tr.total td { background: #f4b084; font-weight: 700; }
     .rpt tr.total td.nofill { background: #fff; }
     .rpt .rk1 { background: #ffff00 !important; } .rpt .rk2 { background: #00ff00 !important; } .rpt .rk3 { background: #ffc000 !important; }
+    .rpt-capture { display: inline-block; background: #fff; padding: 10px; }
+    .rpt tr.sub td { background: #deebf7; font-weight: 700; }
     .rpt-legend { display: inline-block; width: 14px; height: 14px; background: #d9d9d9; border: 1px solid #94a3b8; vertical-align: -2px; margin-right: 6px; }
 
     @media print {
@@ -308,10 +311,33 @@
           <button type="button" onclick="exportReportXlsx()" class="flex items-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-200 transition hover:bg-emerald-500/20">
             <i data-lucide="file-spreadsheet" class="h-4 w-4"></i> Export Excel (.xlsx)
           </button>
+          <button type="button" onclick="shareTableAsJpg('reportCapture', 'monthly')" class="flex items-center gap-2 rounded-xl border border-sky-400/30 bg-sky-500/10 px-3 py-2 text-xs font-semibold text-sky-200 transition hover:bg-sky-500/20">
+            <i data-lucide="share-2" class="h-4 w-4"></i> แชร์ / บันทึกรูป JPG
+          </button>
         </div>
       </div>
-      <div class="rpt-scroll custom-scrollbar"><table id="reportTable" class="rpt"></table></div>
+      <div class="rpt-scroll custom-scrollbar"><div id="reportCapture" class="rpt-capture"><table id="reportTable" class="rpt"></table></div></div>
       <p id="surgeNote" class="border-t border-slate-800 px-5 py-2 text-[11px] text-slate-500"></p>
+    </section>
+
+    <section id="sec-annual" class="glass-panel mt-4 overflow-hidden rounded-2xl">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 p-4 md:px-5">
+        <div>
+          <h2 class="font-semibold text-white">สรุปข้อมูลประจำปี</h2>
+          <p class="text-[11px] text-slate-500">ผลการจับกุมรายเดือน รายจังหวัด รวมทั้งปี เทียบเป้าหมาย</p>
+        </div>
+        <div class="header-controls flex flex-wrap items-center gap-2">
+          <label class="flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2">
+            <span class="mr-2 flex-shrink-0 text-[11px] text-slate-400">ปี</span>
+            <select id="annualYear" class="min-w-0 cursor-pointer bg-transparent text-xs font-semibold text-white outline-none"></select>
+          </label>
+          <button type="button" onclick="shareTableAsJpg('annualCapture', 'annual')" class="flex items-center gap-2 rounded-xl border border-sky-400/30 bg-sky-500/10 px-3 py-2 text-xs font-semibold text-sky-200 transition hover:bg-sky-500/20">
+            <i data-lucide="share-2" class="h-4 w-4"></i> แชร์ / บันทึกรูป JPG
+          </button>
+        </div>
+      </div>
+      <div class="rpt-scroll custom-scrollbar"><div id="annualCapture" class="rpt-capture"><table id="annualTable" class="rpt"></table></div></div>
+      <p id="annualNote" class="border-t border-slate-800 px-5 py-2 text-[11px] text-slate-500"></p>
     </section>
 
     <section id="sec-matrix" class="glass-panel mt-4 overflow-hidden rounded-2xl">
@@ -386,6 +412,7 @@
       getElement('yearSelector').addEventListener('change', handleMonthChange);
       getElement('surgeStart').addEventListener('change', handleSurgeChange);
       getElement('surgeEnd').addEventListener('change', handleSurgeChange);
+      getElement('annualYear').addEventListener('change', renderAnnual);
       getElement('startDate').addEventListener('change', renderDashboard);
       getElement('endDate').addEventListener('change', renderDashboard);
       getElement('dailyArrestDate').addEventListener('change', renderDailyArrest);
@@ -467,12 +494,16 @@
         const option = document.createElement('option'); option.value = String(i + 1).padStart(2, '0'); option.textContent = name; monthSelect.appendChild(option);
       });
       yearSelect.value = current.slice(0, 4); monthSelect.value = current.slice(5, 7);
+      const annualSelect = getElement('annualYear'); const prevAnnual = annualSelect.value;
+      annualSelect.innerHTML = yearSelect.innerHTML;
+      annualSelect.value = prevAnnual && [...annualSelect.options].some(o => o.value === prevAnnual) ? prevAnnual : current.slice(0, 4);
       state.selectedMonth = current;
       applyMonthDateRange();
     }
 
     function handleMonthChange() {
       state.selectedMonth = `${getElement('yearSelector').value}-${getElement('monthSelector').value}`;
+      getElement('annualYear').value = getElement('yearSelector').value;
       applyMonthDateRange(); renderDashboard();
     }
 
@@ -519,7 +550,7 @@
       getElement('remainingTarget').textContent = formatNumber(remainingTarget);
       getElement('targetPercent').textContent = `${totalPercent.toFixed(1)}%`;
 
-      renderDailyArrest(); renderTopProvince(ranking); renderMissingAlert(ranking, totalTarget); renderSummaryTable(ranking); renderCharts(filteredRecords, ranking, startDate, endDate); renderMatrix(filteredRecords, startDate, endDate); renderReport();
+      renderDailyArrest(); renderTopProvince(ranking); renderMissingAlert(ranking, totalTarget); renderSummaryTable(ranking); renderCharts(filteredRecords, ranking, startDate, endDate); renderMatrix(filteredRecords, startDate, endDate); renderReport(); renderAnnual();
     }
 
     function clearDashboard() {
@@ -930,6 +961,99 @@
       } catch (error) { showToast('ส่งออก Excel ไม่สำเร็จ: ' + error.message, 'error'); }
     }
 
+    // ===== แชร์ตารางเป็นรูป JPG =====
+    async function shareTableAsJpg(captureId, kind) {
+      const target = getElement(captureId);
+      if (!target) return;
+      if (typeof html2canvas === 'undefined') { showToast('โหลดไลบรารีสร้างรูปไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่', 'error'); return; }
+      const isAnnual = kind === 'annual';
+      const fileName = isAnnual ? `สรุปผลการจับกุมประจำปี_${getElement('annualYear').value}.jpg` : `ผลการจับกุม_${state.selectedMonth}.jpg`;
+      const title = isAnnual ? `สรุปผลการจับกุมประจำปี ${Number(getElement('annualYear').value) + 543}` : reportTitle(state.selectedMonth);
+      showToast('กำลังสร้างรูปภาพ...', 'success');
+      try {
+        const canvas = await html2canvas(target, {
+          backgroundColor: '#ffffff', scale: 2, useCORS: true, logging: false,
+          windowWidth: Math.max(document.documentElement.clientWidth, target.scrollWidth + 40),
+          onclone: (doc) => { doc.querySelectorAll('.rpt-scroll').forEach(el => { el.style.overflow = 'visible'; el.style.maxWidth = 'none'; }); }
+        });
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
+        if (!blob) throw new Error('สร้างไฟล์รูปไม่สำเร็จ');
+        const file = new File([blob], fileName, { type: 'image/jpeg' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try { await navigator.share({ files: [file], title }); return; }
+          catch (error) { if (error && error.name === 'AbortError') return; }
+        }
+        const url = URL.createObjectURL(blob); const link = document.createElement('a');
+        link.href = url; link.download = fileName; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast('บันทึกรูป JPG เรียบร้อยแล้ว', 'success');
+      } catch (error) { showToast('สร้างรูปไม่สำเร็จ: ' + error.message, 'error'); }
+    }
+
+    // ===== สรุปข้อมูลประจำปี =====
+    const THAI_MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
+    function buildAnnualData(year) {
+      const index = Object.fromEntries(PROVINCES.map((p, i) => [p, i]));
+      const rows = PROVINCES.map(p => ({ province: p, months: Array(12).fill(0), target: 0, total: 0 }));
+      const monthTargets = Array(12).fill(0);
+      for (let m = 0; m < 12; m++) {
+        const saved = state.allTargets[`${year}-${String(m + 1).padStart(2, '0')}`] || {};
+        PROVINCES.forEach((p, i) => { const v = Math.max(0, Math.floor(Number(saved[p]) || 0)); rows[i].target += v; monthTargets[m] += v; });
+      }
+      state.records.forEach(record => {
+        if (!record.yearMonth || !String(record.yearMonth).startsWith(`${year}-`) || !(record.province in index)) return;
+        const m = Number(String(record.yearMonth).slice(5, 7)) - 1;
+        if (m < 0 || m > 11) return;
+        const row = rows[index[record.province]]; row.months[m]++; row.total++;
+      });
+      rows.forEach(row => {
+        row.over = Math.max(row.total - row.target, 0); row.remain = Math.max(row.target - row.total, 0);
+        row.percent = row.target > 0 ? (row.total / row.target) * 100 : null;
+      });
+      rows.forEach(row => { row.rank = row.percent === null ? null : 1 + rows.filter(o => o.percent !== null && o.percent > row.percent + 1e-9).length; });
+      const monthTotals = Array(12).fill(0);
+      rows.forEach(row => row.months.forEach((v, i) => { monthTotals[i] += v; }));
+      const totals = { target: rows.reduce((s, r) => s + r.target, 0), total: rows.reduce((s, r) => s + r.total, 0) };
+      totals.over = Math.max(totals.total - totals.target, 0); totals.remain = Math.max(totals.target - totals.total, 0);
+      totals.percent = totals.target > 0 ? (totals.total / totals.target) * 100 : null;
+      const monthPercents = monthTotals.map((v, i) => monthTargets[i] > 0 ? (v / monthTargets[i]) * 100 : null);
+      return { year, rows, totals, monthTotals, monthTargets, monthPercents };
+    }
+
+    function renderAnnual() {
+      const table = getElement('annualTable'); const select = getElement('annualYear');
+      if (!table || !select || !select.value) return;
+      const year = Number(select.value);
+      const { rows, totals, monthTotals, monthTargets, monthPercents } = buildAnnualData(year);
+      const fmtOver = n => n > 0 ? `+${n}` : '0';
+      const fmtPct = p => p === null ? '' : `${p.toFixed(1)}%`;
+      const show = (v, m) => (v > 0 || monthTargets[m] > 0) ? v : '';
+
+      let html = `<tr><td class="rpt-title" colspan="19">สรุปผลการจับกุมประจำปี ${year + 543}</td></tr>
+        <tr>
+          <th class="hd hd-big" rowspan="2">หน่วยงาน</th><th class="hd hd-small" rowspan="2">เป้าหมาย<br>รวมทั้งปี</th>
+          <th class="hd hd-big" colspan="12">ผลการจับกุมรายเดือน</th>
+          <th class="hd hd-small" rowspan="2">รวม</th><th class="hd hd-small" rowspan="2">ผลการปฏิบัติที่<br>เกินเป้าหมาย</th>
+          <th class="hd hd-small" rowspan="2">เป้า<br>คงเหลือ</th><th class="hd hd-small" rowspan="2">คิดเป็นร้อยละ<br>(ต่อเป้า)</th><th class="hd hd-small" rowspan="2">ลำดับ<br>(ร้อยละ)</th>
+        </tr><tr>${THAI_MONTHS_SHORT.map(n => `<th class="dayhead" style="min-width:44px">${n}</th>`).join('')}</tr>`;
+
+      rows.forEach(row => {
+        const rankClass = row.rank && RANK_COLORS[row.rank] ? `rk${row.rank}` : '';
+        html += `<tr><td class="prov">${row.province}</td><td>${row.target}</td>${row.months.map((v, m) => `<td>${show(v, m)}</td>`).join('')}
+          <td class="sumcol">${row.total}</td><td class="sumcol">${fmtOver(row.over)}</td><td class="sumcol">${row.remain}</td>
+          <td>${fmtPct(row.percent)}</td><td class="${rankClass}">${row.rank ?? ''}</td></tr>`;
+      });
+      html += `<tr class="total"><td class="prov">รวม</td><td>${totals.target}</td>${monthTotals.map(v => `<td>${v}</td>`).join('')}
+        <td>${totals.total}</td><td>${fmtOver(totals.over)}</td><td>${totals.remain}</td><td>${fmtPct(totals.percent)}</td><td class="nofill"></td></tr>`;
+      html += `<tr class="sub"><td class="prov" colspan="2">เป้าหมายรายเดือน</td>${monthTargets.map(v => `<td>${v > 0 ? v : ''}</td>`).join('')}<td colspan="5"></td></tr>
+        <tr class="sub"><td class="prov" colspan="2">ร้อยละต่อเป้า</td>${monthPercents.map(p => `<td>${p === null ? '' : p.toFixed(1) + '%'}</td>`).join('')}<td colspan="5"></td></tr>`;
+      table.innerHTML = html;
+
+      const monthsWithTarget = monthTargets.filter(v => v > 0).length;
+      getElement('annualNote').textContent = `ปี ${year + 543}: เป้าหมายรวมนับจาก ${monthsWithTarget} เดือนที่ตั้งเป้าไว้ในระบบ · เดือนที่ยังไม่ตั้งเป้าและไม่มีผลจับกุมจะเว้นว่าง`;
+    }
+
     function exportToCSV() {
       const BOM = '\uFEFF'; let csv = BOM;
       csv += "ข้อมูลรายงานภาพรวม\n"; csv += `ประจำเดือน,${state.selectedMonth}\n`; csv += `ผลการจับกุมสะสม,${getElement('totalCases').innerText.replace(/,/g, '')}\n`; csv += `ผลการจับกุมรายวัน,${getElement('dailyArrestCases').innerText.replace(/,/g, '')}\n\n`;
@@ -942,7 +1066,7 @@
 
     let presentationTimer, refreshTimer, clockTimer;
     let currentSlideIndex = 0;
-    const slidesList = ['sec-cards', 'sec-charts', 'sec-ranking', 'sec-report', 'sec-matrix'];
+    const slidesList = ['sec-cards', 'sec-charts', 'sec-ranking', 'sec-report', 'sec-annual', 'sec-matrix'];
 
     function showSlide(idx) {
        slidesList.forEach((id, i) => {
