@@ -10,6 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
   <style>
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -56,6 +57,29 @@
     .presenting section.hidden { display: none !important; }
     .presenting .header-panel, .presenting footer { display: none !important; }
     
+    /* ฟอนต์ TH Sarabun PSK: ใช้ฟอนต์ที่ติดตั้งในเครื่อง หรือไฟล์ในโฟลเดอร์ ./fonts/ */
+    @font-face { font-family: "TH Sarabun PSK"; font-weight: 400; font-style: normal; font-display: swap;
+      src: local("TH Sarabun PSK"), local("THSarabunPSK"), local("TH SarabunPSK"), url("./fonts/THSarabunPSK.ttf") format("truetype"); }
+    @font-face { font-family: "TH Sarabun PSK"; font-weight: 700; font-style: normal; font-display: swap;
+      src: local("TH Sarabun PSK Bold"), local("THSarabunPSK-Bold"), local("TH SarabunPSK Bold"), url("./fonts/THSarabunPSK-Bold.ttf") format("truetype"); }
+
+    /* ตารางรายงานผลการจับกุม (ตามแบบ Excel) */
+    .rpt-scroll { overflow-x: auto; padding: 12px; background: #fff; -webkit-overflow-scrolling: touch; }
+    .rpt { border-collapse: collapse; margin: 0 auto; background: #fff; color: #000; font-family: "TH Sarabun PSK", "THSarabunPSK", "TH SarabunPSK", "Sarabun", sans-serif; font-size: 21px; line-height: 1.15; }
+    .rpt th, .rpt td { border: 1px solid #000; padding: 1px 3px; text-align: center; vertical-align: middle; white-space: nowrap; color: #000; }
+    .rpt .rpt-title { border: none; font-size: 26px; font-weight: 700; padding: 6px 0 8px; }
+    .rpt .hd { background: #bdd7ee; font-weight: 700; }
+    .rpt .hd-big { font-size: 24px; }
+    .rpt .hd-small { font-size: 16px; font-weight: 700; white-space: normal; line-height: 1.05; min-width: 64px; }
+    .rpt .dayhead { background: #2e75b6; color: #fff; font-weight: 700; min-width: 27px; }
+    .rpt .prov { text-align: center; font-weight: 700; min-width: 112px; font-size: 22px; }
+    .rpt .surge { background: #d9d9d9; }
+    .rpt .sumcol { background: #d9d9d9; font-weight: 400; }
+    .rpt tr.total td { background: #f4b084; font-weight: 700; }
+    .rpt tr.total td.nofill { background: #fff; }
+    .rpt .rk1 { background: #ffff00 !important; } .rpt .rk2 { background: #00ff00 !important; } .rpt .rk3 { background: #ffc000 !important; }
+    .rpt-legend { display: inline-block; width: 14px; height: 14px; background: #d9d9d9; border: 1px solid #94a3b8; vertical-align: -2px; margin-right: 6px; }
+
     @media print {
       @page { size: A4 landscape; margin: 10mm; }
       body { background: white !important; color: black !important; min-height: auto; }
@@ -65,6 +89,10 @@
       canvas { filter: invert(1) hue-rotate(180deg); }
       .bg-slate-950, .bg-slate-900, .bg-slate-800, .bg-emerald-950, .bg-blue-950 { background: #f8f9fa !important; }
       .sticky-header th, .sticky-column { position: static !important; }
+      .rpt-scroll { overflow: visible !important; padding: 0 !important; }
+      .rpt, .rpt * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .rpt th.dayhead { color: #fff !important; }
+      .rpt { font-size: 12px; } .rpt .rpt-title { font-size: 16px; } .rpt .hd-big { font-size: 14px; } .rpt .prov { font-size: 13px; min-width: 70px; } .rpt .hd-small { font-size: 9px; min-width: 40px; } .rpt .dayhead { min-width: 16px; }
     }
 
     @media (max-width: 1279px) { .summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
@@ -106,6 +134,8 @@
               <label class="flex items-center rounded-xl border border-white/20 bg-slate-950/80 px-3 py-2 shadow-lg">
                 <i data-lucide="calendar-days" class="mr-2 h-4 w-4 flex-shrink-0 text-yellow-300"></i>
                 <select id="monthSelector" class="min-w-0 cursor-pointer bg-transparent text-xs font-semibold text-white outline-none"></select>
+                <span class="mx-1 text-slate-500">/</span>
+                <select id="yearSelector" class="min-w-0 cursor-pointer bg-transparent text-xs font-semibold text-white outline-none"></select>
               </label>
               
               <button id="btnToggleSettings" type="button" onclick="toggleSettings()" class="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/20">
@@ -261,6 +291,29 @@
       </div>
     </section>
 
+    <section id="sec-report" class="glass-panel mt-4 overflow-hidden rounded-2xl">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 p-4 md:px-5">
+        <div>
+          <h2 class="font-semibold text-white">ตารางผลการจับกุมประจำเดือน (แบบรายงาน)</h2>
+          <p class="text-[11px] text-slate-500">แสดงทั้งเดือนที่เลือก · ช่องสีเทาคือช่วงระดม</p>
+        </div>
+        <div class="header-controls flex flex-wrap items-center gap-2">
+          <label class="flex items-center rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2">
+            <span class="mr-2 flex-shrink-0 text-[11px] text-slate-400">ช่วงระดม</span>
+            <input type="date" id="surgeStart" class="min-w-0 bg-transparent text-[11px] text-slate-200 outline-none">
+            <span class="mx-2 text-[11px] text-slate-500">ถึง</span>
+            <input type="date" id="surgeEnd" class="min-w-0 bg-transparent text-[11px] text-slate-200 outline-none">
+          </label>
+          <button type="button" onclick="clearSurge()" class="rounded-xl border border-slate-400/30 bg-slate-500/10 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:bg-slate-500/20">ล้างช่วงระดม</button>
+          <button type="button" onclick="exportReportXlsx()" class="flex items-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-200 transition hover:bg-emerald-500/20">
+            <i data-lucide="file-spreadsheet" class="h-4 w-4"></i> Export Excel (.xlsx)
+          </button>
+        </div>
+      </div>
+      <div class="rpt-scroll custom-scrollbar"><table id="reportTable" class="rpt"></table></div>
+      <p id="surgeNote" class="border-t border-slate-800 px-5 py-2 text-[11px] text-slate-500"></p>
+    </section>
+
     <section id="sec-matrix" class="glass-panel mt-4 overflow-hidden rounded-2xl">
       <div class="flex items-center justify-between border-b border-slate-800 p-4 md:px-5">
         <div>
@@ -330,6 +383,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       getElement('monthSelector').addEventListener('change', handleMonthChange);
+      getElement('yearSelector').addEventListener('change', handleMonthChange);
+      getElement('surgeStart').addEventListener('change', handleSurgeChange);
+      getElement('surgeEnd').addEventListener('change', handleSurgeChange);
       getElement('startDate').addEventListener('change', renderDashboard);
       getElement('endDate').addEventListener('change', renderDashboard);
       getElement('dailyArrestDate').addEventListener('change', renderDailyArrest);
@@ -394,25 +450,33 @@
     }
 
     function buildMonthSelector() {
-      const selector = getElement('monthSelector');
-      const previousMonth = state.selectedMonth || selector.value;
-      selector.innerHTML = '';
-      const sortedMonths = [...state.validMonths].sort().reverse();
-      sortedMonths.forEach(yearMonth => {
-        const option = document.createElement('option');
-        option.value = yearMonth; option.textContent = formatMonth(yearMonth);
-        selector.appendChild(option);
+      const monthSelect = getElement('monthSelector'); const yearSelect = getElement('yearSelector');
+      const now = new Date();
+      let current = state.selectedMonth;
+      if (!current) {
+        const nowYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        current = nowYm >= `${MIN_YEAR}-01` ? nowYm : `${MIN_YEAR}-01`;
+      }
+      const maxYear = Math.max(MIN_YEAR, now.getFullYear() + 1, Number(current.slice(0, 4)), ...state.validMonths.map(m => Number(String(m).slice(0, 4)) || MIN_YEAR));
+      yearSelect.innerHTML = '';
+      for (let year = MIN_YEAR; year <= maxYear; year++) {
+        const option = document.createElement('option'); option.value = String(year); option.textContent = `${year + 543} (${year})`; yearSelect.appendChild(option);
+      }
+      monthSelect.innerHTML = '';
+      THAI_MONTHS.forEach((name, i) => {
+        const option = document.createElement('option'); option.value = String(i + 1).padStart(2, '0'); option.textContent = name; monthSelect.appendChild(option);
       });
-      if (previousMonth && state.validMonths.includes(previousMonth)) selector.value = previousMonth;
-      state.selectedMonth = selector.value || state.validMonths[0] || '';
+      yearSelect.value = current.slice(0, 4); monthSelect.value = current.slice(5, 7);
+      state.selectedMonth = current;
       applyMonthDateRange();
     }
 
     function handleMonthChange() {
-      state.selectedMonth = getElement('monthSelector').value;
+      state.selectedMonth = `${getElement('yearSelector').value}-${getElement('monthSelector').value}`;
       applyMonthDateRange(); renderDashboard();
     }
 
+    
     function applyMonthDateRange() {
       if (!state.selectedMonth) return;
       const firstDate = `${state.selectedMonth}-01`;
@@ -429,6 +493,7 @@
       const yesterdayStr = toLocalDateString(yesterday);
       if (yesterdayStr.startsWith(state.selectedMonth)) dailyInput.value = yesterdayStr;
       else dailyInput.value = lastDate;
+      syncSurgeInputs();
     }
 
     function renderDashboard() {
@@ -454,7 +519,7 @@
       getElement('remainingTarget').textContent = formatNumber(remainingTarget);
       getElement('targetPercent').textContent = `${totalPercent.toFixed(1)}%`;
 
-      renderDailyArrest(); renderTopProvince(ranking); renderMissingAlert(ranking, totalTarget); renderSummaryTable(ranking); renderCharts(filteredRecords, ranking, startDate, endDate); renderMatrix(filteredRecords, startDate, endDate);
+      renderDailyArrest(); renderTopProvince(ranking); renderMissingAlert(ranking, totalTarget); renderSummaryTable(ranking); renderCharts(filteredRecords, ranking, startDate, endDate); renderMatrix(filteredRecords, startDate, endDate); renderReport();
     }
 
     function clearDashboard() {
@@ -653,6 +718,218 @@
     function parseLocalDate(value) { const [year, month, day] = value.split('-').map(Number); return new Date(year, month - 1, day); }
     function toLocalDateString(date) { return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-'); }
 
+    // ===== ตารางรายงานผลการจับกุม + ช่วงระดม + Export Excel =====
+    const THAI_MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    const MIN_YEAR = 2026;
+    const SURGE_KEY = 'SURGE_PERIODS';
+    const DEFAULT_SURGE = { '2026-09': { start: '2026-09-11', end: '2026-09-17' } };
+    const RANK_COLORS = { 1: '#ffff00', 2: '#00ff00', 3: '#ffc000' };
+
+    function loadSurgeStore() {
+      try { return { ...DEFAULT_SURGE, ...JSON.parse(localStorage.getItem(SURGE_KEY) || '{}') }; }
+      catch (e) { return { ...DEFAULT_SURGE }; }
+    }
+    function getSurge(yearMonth) {
+      const item = loadSurgeStore()[yearMonth];
+      return item && item.start && item.end ? item : null;
+    }
+    function setSurge(yearMonth, start, end) {
+      let store = {};
+      try { store = JSON.parse(localStorage.getItem(SURGE_KEY) || '{}'); } catch (e) {}
+      store[yearMonth] = { start, end };
+      try { localStorage.setItem(SURGE_KEY, JSON.stringify(store)); } catch (e) { showToast('บันทึกช่วงระดมในเครื่องไม่สำเร็จ', 'error'); }
+    }
+    function syncSurgeInputs() {
+      if (!state.selectedMonth) return;
+      const first = `${state.selectedMonth}-01`; const last = getLastDateOfMonth(state.selectedMonth);
+      const s = getElement('surgeStart'); const e = getElement('surgeEnd');
+      [s, e].forEach(input => { input.min = first; input.max = last; });
+      const surge = getSurge(state.selectedMonth);
+      s.value = surge ? surge.start : ''; e.value = surge ? surge.end : '';
+    }
+    function handleSurgeChange() {
+      const start = getElement('surgeStart').value; const end = getElement('surgeEnd').value;
+      if (!start || !end) return;
+      if (start > end) { showToast('วันที่เริ่มระดมต้องไม่หลังวันที่สิ้นสุด', 'error'); return; }
+      setSurge(state.selectedMonth, start, end); renderReport();
+    }
+    function clearSurge() {
+      setSurge(state.selectedMonth, '', ''); syncSurgeInputs(); renderReport();
+    }
+    function buddhistYear(yearMonth) { return Number(yearMonth.slice(0, 4)) + 543; }
+    function reportTitle(yearMonth) { return `ผลการจับกุม ${THAI_MONTHS[Number(yearMonth.slice(5, 7)) - 1]} ${buddhistYear(yearMonth)}`; }
+
+    function buildReportData() {
+      const ym = state.selectedMonth;
+      const targets = getCurrentTargets();
+      const index = Object.fromEntries(PROVINCES.map((p, i) => [p, i]));
+      const rows = PROVINCES.map(p => ({ province: p, target: targets[p], days: Array(31).fill(0), total: 0 }));
+      state.records.forEach(record => {
+        if (record.yearMonth !== ym || !(record.province in index)) return;
+        const day = Number(String(record.dateStr).slice(8, 10)) || Number(record.day);
+        if (day < 1 || day > 31) return;
+        const row = rows[index[record.province]]; row.days[day - 1]++; row.total++;
+      });
+      rows.forEach(row => {
+        row.over = Math.max(row.total - row.target, 0);
+        row.remain = Math.max(row.target - row.total, 0);
+        row.percent = row.target > 0 ? (row.total / row.target) * 100 : null;
+      });
+      rows.forEach(row => {
+        row.rank = row.percent === null ? null : 1 + rows.filter(o => o.percent !== null && o.percent > row.percent + 1e-9).length;
+      });
+      const totals = { target: 0, total: 0, days: Array(31).fill(0) };
+      rows.forEach(row => { totals.target += row.target; totals.total += row.total; row.days.forEach((v, i) => { totals.days[i] += v; }); });
+      totals.over = Math.max(totals.total - totals.target, 0);
+      totals.remain = Math.max(totals.target - totals.total, 0);
+      totals.percent = totals.target > 0 ? (totals.total / totals.target) * 100 : null;
+      const surge = getSurge(ym);
+      const surgeDays = Array.from({ length: 31 }, (_, i) => {
+        if (!surge) return false;
+        const date = `${ym}-${String(i + 1).padStart(2, '0')}`;
+        return date >= surge.start && date <= surge.end;
+      });
+      return { ym, rows, totals, surge, surgeDays };
+    }
+
+    function renderReport() {
+      const table = getElement('reportTable');
+      if (!table || !state.selectedMonth) return;
+      const { ym, rows, totals, surge, surgeDays } = buildReportData();
+      const fmtOver = n => n > 0 ? `+${n}` : '0';
+      const fmtPct = p => p === null ? '' : `${p.toFixed(1)}%`;
+      const dayHeads = Array.from({ length: 31 }, (_, i) => `<th class="dayhead">${i + 1}</th>`).join('');
+
+      let html = `<tr><td class="rpt-title" colspan="38">${reportTitle(ym)}</td></tr>
+        <tr>
+          <th class="hd hd-big" rowspan="2">หน่วยงาน</th><th class="hd hd-big" rowspan="2">เป้าหมาย</th>
+          <th class="hd hd-big" colspan="31">วันที่</th>
+          <th class="hd hd-small" rowspan="2">รวม</th><th class="hd hd-small" rowspan="2">ผลการปฏิบัติที่<br>เกินเป้าหมาย</th>
+          <th class="hd hd-small" rowspan="2">เป้า<br>คงเหลือ</th><th class="hd hd-small" rowspan="2">คิดเป็นร้อยละ<br>(ต่อเป้า)</th><th class="hd hd-small" rowspan="2">ลำดับ<br>(ร้อยละ)</th>
+        </tr><tr>${dayHeads}</tr>`;
+
+      rows.forEach(row => {
+        const cells = row.days.map((v, i) => {
+          const text = v > 0 ? v : (surgeDays[i] ? '0' : '');
+          return `<td class="${surgeDays[i] ? 'surge' : ''}">${text}</td>`;
+        }).join('');
+        const rankClass = row.rank && RANK_COLORS[row.rank] ? ` rk${row.rank}` : '';
+        html += `<tr><td class="prov">${row.province}</td><td>${row.target}</td>${cells}
+          <td class="sumcol">${row.total}</td><td class="sumcol">${fmtOver(row.over)}</td><td class="sumcol">${row.remain}</td>
+          <td>${fmtPct(row.percent)}</td><td class="${rankClass.trim()}">${row.rank ?? ''}</td></tr>`;
+      });
+
+      html += `<tr class="total"><td class="prov">รวม</td><td>${totals.target}</td>${totals.days.map(v => `<td>${v}</td>`).join('')}
+        <td>${totals.total}</td><td>${fmtOver(totals.over)}</td><td>${totals.remain}</td><td>${fmtPct(totals.percent)}</td><td class="nofill"></td></tr>`;
+      table.innerHTML = html;
+
+      getElement('surgeNote').innerHTML = surge
+        ? `<span class="rpt-legend"></span>ช่วงระดม ${formatDisplayDate(surge.start)} – ${formatDisplayDate(surge.end)} (ตั้งค่าเก็บในเบราว์เซอร์เครื่องนี้)`
+        : 'ยังไม่ได้กำหนดช่วงระดมของเดือนนี้ — เลือกวันที่ในช่อง "ช่วงระดม" ด้านบน';
+    }
+
+    async function exportReportXlsx() {
+      if (!state.selectedMonth) { showToast('ยังไม่ได้เลือกเดือน', 'error'); return; }
+      if (typeof ExcelJS === 'undefined') { showToast('โหลดไลบรารี Excel ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่', 'error'); return; }
+      const { ym, rows, totals, surgeDays } = buildReportData();
+      const FONT = 'TH SarabunPSK';
+      const wb = new ExcelJS.Workbook(); wb.creator = 'ตำรวจภูธรภาค 3';
+      const sheetName = `${THAI_MONTHS[Number(ym.slice(5, 7)) - 1]} ${buddhistYear(ym)}`;
+      const ws = wb.addWorksheet(sheetName, {
+        views: [{ state: 'frozen', xSplit: 2, ySplit: 3 }],
+        pageSetup: { orientation: 'landscape', paperSize: 9, fitToPage: true, fitToWidth: 1, fitToHeight: 0, margins: { left: 0.3, right: 0.3, top: 0.4, bottom: 0.4, header: 0.2, footer: 0.2 } }
+      });
+
+      const COL_DAY1 = 3, COL_TOTAL = 34, COL_OVER = 35, COL_REMAIN = 36, COL_PCT = 37, COL_RANK = 38;
+      const first = 4, last = first + rows.length - 1, totalRow = last + 1;
+      const colL = n => ws.getColumn(n).letter;
+      const thin = { style: 'thin', color: { argb: 'FF000000' } };
+      const border = { top: thin, left: thin, bottom: thin, right: thin };
+      const fill = argb => ({ type: 'pattern', pattern: 'solid', fgColor: { argb } });
+      const center = { horizontal: 'center', vertical: 'middle', wrapText: true };
+      const font = (o = {}) => ({ name: FONT, size: 16, ...o });
+
+      ws.getColumn(1).width = 18; ws.getColumn(2).width = 10;
+      for (let c = COL_DAY1; c < COL_TOTAL; c++) ws.getColumn(c).width = 4.6;
+      ws.getColumn(COL_TOTAL).width = 7; ws.getColumn(COL_OVER).width = 15; ws.getColumn(COL_REMAIN).width = 8.5; ws.getColumn(COL_PCT).width = 14; ws.getColumn(COL_RANK).width = 9.5;
+
+      // แถวชื่อเรื่อง
+      ws.mergeCells(1, 1, 1, COL_RANK);
+      Object.assign(ws.getCell(1, 1), { value: reportTitle(ym), font: font({ size: 20, bold: true }), alignment: center });
+      ws.getRow(1).height = 30;
+
+      // หัวตาราง
+      const headBlue = 'FFBDD7EE';
+      const head = (r1, c1, r2, c2, text, o = {}) => {
+        if (r1 !== r2 || c1 !== c2) ws.mergeCells(r1, c1, r2, c2);
+        const cell = ws.getCell(r1, c1);
+        cell.value = text; cell.font = font({ bold: true, size: o.size || 18 }); cell.alignment = center; cell.fill = fill(headBlue);
+      };
+      head(2, 1, 3, 1, 'หน่วยงาน', { size: 20 }); head(2, 2, 3, 2, 'เป้าหมาย', { size: 20 });
+      head(2, COL_DAY1, 2, COL_TOTAL - 1, 'วันที่', { size: 20 });
+      head(2, COL_TOTAL, 3, COL_TOTAL, 'รวม', { size: 13 }); head(2, COL_OVER, 3, COL_OVER, 'ผลการปฏิบัติที่\nเกินเป้าหมาย', { size: 13 });
+      head(2, COL_REMAIN, 3, COL_REMAIN, 'เป้า\nคงเหลือ', { size: 13 }); head(2, COL_PCT, 3, COL_PCT, 'คิดเป็นร้อยละ\n(ต่อเป้า)', { size: 13 });
+      head(2, COL_RANK, 3, COL_RANK, 'ลำดับ\n(ร้อยละ)', { size: 13 });
+      for (let d = 1; d <= 31; d++) {
+        const cell = ws.getCell(3, COL_DAY1 + d - 1);
+        cell.value = d; cell.font = font({ bold: true, color: { argb: 'FFFFFFFF' } }); cell.alignment = center; cell.fill = fill('FF2E75B6');
+      }
+      ws.getRow(2).height = 34; ws.getRow(3).height = 24;
+
+      // แถวข้อมูล
+      const gray = 'FFD9D9D9';
+      rows.forEach((row, i) => {
+        const r = first + i;
+        ws.getRow(r).height = 25;
+        Object.assign(ws.getCell(r, 1), { value: row.province, font: font({ bold: true, size: 17 }), alignment: center });
+        Object.assign(ws.getCell(r, 2), { value: row.target, font: font(), alignment: center });
+        row.days.forEach((v, d) => {
+          const cell = ws.getCell(r, COL_DAY1 + d);
+          if (v > 0) cell.value = v; else if (surgeDays[d]) cell.value = 0;
+          cell.font = font(); cell.alignment = center;
+          if (surgeDays[d]) cell.fill = fill(gray);
+        });
+        const T = `${colL(COL_TOTAL)}${r}`, B = `B${r}`, P = `${colL(COL_PCT)}${r}`;
+        Object.assign(ws.getCell(r, COL_TOTAL), { value: { formula: `SUM(${colL(COL_DAY1)}${r}:${colL(COL_TOTAL - 1)}${r})`, result: row.total }, font: font(), alignment: center, fill: fill(gray) });
+        Object.assign(ws.getCell(r, COL_OVER), { value: { formula: `MAX(${T}-${B},0)`, result: row.over }, font: font(), alignment: center, fill: fill(gray), numFmt: '"+"0;-0;0' });
+        Object.assign(ws.getCell(r, COL_REMAIN), { value: { formula: `MAX(${B}-${T},0)`, result: row.remain }, font: font(), alignment: center, fill: fill(gray) });
+        Object.assign(ws.getCell(r, COL_PCT), { value: { formula: `IF(${B}>0,${T}/${B},"")`, result: row.percent === null ? '' : row.percent / 100 }, font: font(), alignment: center, numFmt: '0.0%' });
+        Object.assign(ws.getCell(r, COL_RANK), { value: { formula: `IF(${B}>0,RANK(${P},$${colL(COL_PCT)}$${first}:$${colL(COL_PCT)}$${last},0),"")`, result: row.rank ?? '' }, font: font({ bold: true }), alignment: center });
+      });
+
+      // แถวรวม
+      const orange = 'FFF4B084';
+      ws.getRow(totalRow).height = 26;
+      Object.assign(ws.getCell(totalRow, 1), { value: 'รวม', font: font({ bold: true, size: 18 }), alignment: center });
+      Object.assign(ws.getCell(totalRow, 2), { value: { formula: `SUM(B${first}:B${last})`, result: totals.target }, font: font({ bold: true }), alignment: center });
+      for (let c = COL_DAY1; c < COL_TOTAL; c++) {
+        Object.assign(ws.getCell(totalRow, c), { value: { formula: `SUM(${colL(c)}${first}:${colL(c)}${last})`, result: totals.days[c - COL_DAY1] }, font: font({ bold: true }), alignment: center });
+      }
+      const TT = `${colL(COL_TOTAL)}${totalRow}`, TB = `B${totalRow}`;
+      Object.assign(ws.getCell(totalRow, COL_TOTAL), { value: { formula: `SUM(${colL(COL_TOTAL)}${first}:${colL(COL_TOTAL)}${last})`, result: totals.total }, font: font({ bold: true }), alignment: center });
+      Object.assign(ws.getCell(totalRow, COL_OVER), { value: { formula: `MAX(${TT}-${TB},0)`, result: totals.over }, font: font({ bold: true }), alignment: center, numFmt: '"+"0;-0;0' });
+      Object.assign(ws.getCell(totalRow, COL_REMAIN), { value: { formula: `MAX(${TB}-${TT},0)`, result: totals.remain }, font: font({ bold: true }), alignment: center });
+      Object.assign(ws.getCell(totalRow, COL_PCT), { value: { formula: `IF(${TB}>0,${TT}/${TB},"")`, result: totals.percent === null ? '' : totals.percent / 100 }, font: font({ bold: true }), alignment: center, numFmt: '0.0%' });
+      for (let c = 1; c < COL_RANK; c++) ws.getCell(totalRow, c).fill = fill(orange);
+
+      // เส้นขอบทุกช่อง (ยกเว้นแถวชื่อเรื่อง)
+      for (let r = 2; r <= totalRow; r++) for (let c = 1; c <= COL_RANK; c++) { if (r === totalRow && c === COL_RANK) continue; ws.getCell(r, c).border = border; }
+      ws.getCell(totalRow, COL_RANK).border = border;
+
+      // สีลำดับ 1-3 (ปรับอัตโนมัติเมื่อแก้ตัวเลขใน Excel)
+      const cf = (value, argb) => ({ type: 'cellIs', operator: 'equal', formulae: [value], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb } } } });
+      ws.addConditionalFormatting({ ref: `${colL(COL_RANK)}${first}:${colL(COL_RANK)}${last}`, rules: [cf(1, 'FFFFFF00'), cf(2, 'FF00FF00'), cf(3, 'FFFFC000')] });
+
+      try {
+        const buffer = await wb.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = URL.createObjectURL(blob); const link = document.createElement('a');
+        link.href = url; link.download = `ผลการจับกุม_${ym}.xlsx`; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast('ส่งออกไฟล์ Excel เรียบร้อยแล้ว', 'success');
+      } catch (error) { showToast('ส่งออก Excel ไม่สำเร็จ: ' + error.message, 'error'); }
+    }
+
     function exportToCSV() {
       const BOM = '\uFEFF'; let csv = BOM;
       csv += "ข้อมูลรายงานภาพรวม\n"; csv += `ประจำเดือน,${state.selectedMonth}\n`; csv += `ผลการจับกุมสะสม,${getElement('totalCases').innerText.replace(/,/g, '')}\n`; csv += `ผลการจับกุมรายวัน,${getElement('dailyArrestCases').innerText.replace(/,/g, '')}\n\n`;
@@ -665,7 +942,7 @@
 
     let presentationTimer, refreshTimer, clockTimer;
     let currentSlideIndex = 0;
-    const slidesList = ['sec-cards', 'sec-charts', 'sec-ranking', 'sec-matrix'];
+    const slidesList = ['sec-cards', 'sec-charts', 'sec-ranking', 'sec-report', 'sec-matrix'];
 
     function showSlide(idx) {
        slidesList.forEach((id, i) => {
